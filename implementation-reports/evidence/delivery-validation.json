@@ -1,0 +1,59 @@
+{
+  "scope": "交付文件结构与静态一致性；非业务实现或应用安全测试",
+  "version": "V4.0-RC2",
+  "checks": [
+    {
+      "name": "JSON语法",
+      "status": "PASS",
+      "detail": "21个JSON文件语法可读取"
+    },
+    {
+      "name": "Schema与种子校验",
+      "status": "PASS",
+      "detail": "2套JSON Schema元校验、27条导入草稿及新建请求正反例通过"
+    },
+    {
+      "name": "产品基线",
+      "status": "PASS",
+      "detail": "27款稳定主档、六款精确顺序，全为未发布草稿"
+    },
+    {
+      "name": "分类模板",
+      "status": "PASS",
+      "detail": "4分类、4模板、27条映射及6份内容采集单一致"
+    },
+    {
+      "name": "API契约",
+      "status": "PASS",
+      "detail": "28项API一致，356处本地Schema引用可解析；无授权／审核／原件下载业务路由"
+    },
+    {
+      "name": "响应白名单",
+      "status": "PASS",
+      "detail": "前台字段白名单一致，创建结果统一为AdminDraft"
+    },
+    {
+      "name": "验收追踪",
+      "status": "PASS",
+      "detail": "12需求—10任务范围—64项验收追踪一致，应用测试均未执行"
+    },
+    {
+      "name": "对比度计算",
+      "status": "PASS",
+      "detail": "8对指定文字颜色通过；不是完整UI无障碍验收"
+    },
+    {
+      "name": "只读来源",
+      "status": "PASS",
+      "detail": "原ZIP及75个文件哈希一致"
+    },
+    {
+      "name": "HTML与Word结构",
+      "status": "PASS",
+      "detail": "HTML的18处本地链接／锚点有效，4份Word容器有效；版式另经渲染检查"
+    }
+  ],
+  "pass": 10,
+  "fail": 0,
+  "applicationAcceptanceStatus": "64项均NOT_RUN"
+}

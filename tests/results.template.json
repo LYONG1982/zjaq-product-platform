@@ -1,0 +1,520 @@
+{
+  "status": "NOT_RUN",
+  "purpose": "供Codex复制填写，不是本包运行结果",
+  "applicationBuild": "",
+  "environment": "",
+  "tests": [
+    {
+      "testId": "AT-001",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-002",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-003",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-004",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-005",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-006",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-007",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-008",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-009",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-010",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-011",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-012",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-013",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-014",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-015",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-016",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-017",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-018",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-019",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-020",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-021",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-022",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-023",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-024",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-025",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-026",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-027",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-028",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-029",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-030",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-031",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-032",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-033",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-034",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-035",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-036",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-037",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-038",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-039",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-040",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-041",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-042",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-043",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-044",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-045",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-046",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-047",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-048",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-049",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-050",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-051",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-052",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-053",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-054",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-055",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-056",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-057",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-058",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-059",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-060",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-061",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-062",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-063",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    },
+    {
+      "testId": "AT-064",
+      "status": "NOT_RUN",
+      "actual": "",
+      "environment": "",
+      "evidencePath": "",
+      "executedAt": null
+    }
+  ]
+}

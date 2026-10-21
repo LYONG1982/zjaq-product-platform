@@ -1,0 +1,16 @@
+{
+  "demoRepeat": {
+    "skipped": true,
+    "productId": "ZJ-032",
+    "userChangesPreserved": true
+  },
+  "isolatedEditProtection": {
+    "skipped": true,
+    "productId": "ZJ-032",
+    "userChangesPreserved": true
+  },
+  "original3100RecordsUnchanged": 31,
+  "current3403Records": 32,
+  "previewDemoUnchanged": true,
+  "scope": "local-only"
+}

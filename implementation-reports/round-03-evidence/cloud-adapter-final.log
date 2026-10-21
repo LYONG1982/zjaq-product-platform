@@ -1,0 +1,48 @@
+TAP version 13
+# Subtest: CloudBase adapter command contract: persistence, idempotency, rollback and management concurrency using an in-memory transaction harness
+ok 1 - CloudBase adapter command contract: persistence, idempotency, rollback and management concurrency using an in-memory transaction harness
+  ---
+  duration_ms: 33.511958
+  type: 'test'
+  ...
+# Subtest: real identity rejects local tokens before network and accepts only the exact configured official origin
+ok 2 - real identity rejects local tokens before network and accepts only the exact configured official origin
+  ---
+  duration_ms: 0.392583
+  type: 'test'
+  ...
+# {"event":"http_request","requestId":"809d23e5-7fad-4a81-817d-07ee505467c8","method":"POST","status":200,"durationMs":21}
+# {"event":"http_request","requestId":"28af1073-3c70-457c-a54f-012ef1e98f55","method":"POST","status":200,"durationMs":5}
+# {"event":"http_request","requestId":"44af5a5a-3f0d-4204-9c1a-b0ba87f3dd1e","method":"PUT","status":200,"durationMs":5}
+# {"event":"http_request","requestId":"c13d2166-99e1-4cc3-8378-5712ea221580","method":"POST","status":200,"durationMs":461}
+# {"event":"http_request","requestId":"50aeea07-f4fb-4a63-a9e1-b72629cbfc62","method":"PATCH","status":200,"durationMs":4}
+# {"event":"http_request","requestId":"de20a18f-d2ea-42e9-9643-db37c4e9df6a","method":"POST","status":500,"durationMs":1}
+# {"event":"http_request","requestId":"dbcc98b4-d510-4199-8665-77073272efef","method":"GET","status":200,"durationMs":2}
+# {"event":"http_request","requestId":"5c0f20c2-9df6-4e4c-9246-caee8466a839","method":"POST","status":200,"durationMs":3}
+# {"event":"http_request","requestId":"f36a3fe2-9b05-44b3-b5dc-9b22bd995fc0","method":"POST","status":200,"durationMs":1}
+# {"event":"http_request","requestId":"a8cefc37-2745-43c2-ba3c-bf9379cd5191","method":"POST","status":429,"durationMs":3}
+# {"event":"http_request","requestId":"8fd79e7a-e7ca-4ec0-9c4a-9e17cbff167f","method":"GET","status":200,"durationMs":3}
+# {"event":"http_request","requestId":"abd1ac64-68aa-4b30-b4ec-105d94d7b682","method":"GET","status":206,"durationMs":4}
+# {"event":"http_request","requestId":"47281047-419b-407f-83af-195a3cd84716","method":"POST","status":200,"durationMs":4}
+# {"event":"http_request","requestId":"af958fd9-c5cc-4e82-bd79-d5c95aed802e","method":"GET","status":404,"durationMs":1}
+# Subtest: CloudBase adapter file and publication lifecycle uses durable metadata and a private object harness
+ok 3 - CloudBase adapter file and publication lifecycle uses durable metadata and a private object harness
+  ---
+  duration_ms: 644.609125
+  type: 'test'
+  ...
+# Subtest: initialization is atomic and backup validation rejects incomplete aggregates
+ok 4 - initialization is atomic and backup validation rejects incomplete aggregates
+  ---
+  duration_ms: 232.1645
+  type: 'test'
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1255.217625

@@ -1,0 +1,147 @@
+{
+  "contractStatus": "请求及响应JSON Schema已提供；应用实现后仍需实际契约测试",
+  "successEnvelope": {
+    "data": "typed DTO",
+    "requestId": "server generated"
+  },
+  "listEnvelope": {
+    "data": [],
+    "page": {
+      "nextCursor": null,
+      "hasMore": false
+    },
+    "requestId": "server generated"
+  },
+  "PublicProduct": {
+    "allowlist": [
+      "productId",
+      "releaseId",
+      "releaseSequence",
+      "publishedAt",
+      "name",
+      "category",
+      "tagline",
+      "summary",
+      "audiences",
+      "problemValues",
+      "features",
+      "scenarios",
+      "technical",
+      "boundaries",
+      "media",
+      "materials"
+    ],
+    "denylist": [
+      "draft",
+      "draftVersion",
+      "owner",
+      "internal",
+      "sourceAssetId",
+      "sourceObjectId",
+      "adminUser",
+      "storagePath",
+      "historicalReleases"
+    ]
+  },
+  "PublicMaterial": {
+    "allowlist": [
+      "materialId",
+      "versionId",
+      "name",
+      "kind",
+      "versionLabel",
+      "applicableVersion",
+      "previewKind",
+      "pageCount",
+      "publishedAt",
+      "previewPath"
+    ],
+    "previewPath": "/api/v1/catalog/products/{productId}/materials/{materialId}/preview"
+  },
+  "PreviewManifest": {
+    "allowlist": [
+      "productId",
+      "materialId",
+      "releaseId",
+      "versionId",
+      "name",
+      "versionLabel",
+      "previewKind",
+      "pageCount",
+      "parts"
+    ],
+    "parts": [
+      {
+        "part": "pdf or page-1",
+        "pageIndex": "integer or null",
+        "mimeType": "validated MIME",
+        "path": "server-generated stream path with releaseId/versionId/part"
+      }
+    ]
+  },
+  "AdminDraft": {
+    "fields": [
+      "productId",
+      "draftVersion",
+      "publicationState",
+      "publicationVersion",
+      "releaseSequence",
+      "lastPublishedDraftVersion",
+      "hasUnpublishedChanges",
+      "content",
+      "updatedAt",
+      "updatedBy"
+    ]
+  },
+  "CreateResult": {
+    "sameAs": "AdminDraft",
+    "fields": [
+      "productId",
+      "draftVersion",
+      "publicationState",
+      "publicationVersion",
+      "releaseSequence",
+      "lastPublishedDraftVersion",
+      "hasUnpublishedChanges",
+      "content",
+      "updatedAt",
+      "updatedBy"
+    ]
+  },
+  "PublishResult": {
+    "fields": [
+      "productId",
+      "releaseId",
+      "releaseSequence",
+      "publicationVersion",
+      "publicationState",
+      "publishedAt",
+      "publishedBy"
+    ]
+  },
+  "UploadResult": {
+    "fields": [
+      "uploadId",
+      "assetId",
+      "status",
+      "size",
+      "mimeType",
+      "checksum",
+      "pageCount",
+      "error"
+    ]
+  },
+  "stateEnum": [
+    "DRAFT",
+    "PUBLISHED",
+    "OFFLINE"
+  ],
+  "technicalUploadState": [
+    "UPLOADING",
+    "CHECKING",
+    "READY",
+    "REJECTED"
+  ],
+  "publicInvariant": "Only current active release references are visible. No returned field may act as public grant to source or draft.",
+  "categoryRename": "分类名称是公共字典；改名立即影响分类展示，产品分类ID变更仍通过产品发布生效。"
+}

@@ -1,0 +1,250 @@
+{
+  "count": 61,
+  "allMatch": true,
+  "files": [
+    {
+      "file": "00_总评审.html",
+      "matches": true
+    },
+    {
+      "file": "AGENTS.md",
+      "matches": true
+    },
+    {
+      "file": "README_先读.md",
+      "matches": true
+    },
+    {
+      "file": "appendix/01_范围变更与废止清单.md",
+      "matches": true
+    },
+    {
+      "file": "appendix/02_数据与接口补充说明.md",
+      "matches": true
+    },
+    {
+      "file": "appendix/03_V3迁移核查.md",
+      "matches": true
+    },
+    {
+      "file": "appendix/04_验收场景与记录规则.md",
+      "matches": true
+    },
+    {
+      "file": "appendix/05_评审决策与默认值.md",
+      "matches": true
+    },
+    {
+      "file": "appendix/06_需求实施追踪.md",
+      "matches": true
+    },
+    {
+      "file": "appendix/07_技术依据.md",
+      "matches": true
+    },
+    {
+      "file": "appendix/08_交付包自检说明.md",
+      "matches": true
+    },
+    {
+      "file": "contracts/api-contract.yaml",
+      "matches": true
+    },
+    {
+      "file": "contracts/api-inventory.json",
+      "matches": true
+    },
+    {
+      "file": "contracts/domain.schema.json",
+      "matches": true
+    },
+    {
+      "file": "contracts/response-shapes.json",
+      "matches": true
+    },
+    {
+      "file": "contracts/response.schema.json",
+      "matches": true
+    },
+    {
+      "file": "data/categories.seed.json",
+      "matches": true
+    },
+    {
+      "file": "data/pilot-products.json",
+      "matches": true
+    },
+    {
+      "file": "data/products.master.seed.json",
+      "matches": true
+    },
+    {
+      "file": "data/seed-policy.json",
+      "matches": true
+    },
+    {
+      "file": "delivery-check-report.json",
+      "matches": true
+    },
+    {
+      "file": "design/contrast-report.json",
+      "matches": true
+    },
+    {
+      "file": "design/tokens.css",
+      "matches": true
+    },
+    {
+      "file": "design/tokens.json",
+      "matches": true
+    },
+    {
+      "file": "design/tokens.scss",
+      "matches": true
+    },
+    {
+      "file": "docs/01_PRD.md",
+      "matches": true
+    },
+    {
+      "file": "docs/02_UX.md",
+      "matches": true
+    },
+    {
+      "file": "docs/03_UI.md",
+      "matches": true
+    },
+    {
+      "file": "docs/04_Codex任务书.md",
+      "matches": true
+    },
+    {
+      "file": "html-review-check-report.json",
+      "matches": true
+    },
+    {
+      "file": "implementation/.env.example",
+      "matches": true
+    },
+    {
+      "file": "implementation/Codex_启动实施提示词.md",
+      "matches": true
+    },
+    {
+      "file": "implementation/prompts/01_后台闭环_TASK02-03.md",
+      "matches": true
+    },
+    {
+      "file": "implementation/prompts/02_阅读端_TASK04-05.md",
+      "matches": true
+    },
+    {
+      "file": "implementation/prompts/03_真实服务_TASK06-07.md",
+      "matches": true
+    },
+    {
+      "file": "implementation/prompts/04_内容与验收_TASK08-09.md",
+      "matches": true
+    },
+    {
+      "file": "implementation/完成报告模板.md",
+      "matches": true
+    },
+    {
+      "file": "reference/README_只读参考.md",
+      "matches": true
+    },
+    {
+      "file": "reference/V3.0_original_readonly.zip",
+      "matches": true
+    },
+    {
+      "file": "reference/source-checksums.json",
+      "matches": true
+    },
+    {
+      "file": "scripts/validate_delivery.py",
+      "matches": true
+    },
+    {
+      "file": "templates/00_内容制作填写说明.md",
+      "matches": true
+    },
+    {
+      "file": "templates/ai.v1.json",
+      "matches": true
+    },
+    {
+      "file": "templates/content-worksheets/ZJ-001.md",
+      "matches": true
+    },
+    {
+      "file": "templates/content-worksheets/ZJ-002.md",
+      "matches": true
+    },
+    {
+      "file": "templates/content-worksheets/ZJ-006.md",
+      "matches": true
+    },
+    {
+      "file": "templates/content-worksheets/ZJ-008.md",
+      "matches": true
+    },
+    {
+      "file": "templates/content-worksheets/ZJ-009.md",
+      "matches": true
+    },
+    {
+      "file": "templates/content-worksheets/ZJ-015.md",
+      "matches": true
+    },
+    {
+      "file": "templates/delivery.v1.json",
+      "matches": true
+    },
+    {
+      "file": "templates/device.v1.json",
+      "matches": true
+    },
+    {
+      "file": "templates/registry.json",
+      "matches": true
+    },
+    {
+      "file": "templates/software.v1.json",
+      "matches": true
+    },
+    {
+      "file": "tests/acceptance-cases.json",
+      "matches": true
+    },
+    {
+      "file": "tests/results.template.json",
+      "matches": true
+    },
+    {
+      "file": "tests/traceability.json",
+      "matches": true
+    },
+    {
+      "file": "tests/验收测试矩阵.md",
+      "matches": true
+    },
+    {
+      "file": "word/01_产品需求规格说明书_PRD_V4.0-RC2.docx",
+      "matches": true
+    },
+    {
+      "file": "word/02_三端UX交互设计规范_V4.0-RC2.docx",
+      "matches": true
+    },
+    {
+      "file": "word/03_UI视觉设计系统_V4.0-RC2.docx",
+      "matches": true
+    },
+    {
+      "file": "word/04_Codex实施任务书_V4.0-RC2.docx",
+      "matches": true
+    }
+  ]
+}

@@ -1,0 +1,679 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "domain.schema.json",
+  "title": "RC2 lightweight domain contracts",
+  "$defs": {
+    "TextItem": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 3000
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "text"
+      ]
+    },
+    "MediaRef": {
+      "type": "object",
+      "properties": {
+        "mediaId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "assetId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "role": {
+          "enum": [
+            "cover",
+            "screenshot",
+            "diagram"
+          ]
+        },
+        "alt": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "mediaId",
+        "assetId",
+        "role",
+        "alt"
+      ]
+    },
+    "PreviewRef": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "pdf"
+            },
+            "assetId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+            },
+            "pageCount": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "assetId",
+            "pageCount"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "images"
+            },
+            "pages": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 200,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "assetId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100,
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+                  },
+                  "pageIndex": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "alt": {
+                    "type": "string",
+                    "maxLength": 300
+                  }
+                },
+                "additionalProperties": false,
+                "required": [
+                  "assetId",
+                  "pageIndex",
+                  "alt"
+                ]
+              }
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "pages"
+          ]
+        }
+      ]
+    },
+    "MaterialRef": {
+      "type": "object",
+      "properties": {
+        "materialId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "versionId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "kind": {
+          "enum": [
+            "brochure",
+            "presentation",
+            "technical",
+            "other"
+          ]
+        },
+        "versionLabel": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "applicableVersion": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "sourceAssetId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "preview": {
+          "$ref": "#/$defs/PreviewRef"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "materialId",
+        "versionId",
+        "name",
+        "kind",
+        "versionLabel",
+        "preview"
+      ]
+    },
+    "DraftContent": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "categoryId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "templateId": {
+          "enum": [
+            "software",
+            "device",
+            "delivery",
+            "ai"
+          ]
+        },
+        "templateVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "owner": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "aliases": {
+          "type": "array",
+          "maxItems": 10,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          }
+        },
+        "tagline": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "summary": {
+          "type": "string",
+          "maxLength": 1500
+        },
+        "audiences": {
+          "type": "string",
+          "maxLength": 1000
+        },
+        "problemValues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TextItem"
+          }
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TextItem"
+          }
+        },
+        "scenarios": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TextItem"
+          }
+        },
+        "technical": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "maxLength": 2000
+          }
+        },
+        "boundaries": {
+          "type": "string",
+          "maxLength": 3000
+        },
+        "media": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MediaRef"
+          }
+        },
+        "materials": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MaterialRef"
+          },
+          "maxItems": 20
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "categoryId",
+        "templateId",
+        "templateVersion",
+        "owner",
+        "tagline",
+        "summary",
+        "problemValues",
+        "features",
+        "scenarios",
+        "technical",
+        "boundaries",
+        "media",
+        "materials"
+      ]
+    },
+    "CreateProduct": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "categoryId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "templateId": {
+          "enum": [
+            "software",
+            "device",
+            "delivery",
+            "ai"
+          ]
+        },
+        "templateVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "aliases": {
+          "type": "array",
+          "maxItems": 10,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "categoryId",
+        "templateId",
+        "templateVersion",
+        "owner"
+      ]
+    },
+    "SaveDraft": {
+      "type": "object",
+      "properties": {
+        "expectedDraftVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "content": {
+          "$ref": "#/$defs/DraftContent"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "expectedDraftVersion",
+        "content"
+      ]
+    },
+    "PublishProduct": {
+      "type": "object",
+      "properties": {
+        "expectedDraftVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "expectedPublicationVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "publicContentConfirmed": {
+          "const": true
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "expectedDraftVersion",
+        "expectedPublicationVersion",
+        "publicContentConfirmed"
+      ]
+    },
+    "UnpublishProduct": {
+      "type": "object",
+      "properties": {
+        "expectedPublicationVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reason": {
+          "type": "string",
+          "maxLength": 300,
+          "default": "内容调整"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "expectedPublicationVersion"
+      ]
+    },
+    "ProductRecord": {
+      "type": "object",
+      "properties": {
+        "productId": {
+          "type": "string",
+          "pattern": "^ZJ-[0-9]{3,}$"
+        },
+        "isDemo": {
+          "type": "boolean"
+        },
+        "pilotOrder": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "publicationState": {
+          "enum": [
+            "DRAFT",
+            "PUBLISHED",
+            "OFFLINE"
+          ]
+        },
+        "activeReleaseId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "lastReleaseId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "publicationVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "releaseSequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "draftVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "lastPublishedDraftVersion": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "draft": {
+          "$ref": "#/$defs/DraftContent"
+        },
+        "internal": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "productId",
+        "isDemo",
+        "publicationState",
+        "activeReleaseId",
+        "publicationVersion",
+        "releaseSequence",
+        "draftVersion",
+        "draft"
+      ]
+    },
+    "UploadIntent": {
+      "type": "object",
+      "properties": {
+        "productId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "purpose": {
+          "enum": [
+            "preview",
+            "source",
+            "media"
+          ]
+        },
+        "fileName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "contentType": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "productId",
+        "purpose",
+        "fileName",
+        "contentType",
+        "size"
+      ]
+    },
+    "UploadComplete": {
+      "type": "object",
+      "properties": {
+        "uploadId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "uploadId"
+      ]
+    },
+    "CategoryWrite": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "shortName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "sortOrder": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "defaultTemplateId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "allowedTemplateIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+          }
+        },
+        "expectedVersion": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "shortName",
+        "sortOrder",
+        "enabled",
+        "defaultTemplateId",
+        "allowedTemplateIds"
+      ]
+    },
+    "AdminUserWrite": {
+      "type": "object",
+      "properties": {
+        "subjectId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "role": {
+          "enum": [
+            "CONTENT_MANAGER",
+            "ADMIN"
+          ]
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "expectedVersion": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "subjectId",
+        "displayName",
+        "role",
+        "enabled"
+      ]
+    },
+    "Error": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "fieldErrors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "message"
+                ]
+              }
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "error",
+        "requestId"
+      ]
+    }
+  }
+}

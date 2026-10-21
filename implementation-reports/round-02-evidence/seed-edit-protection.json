@@ -1,0 +1,31 @@
+{
+  "target": "http://127.0.0.1:3304/api/v1",
+  "result": "PASS",
+  "userModificationPreserved": true,
+  "seedExitCode": 1,
+  "records": [
+    {
+      "productId": "ZJ-028",
+      "name": "【验证数据】软件制作示例",
+      "result": "UNCHANGED",
+      "state": "PUBLISHED"
+    },
+    {
+      "productId": "ZJ-029",
+      "name": "【验证数据】设备资料示例",
+      "result": "UNCHANGED",
+      "state": "PUBLISHED"
+    },
+    {
+      "name": "【验证数据】交付方案示例",
+      "result": "CONFLICT_OR_FAILED",
+      "message": "内容或版本已被修改，保留用户修改并跳过"
+    },
+    {
+      "productId": "ZJ-031",
+      "name": "【验证数据】AI边界示例",
+      "result": "UNCHANGED",
+      "state": "OFFLINE"
+    }
+  ]
+}

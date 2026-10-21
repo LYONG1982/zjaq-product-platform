@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-21T04:09:23.880547+00:00",
+  "health": {
+    "status": "ok",
+    "provider": "mock",
+    "scope": "TASK-02/03",
+    "sessionId": "ff45d29b-12b0-4bfc-bd04-6da4b98fdfd2",
+    "requestId": "b2edaf6e-f069-4586-830b-b9402872d473"
+  },
+  "draftCount": 32,
+  "publicCount": 3,
+  "draftsUnchanged": true,
+  "categoriesUnchanged": true,
+  "usersUnchanged": true,
+  "publicUnchanged": true,
+  "original27RemainDraft": true
+}

@@ -1,0 +1,95 @@
+$ node --import tsx --test tests/unit/*.test.ts
+TAP version 13
+# Subtest: loopback API preserves private baseline, supports contracts, and refuses unimplemented writes
+ok 1 - loopback API preserves private baseline, supports contracts, and refuses unimplemented writes
+  ---
+  duration_ms: 92.183292
+  type: 'test'
+  ...
+# Subtest: production never silently falls back to mock
+ok 2 - production never silently falls back to mock
+  ---
+  duration_ms: 0.268917
+  type: 'test'
+  ...
+# Subtest: all 28 operation JSON responses and write schemas compile as draft 2020-12
+ok 3 - all 28 operation JSON responses and write schemas compile as draft 2020-12
+  ---
+  duration_ms: 187.4225
+  type: 'test'
+  ...
+# Subtest: client cannot choose product identifier or smuggle internal fields
+ok 4 - client cannot choose product identifier or smuggle internal fields
+  ---
+  duration_ms: 1.010917
+  type: 'test'
+  ...
+# Subtest: PATCH allOf requires expectedVersion, create request does not
+ok 5 - PATCH allOf requires expectedVersion, create request does not
+  ---
+  duration_ms: 0.610709
+  type: 'test'
+  ...
+# Subtest: three q queries enforce Unicode-aware 100 characters and strict limits
+ok 6 - three q queries enforce Unicode-aware 100 characters and strict limits
+  ---
+  duration_ms: 14.36925
+  type: 'test'
+  ...
+# Subtest: classification and exact template versions are validated at creation
+ok 7 - classification and exact template versions are validated at creation
+  ---
+  duration_ms: 0.99125
+  type: 'test'
+  ...
+# Subtest: draft can be incomplete; publish-field checks remain strict
+ok 8 - draft can be incomplete; publish-field checks remain strict
+  ---
+  duration_ms: 4.577792
+  type: 'test'
+  ...
+# Subtest: explicit old template version is readable even when disabled for creation
+ok 9 - explicit old template version is readable even when disabled for creation
+  ---
+  duration_ms: 9.347917
+  type: 'test'
+  ...
+# Subtest: public DTO whitelist rejects private fields
+ok 10 - public DTO whitelist rejects private fields
+  ---
+  duration_ms: 1.238791
+  type: 'test'
+  ...
+# Subtest: baseline seeds remain private and match the six pilot IDs in order
+ok 11 - baseline seeds remain private and match the six pilot IDs in order
+  ---
+  duration_ms: 7.838958
+  type: 'test'
+  ...
+# Subtest: dry-run is pure, repeat seed inserts nothing, and edited records survive
+ok 12 - dry-run is pure, repeat seed inserts nothing, and edited records survive
+  ---
+  duration_ms: 1.252
+  type: 'test'
+  ...
+# Subtest: counter derives from maximum identifier, never array length or reset
+ok 13 - counter derives from maximum identifier, never array length or reset
+  ---
+  duration_ms: 0.7995
+  type: 'test'
+  ...
+# Subtest: seed cannot import a published record
+ok 14 - seed cannot import a published record
+  ---
+  duration_ms: 0.091917
+  type: 'test'
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 602.196791

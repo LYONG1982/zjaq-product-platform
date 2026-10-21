@@ -1,0 +1,14 @@
+{
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "name": "@zj/api-client",
+  "exports": {
+    ".": "./src/index.ts",
+    "./preview": "./src/preview.ts"
+  },
+  "dependencies": {
+    "@zj/contracts": "workspace:*",
+    "pdfjs-dist": "6.4.299"
+  }
+}

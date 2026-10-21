@@ -1,0 +1,51 @@
+{
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "name": "zj-product-library",
+  "packageManager": "pnpm@11.13.1",
+  "engines": {
+    "node": ">=22.22.1 <23",
+    "pnpm": "11.13.1"
+  },
+  "scripts": {
+    "generate": "node --import tsx scripts/generate.ts",
+    "check:generated": "node --import tsx scripts/generate.ts --check",
+    "check": "pnpm check:generated && tsc -p tsconfig.json && pnpm --filter @zj/portal check && pnpm --filter @zj/admin check && pnpm --filter @zj/mobile check",
+    "test": "node --import tsx --test tests/unit/*.test.ts",
+    "test:contracts": "node --import tsx --test tests/unit/contracts.test.ts tests/unit/api.test.ts",
+    "test:seed": "node --import tsx --test tests/unit/seed.test.ts",
+    "seed:dry-run": "node --import tsx scripts/seed-dry-run.ts",
+    "dev:api": "node --import tsx services/mock-api/src/main.ts",
+    "dev:portal": "pnpm --filter @zj/portal dev",
+    "dev:admin": "pnpm --filter @zj/admin dev",
+    "dev:h5": "pnpm --filter @zj/mobile dev:h5",
+    "build:portal": "pnpm preview:assets && pnpm --filter @zj/portal build",
+    "build:admin": "pnpm --filter @zj/admin build",
+    "build:h5": "pnpm preview:assets && pnpm --filter @zj/mobile build:h5",
+    "build:mp-weixin": "pnpm --filter @zj/mobile build:mp-weixin",
+    "build": "pnpm build:portal && pnpm build:admin && pnpm build:h5 && pnpm build:mp-weixin",
+    "start:portal": "pnpm --filter @zj/portal start",
+    "start:api": "node --import tsx services/api/src/main.ts",
+    "test:browser": "playwright test",
+    "preview:h5": "node scripts/preview-static.mjs apps/mobile/dist/build/h5 3202",
+    "demo:seed": "node --import tsx scripts/seed-validation-data.ts",
+    "fixtures:generate": "node --import tsx scripts/generate-validation-fixtures.ts",
+    "demo:verify": "node --import tsx scripts/verify-validation-data.ts",
+    "preview:assets": "node scripts/sync-preview-assets.mjs",
+    "demo:ai": "node --import tsx scripts/seed-demo-ai.ts",
+    "demo:ai:fixtures": "python3 scripts/generate-demo-ai.py"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "tsx": "4.23.15",
+    "@types/node": "22.20.4",
+    "json-schema-to-typescript": "16.0.0",
+    "yaml": "2.9.1",
+    "@playwright/test": "1.64.1",
+    "@zj/contracts": "workspace:*",
+    "@zj/template-registry": "workspace:*",
+    "pdf-lib": "1.17.1",
+    "sharp": "0.35.5"
+  }
+}

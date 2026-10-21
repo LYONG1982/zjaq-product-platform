@@ -1,0 +1,52 @@
+[
+  {
+    "id": "miding",
+    "name": "密鼎·保密应用产品系列",
+    "shortName": "密鼎",
+    "sortOrder": 10,
+    "enabled": true,
+    "defaultTemplateId": "software",
+    "allowedTemplateIds": [
+      "software",
+      "device"
+    ]
+  },
+  {
+    "id": "miyi",
+    "name": "密翼·移动终端安全产品",
+    "shortName": "密翼",
+    "sortOrder": 20,
+    "enabled": true,
+    "defaultTemplateId": "device",
+    "allowedTemplateIds": [
+      "device",
+      "software"
+    ]
+  },
+  {
+    "id": "mishu",
+    "name": "密塾·保密教育产品系列",
+    "shortName": "密塾",
+    "sortOrder": 30,
+    "enabled": true,
+    "defaultTemplateId": "delivery",
+    "allowedTemplateIds": [
+      "delivery",
+      "software",
+      "device"
+    ]
+  },
+  {
+    "id": "ai",
+    "name": "AI+人工智能应用",
+    "shortName": "AI+",
+    "sortOrder": 40,
+    "enabled": true,
+    "defaultTemplateId": "ai",
+    "allowedTemplateIds": [
+      "ai",
+      "software",
+      "delivery"
+    ]
+  }
+]

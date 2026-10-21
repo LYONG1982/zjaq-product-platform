@@ -1,0 +1,2483 @@
+openapi: 3.1.0
+info:
+  title: 中技安全产品资料库 RC2 API契约草案
+  version: 4.0.0-rc2
+  description: 待实现的机器可读契约；请求及响应Schema独立文件，域不变量见补充说明。不是已部署服务。
+servers:
+- url: http://localhost:3100
+  description: 约定本地API示例，实际端口由工程记录
+paths:
+  /api/v1/catalog/categories:
+    get:
+      operationId: listPublicCategories
+      summary: 仅包含至少一款当前已发布产品的启用分类；按sortOrder排序。
+      tags:
+      - catalog
+      security: []
+      x-required-role: public
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/PublicCategoryListResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/catalog/products:
+    get:
+      operationId: listPublicProducts
+      summary: 仅从当前发布快照检索；q/categoryId/cursor/limit；默认20最大100。
+      tags:
+      - catalog
+      security: []
+      x-required-role: public
+      parameters:
+      - name: q
+        in: query
+        required: false
+        schema:
+          type: string
+          maxLength: 100
+      - name: categoryId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 20
+          maximum: 100
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/PublicProductSummaryListResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/catalog/products/{productId}:
+    get:
+      operationId: getPublicProduct
+      summary: 返回PublicProduct DTO；不能返回完整ProductRecord或内部字段。
+      tags:
+      - catalog
+      security: []
+      x-required-role: public
+      parameters:
+      - name: productId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/PublicProductResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/catalog/materials:
+    get:
+      operationId: listCurrentMaterials
+      summary: 聚合当前release引用的材料元数据；不包含历史及源文件。
+      tags:
+      - catalog
+      security: []
+      x-required-role: public
+      parameters:
+      - name: q
+        in: query
+        required: false
+        schema:
+          type: string
+          maxLength: 100
+      - name: categoryId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 20
+          maximum: 100
+      - name: productId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: kind
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/CatalogMaterialRowListResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/catalog/products/{productId}/materials/{materialId}/preview:
+    get:
+      operationId: getCurrentPreview
+      summary: 解析当前版本，返回manifest和服务端预览资源路径，不返回对象URL。
+      tags:
+      - catalog
+      security: []
+      x-required-role: public
+      parameters:
+      - name: productId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: materialId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/PreviewManifestResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/catalog/products/{productId}/materials/{materialId}/preview/content:
+    get:
+      operationId: streamCurrentPreview
+      summary: releaseId/versionId/part；每次核对当前绑定；支持Range；原件不可通过purpose参数取得。
+      tags:
+      - catalog
+      security: []
+      x-required-role: public
+      parameters:
+      - name: productId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: materialId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: releaseId
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: versionId
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: part
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: Range
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: '当前允许的二进制预览内容，Cache-Control: no-store；不返回永久存储路径。'
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '206':
+          description: 经过状态检查的部分内容；正确返回Content-Range。
+        '416':
+          description: 无效或超出范围的Range。
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/catalog/products/{productId}/media/{mediaId}:
+    get:
+      operationId: streamCurrentMedia
+      summary: releaseId必填；只提供当前发布引用的封面或截图；不暴露草稿媒体。
+      tags:
+      - catalog
+      security: []
+      x-required-role: public
+      parameters:
+      - name: productId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: mediaId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: releaseId
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: Range
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: '当前允许的二进制预览内容，Cache-Control: no-store；不返回永久存储路径。'
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '206':
+          description: 经过状态检查的部分内容；正确返回Content-Range。
+        '416':
+          description: 无效或超出范围的Range。
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/admin/me:
+    get:
+      operationId: getAdminMe
+      summary: 服务端验证CloudBase身份与后台白名单，返回角色；不是外部阅读登录。
+      tags:
+      - admin
+      security:
+      - AdminBearer: []
+      x-required-role: CONTENT_MANAGER, ADMIN
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/AdminIdentityResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/admin/products:
+    get:
+      operationId: listAdminProducts
+      summary: 完整后台列表可含草稿；仅后台身份；所有产品可管理。
+      tags:
+      - admin
+      security:
+      - AdminBearer: []
+      x-required-role: CONTENT_MANAGER, ADMIN
+      parameters:
+      - name: q
+        in: query
+        required: false
+        schema:
+          type: string
+          maxLength: 100
+      - name: categoryId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 20
+          maximum: 100
+      - name: publicationState
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: hasUnpublishedChanges
+        in: query
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/AdminProductRowListResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+    post:
+      operationId: createProduct
+      summary: Idempotency-Key必填；事务分配编号并建立草稿。
+      tags:
+      - admin
+      security:
+      - AdminBearer: []
+      x-required-role: CONTENT_MANAGER, ADMIN
+      parameters:
+      - name: Idempotency-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          minLength: 16
+          maxLength: 120
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./domain.schema.json#/$defs/CreateProduct
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/AdminDraftResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/admin/products/{productId}/draft:
+    get:
+      operationId: getProductDraft
+      summary: 获取工作草稿与独立线上状态。
+      tags:
+      - admin
+      security:
+      - AdminBearer: []
+      x-required-role: CONTENT_MANAGER, ADMIN
+      parameters:
+      - name: productId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/AdminDraftResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+    patch:
+      operationId: saveProductDraft
+      summary: expectedDraftVersion比较；content是全量结构化草稿替换，不接受状态、发布者或源码对象路径。
+      tags:
+      - admin
+      security:
+      - AdminBearer: []
+      x-required-role: CONTENT_MANAGER, ADMIN
+      parameters:
+      - name: productId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./domain.schema.json#/$defs/SaveDraft
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/AdminDraftResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/admin/products/{productId}/preview:
+    get:
+      operationId: previewProductDraft
+      summary: expectedDraftVersion必填；版本变化409；只读、不产生预览或审批状态。
+      tags:
+      - admin
+      security:
+      - AdminBearer: []
+      x-required-role: CONTENT_MANAGER, ADMIN
+      parameters:
+      - name: productId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: expectedDraftVersion
+        in: query
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/AdminDraftResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/admin/products/{productId}/publish:
+    post:
+      operationId: publishProduct
+      summary: Idempotency-Key必填；版本比较＋完整性校验，事务发布。
+      tags:
+      - admin
+      security:
+      - AdminBearer: []
+      x-required-role: CONTENT_MANAGER, ADMIN
+      parameters:
+      - name: productId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: Idempotency-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          minLength: 16
+          maxLength: 120
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./domain.schema.json#/$defs/PublishProduct
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/PublishResultResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/admin/products/{productId}/unpublish:
+    post:
+      operationId: unpublishProduct
+      summary: Idempotency-Key必填；只检查线上版本，不受草稿完整性限制。
+      tags:
+      - admin
+      security:
+      - AdminBearer: []
+      x-required-role: CONTENT_MANAGER, ADMIN
+      parameters:
+      - name: productId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: Idempotency-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          minLength: 16
+          maxLength: 120
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./domain.schema.json#/$defs/UnpublishProduct
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/UnpublishResultResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/admin/uploads:
+    post:
+      operationId: createUpload
+      summary: Idempotency-Key必填；验证用途、类型及限额，创建暂存对象／短时上传目标。
+      tags:
+      - admin
+      security:
+      - AdminBearer: []
+      x-required-role: CONTENT_MANAGER, ADMIN
+      parameters:
+      - name: Idempotency-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          minLength: 16
+          maxLength: 120
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./domain.schema.json#/$defs/UploadIntent
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/UploadIntentResultResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/admin/uploads/complete:
+    post:
+      operationId: completeUpload
+      summary: 服务器根据uploadId读取真实对象并校验，生成READY或REJECTED；重复调用返回已有结果。
+      tags:
+      - admin
+      security:
+      - AdminBearer: []
+      x-required-role: CONTENT_MANAGER, ADMIN
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./domain.schema.json#/$defs/UploadComplete
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/UploadResultResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/admin/uploads/{uploadId}:
+    get:
+      operationId: getUpload
+      summary: 查询真实检查结果；不伪造自动Office转换。
+      tags:
+      - admin
+      security:
+      - AdminBearer: []
+      x-required-role: CONTENT_MANAGER, ADMIN
+      parameters:
+      - name: uploadId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/UploadResultResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/admin/products/{productId}/assets/{assetId}/content:
+    get:
+      operationId: streamDraftAsset
+      summary: 鉴权并检查该资产属于本产品；后台预览源文件／预览件／媒体。
+      tags:
+      - admin
+      security:
+      - AdminBearer: []
+      x-required-role: CONTENT_MANAGER, ADMIN
+      parameters:
+      - name: productId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: assetId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: Range
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: '当前允许的二进制预览内容，Cache-Control: no-store；不返回永久存储路径。'
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '206':
+          description: 经过状态检查的部分内容；正确返回Content-Range。
+        '416':
+          description: 无效或超出范围的Range。
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/admin/categories:
+    get:
+      operationId: listAdminCategories
+      summary: 返回全部分类及引用数，新增向导使用该API。
+      tags:
+      - admin
+      security:
+      - AdminBearer: []
+      x-required-role: CONTENT_MANAGER, ADMIN
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/AdminCategoryListResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+    post:
+      operationId: createCategory
+      summary: ADMIN；服务端生成分类ID；default必须在allowed内。
+      tags:
+      - admin
+      security:
+      - AdminBearer: []
+      x-required-role: ADMIN
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./domain.schema.json#/$defs/CategoryWrite
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/AdminCategoryResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/admin/categories/{categoryId}:
+    patch:
+      operationId: updateCategory
+      summary: ADMIN；expectedVersion必填；被引用分类停用返回409。
+      tags:
+      - admin
+      security:
+      - AdminBearer: []
+      x-required-role: ADMIN
+      parameters:
+      - name: categoryId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: ./domain.schema.json#/$defs/CategoryWrite
+              - type: object
+                required:
+                - expectedVersion
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/AdminCategoryResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/admin/templates:
+    get:
+      operationId: listTemplates
+      summary: 只读模板及字段；不能在线增删字段；可查询历史模板版本以渲染既有草稿。
+      tags:
+      - admin
+      security:
+      - AdminBearer: []
+      x-required-role: CONTENT_MANAGER, ADMIN
+      parameters:
+      - name: includeDisabled
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: templateId
+        in: query
+        required: false
+        schema:
+          type: string
+          enum: [software, device, delivery, ai]
+      - name: version
+        in: query
+        required: false
+        description: 正整数；按版本精确查询，显式 templateId 与 version 组合可读取禁止新建的历史版本。
+        schema:
+          type: integer
+          minimum: 1
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/TemplateListResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/admin/audit-events:
+    get:
+      operationId: listAuditEvents
+      summary: 按产品／动作／时间筛选日志，不是审批记录。
+      tags:
+      - admin
+      security:
+      - AdminBearer: []
+      x-required-role: CONTENT_MANAGER, ADMIN
+      parameters:
+      - name: productId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: action
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 20
+          maximum: 100
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/AuditEventListResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/admin/users:
+    get:
+      operationId: listAdminUsers
+      summary: ADMIN；后台白名单，无外部会员或合作人员授权。
+      tags:
+      - admin
+      security:
+      - AdminBearer: []
+      x-required-role: ADMIN
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/AdminUserListResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+    post:
+      operationId: createAdminUser
+      summary: ADMIN；已有可信身份subjectId；唯一；禁止默认管理员密码。
+      tags:
+      - admin
+      security:
+      - AdminBearer: []
+      x-required-role: ADMIN
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./domain.schema.json#/$defs/AdminUserWrite
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/AdminUserResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/admin/users/{userId}:
+    patch:
+      operationId: updateAdminUser
+      summary: ADMIN；expectedVersion必填；不能禁用最后一个可用ADMIN。
+      tags:
+      - admin
+      security:
+      - AdminBearer: []
+      x-required-role: ADMIN
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: ./domain.schema.json#/$defs/AdminUserWrite
+              - type: object
+                required:
+                - expectedVersion
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/AdminUserResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/admin/uploads/{uploadId}/content:
+    put:
+      operationId: putUploadBytes
+      summary: 后台流式写入暂存对象；身份、uploadId归属、长度和状态校验；不公开原件。
+      tags:
+      - admin
+      security:
+      - AdminBearer: []
+      x-required-role: CONTENT_MANAGER, ADMIN
+      parameters:
+      - name: uploadId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: 上传字节已收妥，尚须complete技术检查。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/UploadResultResponse
+        '401':
+          description: 后台未登录
+        '403':
+          description: 非后台或不匹配上传任务
+        '409':
+          description: 该上传已完成或对象不可覆盖
+        '413':
+          description: 超出当前限额
+components:
+  securitySchemes:
+    AdminBearer:
+      type: http
+      scheme: bearer
+      description: 仅管理端；经服务端验证的身份令牌加后台白名单检查，不相信客户端role。

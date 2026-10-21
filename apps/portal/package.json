@@ -1,0 +1,26 @@
+{
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "name": "@zj/portal",
+  "scripts": {
+    "dev": "next dev --hostname 127.0.0.1 --port 3200",
+    "build": "next build",
+    "start": "next start --hostname 127.0.0.1 --port 3200",
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "16.4.2",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "@zj/contracts": "workspace:*",
+    "@zj/api-client": "workspace:*",
+    "@zj/design-tokens": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@types/node": "22.20.4",
+    "typescript": "5.9.3"
+  }
+}

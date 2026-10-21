@@ -1,0 +1,20 @@
+$ pnpm preview:assets && pnpm --filter @zj/mobile build:h5
+$ node scripts/sync-preview-assets.mjs
+node:internal/fs/promises:1057
+  return await PromisePrototypeThen(
+         ^
+
+Error: ENOENT: no such file or directory, unlink '/Users/lvyong198201/Documents/Codex/2026-10-19/qin/apps/portal/public/pdf/cmaps/78-EUC-V.bcmap'
+    at async unlink (node:internal/fs/promises:1057:10)
+    at async mayCopyFile (node:internal/fs/cp/cp:246:5)
+    at async copyDir (node:internal/fs/cp/cp:329:19)
+    at async file:///Users/lvyong198201/Documents/Codex/2026-10-19/qin/scripts/sync-preview-assets.mjs:28:5 {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'unlink',
+  path: '/Users/lvyong198201/Documents/Codex/2026-10-19/qin/apps/portal/public/pdf/cmaps/78-EUC-V.bcmap'
+}
+
+Node.js v22.22.1
+[ELIFECYCLE] Command failed with exit code 1.
+[ELIFECYCLE] Command failed with exit code 1.

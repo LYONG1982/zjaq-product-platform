@@ -1,0 +1,27 @@
+$ playwright test
+
+Running 19 tests using 1 worker
+
+(node:27464) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/browser/reading.spec.ts:6:1 › portal V3 home, search filters, product detail and native back keep navigation state (858ms)
+  ✓   2 tests/browser/reading.spec.ts:39:1 › PDF reader renders embedded Chinese text, page input, zoom, keyboard and fullscreen (938ms)
+  ✓   3 tests/browser/reading.spec.ts:77:1 › ordered image preview reaches final page without exposing source files (427ms)
+  ✓   4 tests/browser/reading.spec.ts:100:1 › an open reader rejects later publication changes and offline content (1.1s)
+  ✓   5 tests/browser/reading.spec.ts:245:3 › H5 detail and PDF preview at 390px (803ms)
+  ✓   6 tests/browser/reading.spec.ts:245:3 › H5 detail and PDF preview at 320px (789ms)
+  ✓   7 tests/browser/reading.spec.ts:285:1 › H5 transport failure shows retry instead of an empty catalog (115ms)
+  ✓   8 tests/browser/reading.spec.ts:293:1 › admin light sidebar exposes category and account management with clear forms (632ms)
+  ✓   9 tests/browser/reading.spec.ts:334:1 › portal remains readable at a 720px effective desktop viewport and supports keyboard focus (253ms)
+  ✓  10 tests/browser/smoke.spec.ts:2:1 › portal catalogue hides drafts and handles no search results (370ms)
+  ✓  11 tests/browser/smoke.spec.ts:28:1 › admin pages through seeded products, filters, opens an original draft and templates (719ms)
+  ✓  12 tests/browser/smoke.spec.ts:60:3 › H5 390 empty-state and tab navigation without overflow (287ms)
+  ✓  13 tests/browser/smoke.spec.ts:60:3 › H5 320 empty-state and tab navigation without overflow (276ms)
+  ✓  14 tests/browser/smoke.spec.ts:97:1 › H5 shows service failure rather than an empty catalogue (114ms)
+  ✓  15 tests/browser/smoke.spec.ts:108:1 › built H5 preview cannot expose workspace files or accept foreign origins (7ms)
+  ✓  16 tests/browser/workflow.spec.ts:4:1 › wizard cancellation creates no product (301ms)
+  ✓  17 tests/browser/workflow.spec.ts:18:1 › UI creates, edits, uploads, previews, publishes, updates and unpublishes one product (3.1s)
+  ✓  18 tests/browser/workflow.spec.ts:167:1 › save conflict preserves local input and offers explicit comparison (603ms)
+  ✓  19 tests/browser/workflow.spec.ts:212:1 › image ordering and missing-field publish errors work through the editor (1.8s)
+
+  19 passed (14.4s)

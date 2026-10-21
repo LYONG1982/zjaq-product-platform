@@ -1,0 +1,6 @@
+$ pnpm check:generated && tsc -p tsconfig.json && pnpm --filter @zj/portal check && pnpm --filter @zj/admin check && pnpm --filter @zj/mobile check
+$ node --import tsx scripts/generate.ts --check
+Generated contracts and tokens match.
+$ tsc --noEmit
+$ vue-tsc --noEmit
+$ vue-tsc --noEmit

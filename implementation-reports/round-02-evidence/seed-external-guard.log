@@ -1,0 +1,13 @@
+$ node --import tsx scripts/seed-validation-data.ts
+/Users/lvyong198201/Documents/Codex/2026-10-19/qin/scripts/seed-validation-data.ts:17
+  throw new Error(
+        ^
+
+Error: Validation seed only accepts an explicit loopback Mock API.
+    at <anonymous> (/Users/lvyong198201/Documents/Codex/2026-10-19/qin/scripts/seed-validation-data.ts:17:9)
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.1
+[ELIFECYCLE] Command failed with exit code 1.

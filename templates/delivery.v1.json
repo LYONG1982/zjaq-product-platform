@@ -1,0 +1,117 @@
+{
+  "id": "delivery",
+  "name": "实施交付",
+  "description": "以标准交付、场地条件和落地过程介绍便携实训及实施类产品。",
+  "fields": [
+    {
+      "key": "standardScope",
+      "label": "标准交付范围",
+      "widget": "textarea",
+      "requiredOnCreate": false,
+      "requiredOnPublish": true,
+      "maxLength": 2000,
+      "help": "填写真实内容；未知内容留空，不使用示例值冒充。"
+    },
+    {
+      "key": "siteConditions",
+      "label": "场地条件",
+      "widget": "textarea",
+      "requiredOnCreate": false,
+      "requiredOnPublish": true,
+      "maxLength": 2000,
+      "help": "填写真实内容；未知内容留空，不使用示例值冒充。"
+    },
+    {
+      "key": "setup",
+      "label": "搭建与使用说明",
+      "widget": "textarea",
+      "requiredOnCreate": false,
+      "requiredOnPublish": false,
+      "maxLength": 2000,
+      "help": "填写真实内容；未知内容留空，不使用示例值冒充。"
+    },
+    {
+      "key": "courses",
+      "label": "课程或体验内容",
+      "widget": "textarea",
+      "requiredOnCreate": false,
+      "requiredOnPublish": false,
+      "maxLength": 2000,
+      "help": "填写真实内容；未知内容留空，不使用示例值冒充。"
+    },
+    {
+      "key": "serviceBoundary",
+      "label": "培训维护与实施边界",
+      "widget": "textarea",
+      "requiredOnCreate": false,
+      "requiredOnPublish": false,
+      "maxLength": 2000,
+      "help": "填写真实内容；未知内容留空，不使用示例值冒充。"
+    }
+  ],
+  "version": 1,
+  "enabledForCreate": true,
+  "modules": [
+    {
+      "id": "basic",
+      "title": "基本信息"
+    },
+    {
+      "id": "problems",
+      "title": "问题与价值"
+    },
+    {
+      "id": "features",
+      "title": "核心功能"
+    },
+    {
+      "id": "scenarios",
+      "title": "应用场景"
+    },
+    {
+      "id": "technical",
+      "title": "参数与边界"
+    },
+    {
+      "id": "media",
+      "title": "产品素材"
+    },
+    {
+      "id": "materials",
+      "title": "当前资料"
+    }
+  ],
+  "createRequired": [
+    "name",
+    "categoryId",
+    "templateId",
+    "owner"
+  ],
+  "publishRequired": [
+    "name",
+    "categoryId",
+    "owner",
+    "tagline",
+    "summary",
+    "problemValues",
+    "features",
+    "scenarios",
+    "boundaries",
+    "materials"
+  ],
+  "commonFieldLimits": {
+    "name": 80,
+    "owner": 80,
+    "tagline": 80,
+    "summary": 1500,
+    "boundaries": 3000,
+    "aliasItems": 10,
+    "itemText": 3000
+  },
+  "minimumCounts": {
+    "problemValues": 1,
+    "features": 1,
+    "scenarios": 1,
+    "materials": 1
+  }
+}

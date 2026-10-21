@@ -1,0 +1,18 @@
+{
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "name": "@zj/mock-api",
+  "dependencies": {
+    "@zj/contracts": "workspace:*",
+    "@zj/template-registry": "workspace:*",
+    "yaml": "2.9.1",
+    "pdfjs-dist": "6.4.299",
+    "sharp": "0.35.5",
+    "yauzl": "3.4.0",
+    "saxes": "6.0.0"
+  },
+  "devDependencies": {
+    "@types/yauzl": "3.4.0"
+  }
+}

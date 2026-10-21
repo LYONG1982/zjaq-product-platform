@@ -1,0 +1,39 @@
+{
+  "target": "http://127.0.0.1:3304",
+  "sessionId": "06a77c30-d677-4b80-8714-120ae8750dfa",
+  "records": [
+    {
+      "productId": "ZJ-028",
+      "name": "【验证数据】软件制作示例",
+      "template": "software",
+      "state": "PUBLISHED",
+      "hasUnpublishedChanges": true,
+      "result": "CREATED"
+    },
+    {
+      "productId": "ZJ-029",
+      "name": "【验证数据】设备资料示例",
+      "template": "device",
+      "state": "PUBLISHED",
+      "hasUnpublishedChanges": false,
+      "result": "CREATED"
+    },
+    {
+      "productId": "ZJ-030",
+      "name": "【验证数据】交付方案示例",
+      "template": "delivery",
+      "state": "DRAFT",
+      "hasUnpublishedChanges": false,
+      "result": "CREATED"
+    },
+    {
+      "productId": "ZJ-031",
+      "name": "【验证数据】AI边界示例",
+      "template": "ai",
+      "state": "OFFLINE",
+      "hasUnpublishedChanges": false,
+      "result": "CREATED"
+    }
+  ],
+  "note": "原27主档不修改；进程重启后需重新运行脚本。"
+}

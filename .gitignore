@@ -1,0 +1,17 @@
+node_modules/
+.pnpm-store/
+.next/
+dist/
+coverage/
+work/
+.env
+.env.*
+!.env.example
+*.tsbuildinfo
+.DS_Store
+playwright-report/
+test-results/
+
+.next-*/
+apps/portal/public/pdf/
+apps/mobile/public/pdf/

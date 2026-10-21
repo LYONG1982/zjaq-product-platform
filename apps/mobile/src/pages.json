@@ -1,0 +1,67 @@
+{
+  "pages": [
+    {
+      "path": "pages/home/index",
+      "style": {
+        "navigationBarTitleText": "中技安全产品平台",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/products/index",
+      "style": {
+        "navigationBarTitleText": "产品中心"
+      }
+    },
+    {
+      "path": "pages/materials/index",
+      "style": {
+        "navigationBarTitleText": "资料中心"
+      }
+    },
+    {
+      "path": "pages/detail/index",
+      "style": {
+        "navigationBarTitleText": "产品详情"
+      }
+    },
+    {
+      "path": "pages/viewer/index",
+      "style": {
+        "navigationBarTitleText": "资料预览"
+      }
+    },
+    {
+      "path": "pages/unavailable/index",
+      "style": {
+        "navigationBarTitleText": "内容暂不可用"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "backgroundColor": "#F5F7F9"
+  },
+  "tabBar": {
+    "color": "#586B7B",
+    "selectedColor": "#087F82",
+    "backgroundColor": "#FFFFFF",
+    "list": [
+      {
+        "pagePath": "pages/home/index",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/products/index",
+        "text": "产品"
+      },
+      {
+        "pagePath": "pages/materials/index",
+        "text": "资料"
+      }
+    ],
+    "fontSize": "14px",
+    "height": "56px"
+  }
+}

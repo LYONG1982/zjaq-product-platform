@@ -1,0 +1,181 @@
+$ node --import tsx --test tests/unit/*.test.ts
+TAP version 13
+# Subtest: loopback API preserves private baseline, supports contracts, and validates write requests
+ok 1 - loopback API preserves private baseline, supports contracts, and validates write requests
+  ---
+  duration_ms: 116.380417
+  type: 'test'
+  ...
+# Subtest: production never silently falls back to mock
+ok 2 - production never silently falls back to mock
+  ---
+  duration_ms: 0.27775
+  type: 'test'
+  ...
+# Subtest: CloudBase adapter command contract: persistence, idempotency, rollback and management concurrency using an in-memory transaction harness
+ok 3 - CloudBase adapter command contract: persistence, idempotency, rollback and management concurrency using an in-memory transaction harness
+  ---
+  duration_ms: 37.37475
+  type: 'test'
+  ...
+# Subtest: real identity rejects local tokens before network and accepts only the exact configured official origin
+ok 4 - real identity rejects local tokens before network and accepts only the exact configured official origin
+  ---
+  duration_ms: 0.4325
+  type: 'test'
+  ...
+# {"event":"http_request","requestId":"e4c8144f-b03e-4f6a-af50-cee52c27660b","method":"POST","status":200,"durationMs":23}
+# {"event":"http_request","requestId":"9f1ff26b-5665-4b99-ac5f-491f4de1a8b7","method":"POST","status":200,"durationMs":5}
+# {"event":"http_request","requestId":"9116fa19-e1f0-4fcc-bf32-f07cc02dbee8","method":"PUT","status":200,"durationMs":6}
+# {"event":"http_request","requestId":"3d43df3f-db80-4fa2-9b41-338abbb4d471","method":"POST","status":200,"durationMs":722}
+# {"event":"http_request","requestId":"f8cda663-1e14-4b14-ae7b-38fc3601938a","method":"PATCH","status":200,"durationMs":4}
+# {"event":"http_request","requestId":"b8bb032b-5426-4289-871a-6d710a8be24a","method":"POST","status":500,"durationMs":2}
+# {"event":"http_request","requestId":"78f66b97-bb00-4eb8-8224-6b51387b3b5e","method":"GET","status":200,"durationMs":2}
+# {"event":"http_request","requestId":"24a1c5b7-a18f-43d9-9308-a77eaf8bfd06","method":"POST","status":200,"durationMs":4}
+# {"event":"http_request","requestId":"6955e555-0c1d-417a-98f8-76d721027c07","method":"POST","status":200,"durationMs":1}
+# {"event":"http_request","requestId":"189ce827-38e7-4ad0-9b64-00324faa65d8","method":"POST","status":429,"durationMs":2}
+# {"event":"http_request","requestId":"f8a85a5d-3147-4eb9-b232-0af6d4324e99","method":"GET","status":200,"durationMs":3}
+# {"event":"http_request","requestId":"aa1ab684-b1f4-4891-a9e7-3865d0a085d4","method":"GET","status":206,"durationMs":4}
+# {"event":"http_request","requestId":"7fe25a1b-9624-4e0f-a60c-cdb39677d43c","method":"POST","status":200,"durationMs":3}
+# {"event":"http_request","requestId":"2a2f1fec-3931-416a-ab9e-62225203ccfd","method":"GET","status":404,"durationMs":0}
+# Subtest: CloudBase adapter file and publication lifecycle uses durable metadata and a private object harness
+ok 5 - CloudBase adapter file and publication lifecycle uses durable metadata and a private object harness
+  ---
+  duration_ms: 966.541792
+  type: 'test'
+  ...
+# Subtest: initialization is atomic and backup validation rejects incomplete aggregates
+ok 6 - initialization is atomic and backup validation rejects incomplete aggregates
+  ---
+  duration_ms: 251.857917
+  type: 'test'
+  ...
+# Subtest: all 28 operation JSON responses and write schemas compile as draft 2020-12
+ok 7 - all 28 operation JSON responses and write schemas compile as draft 2020-12
+  ---
+  duration_ms: 216.366917
+  type: 'test'
+  ...
+# Subtest: client cannot choose product identifier or smuggle internal fields
+ok 8 - client cannot choose product identifier or smuggle internal fields
+  ---
+  duration_ms: 1.15075
+  type: 'test'
+  ...
+# Subtest: PATCH allOf requires expectedVersion, create request does not
+ok 9 - PATCH allOf requires expectedVersion, create request does not
+  ---
+  duration_ms: 0.60375
+  type: 'test'
+  ...
+# Subtest: three q queries enforce Unicode-aware 100 characters and strict limits
+ok 10 - three q queries enforce Unicode-aware 100 characters and strict limits
+  ---
+  duration_ms: 13.721834
+  type: 'test'
+  ...
+# Subtest: classification and exact template versions are validated at creation
+ok 11 - classification and exact template versions are validated at creation
+  ---
+  duration_ms: 0.97675
+  type: 'test'
+  ...
+# Subtest: draft can be incomplete; publish-field checks remain strict
+ok 12 - draft can be incomplete; publish-field checks remain strict
+  ---
+  duration_ms: 4.706125
+  type: 'test'
+  ...
+# Subtest: explicit old template version is readable even when disabled for creation
+ok 13 - explicit old template version is readable even when disabled for creation
+  ---
+  duration_ms: 9.864166
+  type: 'test'
+  ...
+# Subtest: public DTO whitelist rejects private fields
+ok 14 - public DTO whitelist rejects private fields
+  ---
+  duration_ms: 0.988292
+  type: 'test'
+  ...
+# Subtest: management API enforces roles, category references, conflict versions and immediate disable
+ok 15 - management API enforces roles, category references, conflict versions and immediate disable
+  ---
+  duration_ms: 103.45975
+  type: 'test'
+  ...
+# Subtest: admin test identity is unavailable unless explicitly enabled
+ok 16 - admin test identity is unavailable unless explicitly enabled
+  ---
+  duration_ms: 4.954625
+  type: 'test'
+  ...
+# Subtest: baseline seeds remain private and match the six pilot IDs in order
+ok 17 - baseline seeds remain private and match the six pilot IDs in order
+  ---
+  duration_ms: 10.749167
+  type: 'test'
+  ...
+# Subtest: dry-run is pure, repeat seed inserts nothing, and edited records survive
+ok 18 - dry-run is pure, repeat seed inserts nothing, and edited records survive
+  ---
+  duration_ms: 3.861375
+  type: 'test'
+  ...
+# Subtest: counter derives from maximum identifier, never array length or reset
+ok 19 - counter derives from maximum identifier, never array length or reset
+  ---
+  duration_ms: 0.6775
+  type: 'test'
+  ...
+# Subtest: seed cannot import a published record
+ok 20 - seed cannot import a published record
+  ---
+  duration_ms: 0.080708
+  type: 'test'
+  ...
+# Subtest: creation idempotency, template boundaries, draft conflict, preserved template and preview version
+ok 21 - creation idempotency, template boundaries, draft conflict, preserved template and preview version
+  ---
+  duration_ms: 123.841833
+  type: 'test'
+  ...
+# Subtest: publish snapshots, update version binding, range, unpublish and republish with immutable assets
+ok 22 - publish snapshots, update version binding, range, unpublish and republish with immutable assets
+  ---
+  duration_ms: 1097.198875
+  type: 'test'
+  ...
+# Subtest: atomic failure and publication race do not mutate the previous snapshot or append duplicate logs
+ok 23 - atomic failure and publication race do not mutate the previous snapshot or append duplicate logs
+  ---
+  duration_ms: 347.605708
+  type: 'test'
+  ...
+# Subtest: file signature, length, type, ownership, metadata cleaning, material identity and source isolation
+ok 24 - file signature, length, type, ownership, metadata cleaning, material identity and source isolation
+  ---
+  duration_ms: 259.687
+  type: 'test'
+  ...
+# Subtest: Office source validation and image preview keep source bytes out of public manifests
+ok 25 - Office source validation and image preview keep source bytes out of public manifests
+  ---
+  duration_ms: 1155.4235
+  type: 'test'
+  ...
+# Subtest: public pagination and literal search use releases, while invalid empty and mismatched uploads fail
+ok 26 - public pagination and literal search use releases, while invalid empty and mismatched uploads fail
+  ---
+  duration_ms: 1053.247459
+  type: 'test'
+  ...
+1..26
+# tests 26
+# suites 0
+# pass 26
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4496.141459

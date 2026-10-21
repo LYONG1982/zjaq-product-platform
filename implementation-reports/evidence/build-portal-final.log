@@ -1,0 +1,24 @@
+$ pnpm --filter @zj/portal build
+$ next build
+▲ Next.js 16.4.2 (Turbopack)
+✓ Running next.config.ts took 56ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 282ms
+  Running TypeScript ...
+  Finished TypeScript in 1096ms ...
+  Collecting page data using 6 workers ...
+  Generating static pages using 6 workers (0/2) ...
+✓ Generating static pages using 6 workers (2/2) in 301ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ○ /_not-found
+├ ƒ /materials
+└ ƒ /products
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

@@ -1,0 +1,18 @@
+$ playwright test
+
+Running 10 tests using 1 worker
+
+(node:19559) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/browser/smoke.spec.ts:2:1 › production portal empty state and navigation (677ms)
+  ✓   2 tests/browser/smoke.spec.ts:21:1 › admin reads all 27 drafts, filters, opens draft and templates (794ms)
+  ✓   3 tests/browser/smoke.spec.ts:50:3 › H5 390 empty-state and navigation without overflow (428ms)
+  ✓   4 tests/browser/smoke.spec.ts:50:3 › H5 320 empty-state and navigation without overflow (397ms)
+  ✓   5 tests/browser/smoke.spec.ts:69:1 › H5 shows service failure rather than an empty catalogue (220ms)
+  ✓   6 tests/browser/smoke.spec.ts:80:1 › built H5 preview cannot expose workspace files or accept foreign origins (25ms)
+  ✓   7 tests/browser/workflow.spec.ts:4:1 › wizard cancellation creates no product (362ms)
+  ✓   8 tests/browser/workflow.spec.ts:18:1 › UI creates, edits, uploads, previews, publishes, updates and unpublishes one product (3.4s)
+  ✓   9 tests/browser/workflow.spec.ts:167:1 › save conflict preserves local input and offers explicit comparison (665ms)
+  ✓  10 tests/browser/workflow.spec.ts:212:1 › image ordering and missing-field publish errors work through the editor (1.8s)
+
+  10 passed (9.8s)

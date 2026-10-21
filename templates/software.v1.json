@@ -1,0 +1,108 @@
+{
+  "id": "software",
+  "name": "软件产品",
+  "description": "以业务角色、功能、流程和部署条件介绍软件。",
+  "fields": [
+    {
+      "key": "deployment",
+      "label": "部署说明",
+      "widget": "textarea",
+      "requiredOnCreate": false,
+      "requiredOnPublish": true,
+      "maxLength": 2000,
+      "help": "填写真实内容；未知内容留空，不使用示例值冒充。"
+    },
+    {
+      "key": "supportedEnvironments",
+      "label": "已验证支持环境",
+      "widget": "textarea",
+      "requiredOnCreate": false,
+      "requiredOnPublish": false,
+      "maxLength": 2000,
+      "help": "填写真实内容；未知内容留空，不使用示例值冒充。"
+    },
+    {
+      "key": "integration",
+      "label": "接口与集成说明",
+      "widget": "textarea",
+      "requiredOnCreate": false,
+      "requiredOnPublish": false,
+      "maxLength": 2000,
+      "help": "填写真实内容；未知内容留空，不使用示例值冒充。"
+    },
+    {
+      "key": "usageConditions",
+      "label": "使用规模与适用条件",
+      "widget": "textarea",
+      "requiredOnCreate": false,
+      "requiredOnPublish": false,
+      "maxLength": 2000,
+      "help": "填写真实内容；未知内容留空，不使用示例值冒充。"
+    }
+  ],
+  "version": 1,
+  "enabledForCreate": true,
+  "modules": [
+    {
+      "id": "basic",
+      "title": "基本信息"
+    },
+    {
+      "id": "problems",
+      "title": "问题与价值"
+    },
+    {
+      "id": "features",
+      "title": "核心功能"
+    },
+    {
+      "id": "scenarios",
+      "title": "应用场景"
+    },
+    {
+      "id": "technical",
+      "title": "参数与边界"
+    },
+    {
+      "id": "media",
+      "title": "产品素材"
+    },
+    {
+      "id": "materials",
+      "title": "当前资料"
+    }
+  ],
+  "createRequired": [
+    "name",
+    "categoryId",
+    "templateId",
+    "owner"
+  ],
+  "publishRequired": [
+    "name",
+    "categoryId",
+    "owner",
+    "tagline",
+    "summary",
+    "problemValues",
+    "features",
+    "scenarios",
+    "boundaries",
+    "materials"
+  ],
+  "commonFieldLimits": {
+    "name": 80,
+    "owner": 80,
+    "tagline": 80,
+    "summary": 1500,
+    "boundaries": 3000,
+    "aliasItems": 10,
+    "itemText": 3000
+  },
+  "minimumCounts": {
+    "problemValues": 1,
+    "features": 1,
+    "scenarios": 1,
+    "materials": 1
+  }
+}

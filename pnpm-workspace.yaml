@@ -1,0 +1,34 @@
+packages:
+  - apps/*
+  - packages/*
+  - services/*
+storeDir: ./work/pnpm-store
+cacheDir: ./work/pnpm-cache
+saveExact: true
+strictPeerDependencies: true
+fetchTimeout: 180000
+networkConcurrency: 8
+allowBuilds:
+  esbuild: true
+  sharp: true
+  '@swc/core': true
+  core-js: false
+  core-js-pure: false
+overrides:
+  'axios@<1': 0.34.0
+  'lodash.unset@<4.18.0': 4.18.0
+  'jpeg-js@<0.4.4': 0.4.4
+  'qs@<6.16.1': 6.16.1
+  'postcss@>=8 <8.5.30': 8.5.30
+  'source-map-js@<1.2.2': 1.2.2
+  'ws@>=8 <8.22.0': 8.22.0
+  '@intlify/core-base@>=9 <9.14.5': 9.14.5
+  '@intlify/message-resolver@>=9 <9.1.11': 9.1.11
+  '@intlify/shared@>=9 <9.14.5': 9.14.5
+  'postcss-selector-parser@>=6 <6.1.4': 6.1.4
+  'adm-zip@<0.6.1': 0.6.1
+  'cookie@<0.7.2': 0.7.2
+  'send@<0.19.2': 0.19.2
+  'path-to-regexp@<0.2': 0.1.13
+  'body-parser@>=1 <1.20.8': 1.20.8
+minimumReleaseAgeStrict: true

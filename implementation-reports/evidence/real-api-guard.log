@@ -1,0 +1,3 @@
+$ node --import tsx services/api/src/main.ts
+REAL_API_REQUIRES_CLOUDBASE: Mock fallback is forbidden
+[ELIFECYCLE] Command failed with exit code 1.

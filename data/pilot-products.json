@@ -1,0 +1,44 @@
+[
+  {
+    "productId": "ZJ-001",
+    "name": "保密工作管理系统",
+    "categoryId": "miding",
+    "templateId": "software",
+    "pilotOrder": 1
+  },
+  {
+    "productId": "ZJ-002",
+    "name": "国产化即时通讯",
+    "categoryId": "miding",
+    "templateId": "software",
+    "pilotOrder": 2
+  },
+  {
+    "productId": "ZJ-009",
+    "name": "移动（便携式）保密教育实训平台",
+    "categoryId": "mishu",
+    "templateId": "delivery",
+    "pilotOrder": 3
+  },
+  {
+    "productId": "ZJ-008",
+    "name": "移动终端（便携式）多功能检测仪",
+    "categoryId": "miyi",
+    "templateId": "device",
+    "pilotOrder": 4
+  },
+  {
+    "productId": "ZJ-006",
+    "name": "移动设备摄像头管控系统",
+    "categoryId": "miyi",
+    "templateId": "device",
+    "pilotOrder": 5
+  },
+  {
+    "productId": "ZJ-015",
+    "name": "智能文档审查系统",
+    "categoryId": "ai",
+    "templateId": "ai",
+    "pilotOrder": 6
+  }
+]

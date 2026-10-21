@@ -1,0 +1,131 @@
+$ node --import tsx --test tests/unit/*.test.ts
+TAP version 13
+# Subtest: loopback API preserves private baseline, supports contracts, and validates write requests
+ok 1 - loopback API preserves private baseline, supports contracts, and validates write requests
+  ---
+  duration_ms: 102.1705
+  type: 'test'
+  ...
+# Subtest: production never silently falls back to mock
+ok 2 - production never silently falls back to mock
+  ---
+  duration_ms: 0.321625
+  type: 'test'
+  ...
+# Subtest: all 28 operation JSON responses and write schemas compile as draft 2020-12
+ok 3 - all 28 operation JSON responses and write schemas compile as draft 2020-12
+  ---
+  duration_ms: 196.811458
+  type: 'test'
+  ...
+# Subtest: client cannot choose product identifier or smuggle internal fields
+ok 4 - client cannot choose product identifier or smuggle internal fields
+  ---
+  duration_ms: 1.122375
+  type: 'test'
+  ...
+# Subtest: PATCH allOf requires expectedVersion, create request does not
+ok 5 - PATCH allOf requires expectedVersion, create request does not
+  ---
+  duration_ms: 0.696583
+  type: 'test'
+  ...
+# Subtest: three q queries enforce Unicode-aware 100 characters and strict limits
+ok 6 - three q queries enforce Unicode-aware 100 characters and strict limits
+  ---
+  duration_ms: 13.257583
+  type: 'test'
+  ...
+# Subtest: classification and exact template versions are validated at creation
+ok 7 - classification and exact template versions are validated at creation
+  ---
+  duration_ms: 1.061042
+  type: 'test'
+  ...
+# Subtest: draft can be incomplete; publish-field checks remain strict
+ok 8 - draft can be incomplete; publish-field checks remain strict
+  ---
+  duration_ms: 5.305542
+  type: 'test'
+  ...
+# Subtest: explicit old template version is readable even when disabled for creation
+ok 9 - explicit old template version is readable even when disabled for creation
+  ---
+  duration_ms: 9.809333
+  type: 'test'
+  ...
+# Subtest: public DTO whitelist rejects private fields
+ok 10 - public DTO whitelist rejects private fields
+  ---
+  duration_ms: 0.948292
+  type: 'test'
+  ...
+# Subtest: baseline seeds remain private and match the six pilot IDs in order
+ok 11 - baseline seeds remain private and match the six pilot IDs in order
+  ---
+  duration_ms: 8.1855
+  type: 'test'
+  ...
+# Subtest: dry-run is pure, repeat seed inserts nothing, and edited records survive
+ok 12 - dry-run is pure, repeat seed inserts nothing, and edited records survive
+  ---
+  duration_ms: 2.056333
+  type: 'test'
+  ...
+# Subtest: counter derives from maximum identifier, never array length or reset
+ok 13 - counter derives from maximum identifier, never array length or reset
+  ---
+  duration_ms: 2.926417
+  type: 'test'
+  ...
+# Subtest: seed cannot import a published record
+ok 14 - seed cannot import a published record
+  ---
+  duration_ms: 0.129
+  type: 'test'
+  ...
+# Subtest: creation idempotency, template boundaries, draft conflict, preserved template and preview version
+ok 15 - creation idempotency, template boundaries, draft conflict, preserved template and preview version
+  ---
+  duration_ms: 106.063333
+  type: 'test'
+  ...
+# Subtest: publish snapshots, update version binding, range, unpublish and republish with immutable assets
+ok 16 - publish snapshots, update version binding, range, unpublish and republish with immutable assets
+  ---
+  duration_ms: 961.543209
+  type: 'test'
+  ...
+# Subtest: atomic failure and publication race do not mutate the previous snapshot or append duplicate logs
+ok 17 - atomic failure and publication race do not mutate the previous snapshot or append duplicate logs
+  ---
+  duration_ms: 364.236084
+  type: 'test'
+  ...
+# Subtest: file signature, length, type, ownership, metadata cleaning, material identity and source isolation
+ok 18 - file signature, length, type, ownership, metadata cleaning, material identity and source isolation
+  ---
+  duration_ms: 275.460042
+  type: 'test'
+  ...
+# Subtest: Office source validation and image preview keep source bytes out of public manifests
+ok 19 - Office source validation and image preview keep source bytes out of public manifests
+  ---
+  duration_ms: 1162.411583
+  type: 'test'
+  ...
+# Subtest: public pagination and literal search use releases, while invalid empty and mismatched uploads fail
+ok 20 - public pagination and literal search use releases, while invalid empty and mismatched uploads fail
+  ---
+  duration_ms: 1077.810125
+  type: 'test'
+  ...
+1..20
+# tests 20
+# suites 0
+# pass 20
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4433.233291

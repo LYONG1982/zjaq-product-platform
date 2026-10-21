@@ -1,0 +1,25 @@
+{
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "name": "@zj/admin",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 3201 --strictPort",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 3201 --strictPort",
+    "check": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "vue": "3.5.44",
+    "@zj/api-client": "workspace:*",
+    "@zj/contracts": "workspace:*",
+    "@zj/design-tokens": "workspace:*",
+    "pdfjs-dist": "6.4.299"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "6.0.10",
+    "vite": "8.3.4",
+    "vue-tsc": "3.3.13",
+    "typescript": "5.9.3"
+  }
+}

@@ -1,0 +1,178 @@
+[
+  {
+    "requirementId": "FR-01",
+    "taskIds": [
+      "TASK-01",
+      "TASK-04",
+      "TASK-05"
+    ],
+    "testIds": [
+      "AT-001",
+      "AT-002",
+      "AT-003",
+      "AT-004",
+      "AT-005",
+      "AT-006",
+      "AT-007"
+    ]
+  },
+  {
+    "requirementId": "FR-02",
+    "taskIds": [
+      "TASK-02",
+      "TASK-07"
+    ],
+    "testIds": [
+      "AT-008",
+      "AT-009",
+      "AT-010",
+      "AT-011",
+      "AT-012",
+      "AT-013",
+      "AT-014",
+      "AT-015"
+    ]
+  },
+  {
+    "requirementId": "FR-03",
+    "taskIds": [
+      "TASK-02",
+      "TASK-07"
+    ],
+    "testIds": [
+      "AT-016",
+      "AT-017",
+      "AT-018",
+      "AT-019",
+      "AT-020",
+      "AT-021",
+      "AT-022"
+    ]
+  },
+  {
+    "requirementId": "FR-04",
+    "taskIds": [
+      "TASK-03"
+    ],
+    "testIds": [
+      "AT-023",
+      "AT-024",
+      "AT-025",
+      "AT-026"
+    ]
+  },
+  {
+    "requirementId": "FR-05",
+    "taskIds": [
+      "TASK-03",
+      "TASK-07"
+    ],
+    "testIds": [
+      "AT-027",
+      "AT-028",
+      "AT-029",
+      "AT-030",
+      "AT-031",
+      "AT-032",
+      "AT-033"
+    ]
+  },
+  {
+    "requirementId": "FR-06",
+    "taskIds": [
+      "TASK-03",
+      "TASK-07"
+    ],
+    "testIds": [
+      "AT-034",
+      "AT-035",
+      "AT-036",
+      "AT-037",
+      "AT-038"
+    ]
+  },
+  {
+    "requirementId": "FR-07",
+    "taskIds": [
+      "TASK-04",
+      "TASK-05",
+      "TASK-07"
+    ],
+    "testIds": [
+      "AT-039",
+      "AT-040",
+      "AT-041",
+      "AT-042",
+      "AT-043",
+      "AT-044",
+      "AT-045"
+    ]
+  },
+  {
+    "requirementId": "FR-08",
+    "taskIds": [
+      "TASK-02",
+      "TASK-07"
+    ],
+    "testIds": [
+      "AT-046",
+      "AT-047",
+      "AT-048",
+      "AT-049",
+      "AT-050",
+      "AT-051"
+    ]
+  },
+  {
+    "requirementId": "FR-09",
+    "taskIds": [
+      "TASK-01",
+      "TASK-02",
+      "TASK-06"
+    ],
+    "testIds": [
+      "AT-052",
+      "AT-053",
+      "AT-054"
+    ]
+  },
+  {
+    "requirementId": "FR-10",
+    "taskIds": [
+      "TASK-06",
+      "TASK-07"
+    ],
+    "testIds": [
+      "AT-055",
+      "AT-056",
+      "AT-057"
+    ]
+  },
+  {
+    "requirementId": "FR-11",
+    "taskIds": [
+      "TASK-04",
+      "TASK-05",
+      "TASK-09"
+    ],
+    "testIds": [
+      "AT-058",
+      "AT-059"
+    ]
+  },
+  {
+    "requirementId": "FR-12",
+    "taskIds": [
+      "TASK-07",
+      "TASK-08",
+      "TASK-09"
+    ],
+    "testIds": [
+      "AT-060",
+      "AT-061",
+      "AT-062",
+      "AT-063",
+      "AT-064"
+    ]
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "health": {
+    "status": "ok",
+    "provider": "mock",
+    "scope": "TASK-01",
+    "requestId": "41e006b9-1b22-49fc-b86c-be05377b1958"
+  },
+  "originalDraftsUnchanged": 27,
+  "rows": 27,
+  "safeToRestartOldReadonlySession": true
+}

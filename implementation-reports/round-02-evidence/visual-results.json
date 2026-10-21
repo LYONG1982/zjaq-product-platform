@@ -1,0 +1,13 @@
+{
+  "result": "PASS",
+  "screenshots": 7,
+  "unchangedMaterialEditPreserved": true,
+  "keyboardDialog": true,
+  "consoleErrors": [],
+  "viewports": [
+    "1440x1024",
+    "390x844",
+    "320x844",
+    "720x512 equivalent CSS viewport for 200% reflow, not native browser zoom"
+  ]
+}

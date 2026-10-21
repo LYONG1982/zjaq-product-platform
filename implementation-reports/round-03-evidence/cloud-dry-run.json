@@ -1,0 +1,28 @@
+{
+  "dryRun": true,
+  "action": "plan",
+  "collections": [
+    "control",
+    "products",
+    "drafts",
+    "releases",
+    "history",
+    "assets",
+    "uploads",
+    "idempotency",
+    "categories",
+    "users",
+    "subjects",
+    "audit",
+    "rates"
+  ],
+  "originalProducts": 27,
+  "defaultState": "DRAFT",
+  "cloudConnected": false,
+  "requirements": [
+    "approved exact environment",
+    "private storage policy",
+    "trusted admin subject",
+    "empty restore target"
+  ]
+}

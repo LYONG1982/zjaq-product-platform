@@ -1,0 +1,43 @@
+{
+  "checks": [
+    {
+      "url": "http://127.0.0.1:3200/",
+      "status": 200,
+      "bytes": 12020,
+      "pid": 9686
+    },
+    {
+      "url": "http://127.0.0.1:3201/",
+      "status": 200,
+      "bytes": 385,
+      "pid": 7861
+    },
+    {
+      "url": "http://127.0.0.1:3202/",
+      "status": 200,
+      "bytes": 441,
+      "pid": 8856
+    },
+    {
+      "url": "http://127.0.0.1:3400/",
+      "status": 200,
+      "bytes": 14803
+    },
+    {
+      "url": "http://127.0.0.1:3401/",
+      "status": 200,
+      "bytes": 388
+    },
+    {
+      "url": "http://127.0.0.1:3402/",
+      "status": 200,
+      "bytes": 444
+    },
+    {
+      "url": "http://127.0.0.1:3403/health",
+      "status": 200,
+      "bytes": 156
+    }
+  ],
+  "isolatedTestServicesStopped": true
+}

@@ -1,0 +1,1932 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "response.schema.json",
+  "title": "RC2 response DTO schemas",
+  "$defs": {
+    "PublicCategory": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "shortName": {
+          "type": "string"
+        },
+        "sortOrder": {
+          "type": "integer"
+        },
+        "productCount": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "shortName",
+        "sortOrder",
+        "productCount"
+      ],
+      "additionalProperties": false
+    },
+    "PublicMedia": {
+      "type": "object",
+      "properties": {
+        "mediaId": {
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "cover",
+            "screenshot",
+            "diagram"
+          ]
+        },
+        "alt": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "mediaId",
+        "role",
+        "alt",
+        "path"
+      ],
+      "additionalProperties": false
+    },
+    "PublicMaterial": {
+      "type": "object",
+      "properties": {
+        "materialId": {
+          "type": "string"
+        },
+        "versionId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "brochure",
+            "presentation",
+            "technical",
+            "other"
+          ]
+        },
+        "versionLabel": {
+          "type": "string"
+        },
+        "applicableVersion": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "previewKind": {
+          "enum": [
+            "pdf",
+            "images"
+          ]
+        },
+        "pageCount": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "publishedAt": {
+          "type": "string"
+        },
+        "previewPath": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "materialId",
+        "versionId",
+        "name",
+        "kind",
+        "versionLabel",
+        "applicableVersion",
+        "previewKind",
+        "pageCount",
+        "publishedAt",
+        "previewPath"
+      ],
+      "additionalProperties": false
+    },
+    "PublicProductSummary": {
+      "type": "object",
+      "properties": {
+        "productId": {
+          "type": "string"
+        },
+        "releaseId": {
+          "type": "string"
+        },
+        "releaseSequence": {
+          "type": "integer"
+        },
+        "publishedAt": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "categoryId": {
+          "type": "string"
+        },
+        "categoryName": {
+          "type": "string"
+        },
+        "tagline": {
+          "type": "string"
+        },
+        "coverPath": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "pilotOrder": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "productId",
+        "releaseId",
+        "releaseSequence",
+        "publishedAt",
+        "name",
+        "categoryId",
+        "categoryName",
+        "tagline",
+        "coverPath",
+        "pilotOrder"
+      ],
+      "additionalProperties": false
+    },
+    "PublicProduct": {
+      "type": "object",
+      "properties": {
+        "productId": {
+          "type": "string"
+        },
+        "releaseId": {
+          "type": "string"
+        },
+        "releaseSequence": {
+          "type": "integer"
+        },
+        "publishedAt": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "category": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "name"
+          ],
+          "additionalProperties": false
+        },
+        "tagline": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "audiences": {
+          "type": "string"
+        },
+        "problemValues": {
+          "type": "array",
+          "items": {
+            "$ref": "./domain.schema.json#/$defs/TextItem"
+          }
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "$ref": "./domain.schema.json#/$defs/TextItem"
+          }
+        },
+        "scenarios": {
+          "type": "array",
+          "items": {
+            "$ref": "./domain.schema.json#/$defs/TextItem"
+          }
+        },
+        "technical": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "boundaries": {
+          "type": "string"
+        },
+        "media": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PublicMedia"
+          }
+        },
+        "materials": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PublicMaterial"
+          }
+        }
+      },
+      "required": [
+        "productId",
+        "releaseId",
+        "releaseSequence",
+        "publishedAt",
+        "name",
+        "category",
+        "tagline",
+        "summary",
+        "audiences",
+        "problemValues",
+        "features",
+        "scenarios",
+        "technical",
+        "boundaries",
+        "media",
+        "materials"
+      ],
+      "additionalProperties": false
+    },
+    "CatalogMaterialRow": {
+      "type": "object",
+      "properties": {
+        "productId": {
+          "type": "string"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "categoryId": {
+          "type": "string"
+        },
+        "material": {
+          "$ref": "#/$defs/PublicMaterial"
+        }
+      },
+      "required": [
+        "productId",
+        "productName",
+        "categoryId",
+        "material"
+      ],
+      "additionalProperties": false
+    },
+    "PreviewManifest": {
+      "type": "object",
+      "properties": {
+        "productId": {
+          "type": "string"
+        },
+        "materialId": {
+          "type": "string"
+        },
+        "releaseId": {
+          "type": "string"
+        },
+        "versionId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "versionLabel": {
+          "type": "string"
+        },
+        "previewKind": {
+          "enum": [
+            "pdf",
+            "images"
+          ]
+        },
+        "pageCount": {
+          "type": "integer"
+        },
+        "parts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "part": {
+                "type": "string"
+              },
+              "pageIndex": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "mimeType": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "part",
+              "pageIndex",
+              "mimeType",
+              "path"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "productId",
+        "materialId",
+        "releaseId",
+        "versionId",
+        "name",
+        "versionLabel",
+        "previewKind",
+        "pageCount",
+        "parts"
+      ],
+      "additionalProperties": false
+    },
+    "AdminIdentity": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "subjectId": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "CONTENT_MANAGER",
+            "ADMIN"
+          ]
+        },
+        "enabled": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "userId",
+        "subjectId",
+        "displayName",
+        "role",
+        "enabled"
+      ],
+      "additionalProperties": false
+    },
+    "AdminDraft": {
+      "type": "object",
+      "properties": {
+        "productId": {
+          "type": "string"
+        },
+        "draftVersion": {
+          "type": "integer"
+        },
+        "publicationState": {
+          "enum": [
+            "DRAFT",
+            "PUBLISHED",
+            "OFFLINE"
+          ]
+        },
+        "publicationVersion": {
+          "type": "integer"
+        },
+        "releaseSequence": {
+          "type": "integer"
+        },
+        "lastPublishedDraftVersion": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "hasUnpublishedChanges": {
+          "type": "boolean"
+        },
+        "content": {
+          "$ref": "./domain.schema.json#/$defs/DraftContent"
+        },
+        "updatedAt": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "updatedBy": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "productId",
+        "draftVersion",
+        "publicationState",
+        "publicationVersion",
+        "releaseSequence",
+        "lastPublishedDraftVersion",
+        "hasUnpublishedChanges",
+        "content",
+        "updatedAt",
+        "updatedBy"
+      ],
+      "additionalProperties": false
+    },
+    "AdminProductRow": {
+      "type": "object",
+      "properties": {
+        "productId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "publishedName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "categoryId": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "publicationState": {
+          "enum": [
+            "DRAFT",
+            "PUBLISHED",
+            "OFFLINE"
+          ]
+        },
+        "publicationVersion": {
+          "type": "integer"
+        },
+        "draftVersion": {
+          "type": "integer"
+        },
+        "hasUnpublishedChanges": {
+          "type": "boolean"
+        },
+        "updatedAt": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "productId",
+        "name",
+        "publishedName",
+        "categoryId",
+        "owner",
+        "publicationState",
+        "publicationVersion",
+        "draftVersion",
+        "hasUnpublishedChanges",
+        "updatedAt"
+      ],
+      "additionalProperties": false
+    },
+    "PublishResult": {
+      "type": "object",
+      "properties": {
+        "productId": {
+          "type": "string"
+        },
+        "releaseId": {
+          "type": "string"
+        },
+        "releaseSequence": {
+          "type": "integer"
+        },
+        "publicationVersion": {
+          "type": "integer"
+        },
+        "publicationState": {
+          "const": "PUBLISHED"
+        },
+        "publishedAt": {
+          "type": "string"
+        },
+        "publishedBy": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "productId",
+        "releaseId",
+        "releaseSequence",
+        "publicationVersion",
+        "publicationState",
+        "publishedAt",
+        "publishedBy"
+      ],
+      "additionalProperties": false
+    },
+    "UnpublishResult": {
+      "type": "object",
+      "properties": {
+        "productId": {
+          "type": "string"
+        },
+        "publicationState": {
+          "const": "OFFLINE"
+        },
+        "publicationVersion": {
+          "type": "integer"
+        },
+        "lastReleaseId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "unpublishedAt": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "productId",
+        "publicationState",
+        "publicationVersion",
+        "lastReleaseId",
+        "unpublishedAt"
+      ],
+      "additionalProperties": false
+    },
+    "UploadResult": {
+      "type": "object",
+      "properties": {
+        "uploadId": {
+          "type": "string"
+        },
+        "assetId": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "UPLOADING",
+            "CHECKING",
+            "READY",
+            "REJECTED"
+          ]
+        },
+        "size": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "mimeType": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "checksum": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "pageCount": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "uploadId",
+        "assetId",
+        "status",
+        "size",
+        "mimeType",
+        "checksum",
+        "pageCount",
+        "error"
+      ],
+      "additionalProperties": false
+    },
+    "UploadIntentResult": {
+      "type": "object",
+      "properties": {
+        "uploadId": {
+          "type": "string"
+        },
+        "assetId": {
+          "type": "string"
+        },
+        "status": {
+          "const": "UPLOADING"
+        },
+        "uploadPath": {
+          "type": "string"
+        },
+        "uploadMethod": {
+          "const": "PUT"
+        }
+      },
+      "required": [
+        "uploadId",
+        "assetId",
+        "status",
+        "uploadPath",
+        "uploadMethod"
+      ],
+      "additionalProperties": false
+    },
+    "AdminCategory": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "shortName": {
+          "type": "string"
+        },
+        "sortOrder": {
+          "type": "integer"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "defaultTemplateId": {
+          "type": "string"
+        },
+        "allowedTemplateIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "version": {
+          "type": "integer"
+        },
+        "referenceCount": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "shortName",
+        "sortOrder",
+        "enabled",
+        "defaultTemplateId",
+        "allowedTemplateIds",
+        "version",
+        "referenceCount"
+      ],
+      "additionalProperties": false
+    },
+    "Template": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "integer"
+        },
+        "description": {
+          "type": "string"
+        },
+        "enabledForCreate": {
+          "type": "boolean"
+        },
+        "modules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "title"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "widget": {
+                "type": "string"
+              },
+              "requiredOnCreate": {
+                "type": "boolean"
+              },
+              "requiredOnPublish": {
+                "type": "boolean"
+              },
+              "maxLength": {
+                "type": "integer"
+              },
+              "help": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "key",
+              "label",
+              "widget",
+              "requiredOnCreate",
+              "requiredOnPublish",
+              "maxLength",
+              "help"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "createRequired": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "publishRequired": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "commonFieldLimits": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        },
+        "minimumCounts": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "version",
+        "description",
+        "enabledForCreate",
+        "modules",
+        "fields",
+        "createRequired",
+        "publishRequired",
+        "commonFieldLimits",
+        "minimumCounts"
+      ],
+      "additionalProperties": false
+    },
+    "AuditEvent": {
+      "type": "object",
+      "properties": {
+        "eventId": {
+          "type": "string"
+        },
+        "actorId": {
+          "type": "string"
+        },
+        "actorName": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string"
+        },
+        "targetId": {
+          "type": "string"
+        },
+        "draftVersion": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "publicationVersion": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "releaseSequence": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "requestId": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "eventId",
+        "actorId",
+        "actorName",
+        "action",
+        "targetId",
+        "draftVersion",
+        "publicationVersion",
+        "releaseSequence",
+        "requestId",
+        "createdAt"
+      ],
+      "additionalProperties": false
+    },
+    "AdminUser": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "subjectId": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "CONTENT_MANAGER",
+            "ADMIN"
+          ]
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "version": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "userId",
+        "subjectId",
+        "displayName",
+        "role",
+        "enabled",
+        "version"
+      ],
+      "additionalProperties": false
+    },
+    "PublicCategoryResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/PublicCategory"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "PublicCategoryListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PublicCategory"
+          }
+        },
+        "page": {
+          "type": "object",
+          "properties": {
+            "nextCursor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "hasMore": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "nextCursor",
+            "hasMore"
+          ],
+          "additionalProperties": false
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "page",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "PublicMediaResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/PublicMedia"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "PublicMediaListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PublicMedia"
+          }
+        },
+        "page": {
+          "type": "object",
+          "properties": {
+            "nextCursor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "hasMore": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "nextCursor",
+            "hasMore"
+          ],
+          "additionalProperties": false
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "page",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "PublicMaterialResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/PublicMaterial"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "PublicMaterialListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PublicMaterial"
+          }
+        },
+        "page": {
+          "type": "object",
+          "properties": {
+            "nextCursor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "hasMore": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "nextCursor",
+            "hasMore"
+          ],
+          "additionalProperties": false
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "page",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "PublicProductSummaryResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/PublicProductSummary"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "PublicProductSummaryListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PublicProductSummary"
+          }
+        },
+        "page": {
+          "type": "object",
+          "properties": {
+            "nextCursor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "hasMore": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "nextCursor",
+            "hasMore"
+          ],
+          "additionalProperties": false
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "page",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "PublicProductResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/PublicProduct"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "PublicProductListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PublicProduct"
+          }
+        },
+        "page": {
+          "type": "object",
+          "properties": {
+            "nextCursor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "hasMore": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "nextCursor",
+            "hasMore"
+          ],
+          "additionalProperties": false
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "page",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "CatalogMaterialRowResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/CatalogMaterialRow"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "CatalogMaterialRowListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CatalogMaterialRow"
+          }
+        },
+        "page": {
+          "type": "object",
+          "properties": {
+            "nextCursor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "hasMore": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "nextCursor",
+            "hasMore"
+          ],
+          "additionalProperties": false
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "page",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "PreviewManifestResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/PreviewManifest"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "PreviewManifestListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PreviewManifest"
+          }
+        },
+        "page": {
+          "type": "object",
+          "properties": {
+            "nextCursor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "hasMore": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "nextCursor",
+            "hasMore"
+          ],
+          "additionalProperties": false
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "page",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "AdminIdentityResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/AdminIdentity"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "AdminIdentityListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AdminIdentity"
+          }
+        },
+        "page": {
+          "type": "object",
+          "properties": {
+            "nextCursor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "hasMore": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "nextCursor",
+            "hasMore"
+          ],
+          "additionalProperties": false
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "page",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "AdminDraftResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/AdminDraft"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "AdminDraftListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AdminDraft"
+          }
+        },
+        "page": {
+          "type": "object",
+          "properties": {
+            "nextCursor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "hasMore": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "nextCursor",
+            "hasMore"
+          ],
+          "additionalProperties": false
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "page",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "AdminProductRowResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/AdminProductRow"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "AdminProductRowListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AdminProductRow"
+          }
+        },
+        "page": {
+          "type": "object",
+          "properties": {
+            "nextCursor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "hasMore": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "nextCursor",
+            "hasMore"
+          ],
+          "additionalProperties": false
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "page",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "PublishResultResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/PublishResult"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "PublishResultListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PublishResult"
+          }
+        },
+        "page": {
+          "type": "object",
+          "properties": {
+            "nextCursor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "hasMore": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "nextCursor",
+            "hasMore"
+          ],
+          "additionalProperties": false
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "page",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "UnpublishResultResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/UnpublishResult"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "UnpublishResultListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/UnpublishResult"
+          }
+        },
+        "page": {
+          "type": "object",
+          "properties": {
+            "nextCursor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "hasMore": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "nextCursor",
+            "hasMore"
+          ],
+          "additionalProperties": false
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "page",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "UploadResultResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/UploadResult"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "UploadResultListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/UploadResult"
+          }
+        },
+        "page": {
+          "type": "object",
+          "properties": {
+            "nextCursor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "hasMore": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "nextCursor",
+            "hasMore"
+          ],
+          "additionalProperties": false
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "page",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "UploadIntentResultResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/UploadIntentResult"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "UploadIntentResultListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/UploadIntentResult"
+          }
+        },
+        "page": {
+          "type": "object",
+          "properties": {
+            "nextCursor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "hasMore": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "nextCursor",
+            "hasMore"
+          ],
+          "additionalProperties": false
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "page",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "AdminCategoryResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/AdminCategory"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "AdminCategoryListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AdminCategory"
+          }
+        },
+        "page": {
+          "type": "object",
+          "properties": {
+            "nextCursor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "hasMore": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "nextCursor",
+            "hasMore"
+          ],
+          "additionalProperties": false
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "page",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "TemplateResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/Template"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "TemplateListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Template"
+          }
+        },
+        "page": {
+          "type": "object",
+          "properties": {
+            "nextCursor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "hasMore": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "nextCursor",
+            "hasMore"
+          ],
+          "additionalProperties": false
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "page",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "AuditEventResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/AuditEvent"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "AuditEventListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AuditEvent"
+          }
+        },
+        "page": {
+          "type": "object",
+          "properties": {
+            "nextCursor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "hasMore": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "nextCursor",
+            "hasMore"
+          ],
+          "additionalProperties": false
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "page",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "AdminUserResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/AdminUser"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "AdminUserListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AdminUser"
+          }
+        },
+        "page": {
+          "type": "object",
+          "properties": {
+            "nextCursor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "hasMore": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "nextCursor",
+            "hasMore"
+          ],
+          "additionalProperties": false
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "page",
+        "requestId"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

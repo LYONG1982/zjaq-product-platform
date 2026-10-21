@@ -1,0 +1,43 @@
+$ playwright test --grep 'explicit catalog return restores'
+
+Running 1 test using 1 worker
+
+(node:9330) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/browser/ux.spec.ts:299:1 › explicit catalog return restores the scrolled reading position (5.9s)
+
+
+  1) tests/browser/ux.spec.ts:299:1 › explicit catalog return restores the scrolled reading position 
+
+    Error: expect(locator).toBeInViewport() failed
+
+    Locator:  locator('.product-card').filter({ hasText: '【验证数据】软件制作示例' })
+    Expected: in viewport
+    Received: viewport ratio 0
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeInViewport" locator('.product-card').filter({ hasText: '【验证数据】软件制作示例' }) with timeout 5000ms
+      - waiting for locator('.product-card').filter({ hasText: '【验证数据】软件制作示例' })
+        14 × locator resolved to <a class="product-card" href="/products/ZJ-028?from=%2Fproducts">…</a>
+           - unexpected value "viewport ratio 0"
+
+
+      316 |     ).toBeVisible();
+      317 |     await page.getByText("← 返回上一页", { exact: true }).click();
+    > 318 |     await expect(card).toBeInViewport();
+          |                        ^
+      319 |     await expect
+      320 |       .poll(async () => Math.abs((await page.evaluate(() => scrollY)) - y))
+      321 |       .toBeLessThan(12);
+        at /Users/lvyong198201/Documents/Codex/2026-10-19/qin/tests/browser/ux.spec.ts:318:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    work/round04/browser-artifacts/ux-explicit-catalog-return-b7923-e-scrolled-reading-position/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: work/round04/browser-artifacts/ux-explicit-catalog-return-b7923-e-scrolled-reading-position/error-context.md
+
+  1 failed
+    tests/browser/ux.spec.ts:299:1 › explicit catalog return restores the scrolled reading position 
+[ELIFECYCLE] Command failed with exit code 1.

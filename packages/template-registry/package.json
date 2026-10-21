@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "name": "@zj/template-registry",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@zj/contracts": "workspace:*"
+  }
+}

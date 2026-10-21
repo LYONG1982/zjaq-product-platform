@@ -1,0 +1,16 @@
+vite v8.3.4 building client environment for production...
+transforming...
+✓ 36 modules transformed.
+
+(!) outDir /Users/lvyong198201/Documents/Codex/2026-10-19/qin/work/round04/build/admin is not inside project root and will not be emptied.
+Use --emptyOutDir to override.
+
+rendering chunks...
+computing gzip size...
+../../work/round04/build/admin/index.html                              0.38 kB │ gzip:   0.32 kB
+../../work/round04/build/admin/assets/pdf.worker.min-CjEcRF4W.mjs  1,264.34 kB
+../../work/round04/build/admin/assets/index-NjYtLVI6.css              19.04 kB │ gzip:   4.38 kB
+../../work/round04/build/admin/assets/index-B7zXV0Du.js              132.48 kB │ gzip:  46.81 kB
+../../work/round04/build/admin/assets/pdf-bFg3WHF6.js                429.04 kB │ gzip: 128.95 kB
+
+✓ built in 576ms

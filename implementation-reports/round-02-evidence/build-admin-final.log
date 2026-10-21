@@ -1,0 +1,14 @@
+$ pnpm --filter @zj/admin build
+$ vite build
+vite v8.3.4 building client environment for production...
+transforming...
+✓ 31 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                              0.38 kB │ gzip:   0.32 kB
+dist/assets/pdf.worker.min-CjEcRF4W.mjs  1,264.34 kB
+dist/assets/index-BDNAaWS3.css              17.02 kB │ gzip:   4.01 kB
+dist/assets/index-CcSkkK4f.js              122.78 kB │ gzip:  44.34 kB
+dist/assets/pdf-Cer7tf87.js                429.04 kB │ gzip: 128.95 kB
+
+✓ built in 307ms

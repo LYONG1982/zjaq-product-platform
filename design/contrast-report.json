@@ -1,0 +1,70 @@
+{
+  "method": "WCAG sRGB relative luminance calculation",
+  "scope": "specified text-color pairs only, not a full UI accessibility test",
+  "pairs": [
+    {
+      "use": "主正文",
+      "foreground": "#173046",
+      "background": "#FFFFFF",
+      "contrastRatio": 13.569,
+      "threshold": 4.5,
+      "passes": true
+    },
+    {
+      "use": "次级正文",
+      "foreground": "#586B7B",
+      "background": "#FFFFFF",
+      "contrastRatio": 5.52,
+      "threshold": 4.5,
+      "passes": true
+    },
+    {
+      "use": "白字主按钮",
+      "foreground": "#FFFFFF",
+      "background": "#087F82",
+      "contrastRatio": 4.807,
+      "threshold": 4.5,
+      "passes": true
+    },
+    {
+      "use": "浅底品牌字",
+      "foreground": "#06696C",
+      "background": "#EAF5F4",
+      "contrastRatio": 5.814,
+      "threshold": 4.5,
+      "passes": true
+    },
+    {
+      "use": "已发布状态",
+      "foreground": "#1F7657",
+      "background": "#FFFFFF",
+      "contrastRatio": 5.545,
+      "threshold": 4.5,
+      "passes": true
+    },
+    {
+      "use": "注意状态",
+      "foreground": "#946200",
+      "background": "#FFFFFF",
+      "contrastRatio": 5.242,
+      "threshold": 4.5,
+      "passes": true
+    },
+    {
+      "use": "错误文字",
+      "foreground": "#B13D35",
+      "background": "#FFFFFF",
+      "contrastRatio": 5.852,
+      "threshold": 4.5,
+      "passes": true
+    },
+    {
+      "use": "草稿文字",
+      "foreground": "#2D668E",
+      "background": "#FFFFFF",
+      "contrastRatio": 6.172,
+      "threshold": 4.5,
+      "passes": true
+    }
+  ]
+}

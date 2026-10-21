@@ -1,0 +1,2 @@
+$ node --import tsx scripts/generate.ts
+Generated contracts and tokens.

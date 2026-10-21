@@ -1,0 +1,19 @@
+{
+  "environmentDefault": "development",
+  "productionImport": "explicit --env production --dry-run first; write requires explicit operator approval",
+  "mode": "insert_missing_only",
+  "neverOverwriteExisting": true,
+  "publicationState": "DRAFT",
+  "autoPublish": false,
+  "counterNextAfterFirstImport": 28,
+  "publicDataOrigin": "No copied demo descriptions or sample files; owner and content must be completed",
+  "sourceNotes": "internal only",
+  "ignoredLegacyState": [
+    "roles",
+    "grants",
+    "reviews",
+    "download-history",
+    "published",
+    "favorites"
+  ]
+}

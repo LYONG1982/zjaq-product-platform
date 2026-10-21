@@ -1,0 +1,1967 @@
+{
+  "advisories": {
+    "1088964": {
+      "findings": [
+        {
+          "version": "0.3.7",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/types>@jimp/jpeg>jpeg-js"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1088964,
+      "title": "Infinite loop in jpeg-js",
+      "module_name": "jpeg-js",
+      "vulnerable_versions": "<0.4.4",
+      "patched_versions": ">=0.4.4",
+      "severity": "high",
+      "cwe": "CWE-835",
+      "github_advisory_id": "GHSA-xvf7-4v9q-58w6",
+      "url": "https://github.com/advisories/GHSA-xvf7-4v9q-58w6"
+    },
+    "1093580": {
+      "findings": [
+        {
+          "version": "0.3.7",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/types>@jimp/jpeg>jpeg-js"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1093580,
+      "title": "Uncontrolled resource consumption in jpeg-js",
+      "module_name": "jpeg-js",
+      "vulnerable_versions": "<0.4.0",
+      "patched_versions": ">=0.4.0",
+      "severity": "moderate",
+      "cwe": "CWE-400",
+      "github_advisory_id": "GHSA-w7q9-p3jq-fmhm",
+      "url": "https://github.com/advisories/GHSA-w7q9-p3jq-fmhm"
+    },
+    "1096967": {
+      "findings": [
+        {
+          "version": "2.9.3",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-blit>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-blur>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-circle>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-color>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-contain>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-contain>@jimp/plugin-blit>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-contain>@jimp/plugin-resize>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-contain>@jimp/plugin-scale>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-contain>@jimp/plugin-scale>@jimp/plugin-resize>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-cover>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-cover>@jimp/plugin-crop>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-cover>@jimp/plugin-resize>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-cover>@jimp/plugin-scale>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-cover>@jimp/plugin-scale>@jimp/plugin-resize>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-crop>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-displace>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-dither>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-fisheye>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-flip>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-flip>@jimp/plugin-rotate>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-flip>@jimp/plugin-rotate>@jimp/plugin-blit>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-flip>@jimp/plugin-rotate>@jimp/plugin-crop>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-flip>@jimp/plugin-rotate>@jimp/plugin-resize>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-gaussian>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-invert>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-mask>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-normalize>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-print>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-print>@jimp/plugin-blit>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-resize>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-rotate>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-rotate>@jimp/plugin-blit>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-rotate>@jimp/plugin-crop>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-rotate>@jimp/plugin-resize>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-scale>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-scale>@jimp/plugin-resize>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-shadow>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-shadow>@jimp/plugin-blur>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-shadow>@jimp/plugin-resize>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-threshold>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-threshold>@jimp/plugin-color>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/plugins>@jimp/plugin-threshold>@jimp/plugin-resize>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/types>@jimp/bmp>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/types>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/types>@jimp/gif>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/types>@jimp/jpeg>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/types>@jimp/png>@jimp/custom>@jimp/core>phin",
+            "apps__mobile>@dcloudio/uni-mp-weixin>jimp>@jimp/types>@jimp/tiff>@jimp/custom>@jimp/core>phin"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1096967,
+      "title": "phin may include sensitive headers in subsequent requests after redirect",
+      "module_name": "phin",
+      "vulnerable_versions": "<3.7.1",
+      "patched_versions": ">=3.7.1",
+      "severity": "moderate",
+      "cwe": "CWE-200",
+      "github_advisory_id": "GHSA-x565-32qp-m3vf",
+      "url": "https://github.com/advisories/GHSA-x565-32qp-m3vf"
+    },
+    "1099688": {
+      "findings": [
+        {
+          "version": "5.2.8",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue-jsx>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>vite",
+            "apps__mobile>vite"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1099688,
+      "title": "Vite's `server.fs.deny` is bypassed when using `?import&raw`",
+      "module_name": "vite",
+      "vulnerable_versions": ">=5.2.0 <5.2.14",
+      "patched_versions": ">=5.2.14",
+      "severity": "moderate",
+      "cwe": "CWE-200, CWE-284",
+      "github_advisory_id": "GHSA-9cwx-2883-4wfx",
+      "url": "https://github.com/advisories/GHSA-9cwx-2883-4wfx"
+    },
+    "1099691": {
+      "findings": [
+        {
+          "version": "5.2.8",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue-jsx>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>vite",
+            "apps__mobile>vite"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1099691,
+      "title": "Vite DOM Clobbering gadget found in vite bundled scripts that leads to XSS",
+      "module_name": "vite",
+      "vulnerable_versions": ">=5.2.0 <5.2.14",
+      "patched_versions": ">=5.2.14",
+      "severity": "moderate",
+      "cwe": "CWE-79",
+      "github_advisory_id": "GHSA-64vr-g452-qvp3",
+      "url": "https://github.com/advisories/GHSA-64vr-g452-qvp3"
+    },
+    "1102341": {
+      "findings": [
+        {
+          "version": "0.20.2",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>esbuild",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>esbuild",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>esbuild",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite>esbuild",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>esbuild",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>esbuild",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>esbuild",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>esbuild",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>esbuild",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite>esbuild",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>esbuild",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite>esbuild",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>esbuild",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>esbuild",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-cli-shared>esbuild",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>esbuild",
+            "apps__mobile>@dcloudio/uni-cli-shared>esbuild",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@dcloudio/uni-cli-shared>esbuild",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>vite>esbuild",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue>vite>esbuild",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue-jsx>vite>esbuild",
+            "apps__mobile>@dcloudio/vite-plugin-uni>vite>esbuild",
+            "apps__mobile>vite>esbuild"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1102341,
+      "title": "esbuild enables any website to send any requests to the development server and read the response",
+      "module_name": "esbuild",
+      "vulnerable_versions": "<=0.24.2",
+      "patched_versions": ">=0.24.3",
+      "severity": "moderate",
+      "cwe": "CWE-346",
+      "github_advisory_id": "GHSA-67mh-4wv8-2f99",
+      "url": "https://github.com/advisories/GHSA-67mh-4wv8-2f99"
+    },
+    "1102437": {
+      "findings": [
+        {
+          "version": "5.2.8",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue-jsx>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>vite",
+            "apps__mobile>vite"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1102437,
+      "title": "Websites were able to send any requests to the development server and read the response in vite",
+      "module_name": "vite",
+      "vulnerable_versions": ">=5.0.0 <=5.4.11",
+      "patched_versions": ">=5.4.12",
+      "severity": "moderate",
+      "cwe": "CWE-346, CWE-350, CWE-1385",
+      "github_advisory_id": "GHSA-vg6x-rcgg-rjx6",
+      "url": "https://github.com/advisories/GHSA-vg6x-rcgg-rjx6"
+    },
+    "1103517": {
+      "findings": [
+        {
+          "version": "5.2.8",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue-jsx>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>vite",
+            "apps__mobile>vite"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1103517,
+      "title": "Vite bypasses server.fs.deny when using ?raw??",
+      "module_name": "vite",
+      "vulnerable_versions": ">=5.0.0 <5.4.15",
+      "patched_versions": ">=5.4.15",
+      "severity": "moderate",
+      "cwe": "CWE-200, CWE-284",
+      "github_advisory_id": "GHSA-x574-m823-4x7w",
+      "url": "https://github.com/advisories/GHSA-x574-m823-4x7w"
+    },
+    "1103884": {
+      "findings": [
+        {
+          "version": "5.2.8",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue-jsx>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>vite",
+            "apps__mobile>vite"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1103884,
+      "title": "Vite has an `server.fs.deny` bypass with an invalid `request-target`",
+      "module_name": "vite",
+      "vulnerable_versions": ">=5.0.0 <5.4.18",
+      "patched_versions": ">=5.4.18",
+      "severity": "moderate",
+      "cwe": "CWE-200",
+      "github_advisory_id": "GHSA-356w-63v5-8wf4",
+      "url": "https://github.com/advisories/GHSA-356w-63v5-8wf4"
+    },
+    "1103907": {
+      "findings": [
+        {
+          "version": "0.6.0",
+          "paths": [
+            "apps__mobile>@dcloudio/vite-plugin-uni>express>cookie"
+          ],
+          "dev": true,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1103907,
+      "title": "cookie accepts cookie name, path, and domain with out of bounds characters",
+      "module_name": "cookie",
+      "vulnerable_versions": "<0.7.0",
+      "patched_versions": ">=0.7.0",
+      "severity": "low",
+      "cwe": "CWE-74",
+      "github_advisory_id": "GHSA-pxg6-pf52-xh8x",
+      "url": "https://github.com/advisories/GHSA-pxg6-pf52-xh8x"
+    },
+    "1104173": {
+      "findings": [
+        {
+          "version": "5.2.8",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue-jsx>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>vite",
+            "apps__mobile>vite"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1104173,
+      "title": "Vite's server.fs.deny bypassed with /. for files under project root",
+      "module_name": "vite",
+      "vulnerable_versions": ">=5.0.0 <=5.4.18",
+      "patched_versions": ">=5.4.19",
+      "severity": "moderate",
+      "cwe": "CWE-22",
+      "github_advisory_id": "GHSA-859w-5945-r5v3",
+      "url": "https://github.com/advisories/GHSA-859w-5945-r5v3"
+    },
+    "1104202": {
+      "findings": [
+        {
+          "version": "5.2.8",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue-jsx>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>vite",
+            "apps__mobile>vite"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1104202,
+      "title": "Vite allows server.fs.deny to be bypassed with .svg or relative paths",
+      "module_name": "vite",
+      "vulnerable_versions": ">=5.0.0 <5.4.17",
+      "patched_versions": ">=5.4.17",
+      "severity": "moderate",
+      "cwe": "CWE-200, CWE-284",
+      "github_advisory_id": "GHSA-xcj6-pq6g-qj4x",
+      "url": "https://github.com/advisories/GHSA-xcj6-pq6g-qj4x"
+    },
+    "1105199": {
+      "findings": [
+        {
+          "version": "0.1.10",
+          "paths": [
+            "apps__mobile>@dcloudio/vite-plugin-uni>express>path-to-regexp"
+          ],
+          "dev": true,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1105199,
+      "title": "path-to-regexp contains a ReDoS",
+      "module_name": "path-to-regexp",
+      "vulnerable_versions": "<0.1.12",
+      "patched_versions": ">=0.1.12",
+      "severity": "high",
+      "cwe": "CWE-1333",
+      "github_advisory_id": "GHSA-rhx6-c78j-4q9w",
+      "url": "https://github.com/advisories/GHSA-rhx6-c78j-4q9w"
+    },
+    "1106453": {
+      "findings": [
+        {
+          "version": "9.1.9",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/core-base",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/core-base",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/core-base",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@intlify/core-base",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>@intlify/core-base",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>@intlify/core-base",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/core-base",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/core-base",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/core-base",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>@intlify/core-base",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>@intlify/core-base",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-cli-shared>@intlify/core-base",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>@intlify/core-base",
+            "apps__mobile>@dcloudio/uni-cli-shared>@intlify/core-base",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@dcloudio/uni-cli-shared>@intlify/core-base"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1106453,
+      "title": "vue-i18n's escapeParameterHtml does not prevent DOM-based XSS through its tag attributes",
+      "module_name": "@intlify/core-base",
+      "vulnerable_versions": ">=9.0.0 <9.14.5",
+      "patched_versions": ">=9.14.5",
+      "severity": "moderate",
+      "cwe": "CWE-79",
+      "github_advisory_id": "GHSA-x8qp-wqqm-57ph",
+      "url": "https://github.com/advisories/GHSA-x8qp-wqqm-57ph"
+    },
+    "1107323": {
+      "findings": [
+        {
+          "version": "5.2.8",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue-jsx>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>vite",
+            "apps__mobile>vite"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1107323,
+      "title": "Vite middleware may serve files starting with the same name with the public directory",
+      "module_name": "vite",
+      "vulnerable_versions": "<=5.4.19",
+      "patched_versions": ">=5.4.20",
+      "severity": "low",
+      "cwe": "CWE-22, CWE-200, CWE-284",
+      "github_advisory_id": "GHSA-g4jq-h2w9-997c",
+      "url": "https://github.com/advisories/GHSA-g4jq-h2w9-997c"
+    },
+    "1107327": {
+      "findings": [
+        {
+          "version": "5.2.8",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue-jsx>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>vite",
+            "apps__mobile>vite"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1107327,
+      "title": "Vite's `server.fs` settings were not applied to HTML files",
+      "module_name": "vite",
+      "vulnerable_versions": "<=5.4.19",
+      "patched_versions": ">=5.4.20",
+      "severity": "low",
+      "cwe": "CWE-23, CWE-200, CWE-284",
+      "github_advisory_id": "GHSA-jqfw-vq24-v9c3",
+      "url": "https://github.com/advisories/GHSA-jqfw-vq24-v9c3"
+    },
+    "1109131": {
+      "findings": [
+        {
+          "version": "5.2.8",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue-jsx>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>vite",
+            "apps__mobile>vite"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1109131,
+      "title": "vite allows server.fs.deny bypass via backslash on Windows",
+      "module_name": "vite",
+      "vulnerable_versions": ">=5.2.6 <=5.4.20",
+      "patched_versions": ">=5.4.21",
+      "severity": "moderate",
+      "cwe": "CWE-22",
+      "github_advisory_id": "GHSA-93m4-6634-74q7",
+      "url": "https://github.com/advisories/GHSA-93m4-6634-74q7"
+    },
+    "1109556": {
+      "findings": [
+        {
+          "version": "0.18.0",
+          "paths": [
+            "apps__mobile>@dcloudio/vite-plugin-uni>express>serve-static>send"
+          ],
+          "dev": true,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1109556,
+      "title": "send vulnerable to template injection that can lead to XSS",
+      "module_name": "send",
+      "vulnerable_versions": "<0.19.0",
+      "patched_versions": ">=0.19.0",
+      "severity": "low",
+      "cwe": "CWE-79",
+      "github_advisory_id": "GHSA-m6fv-jmcg-4jfg",
+      "url": "https://github.com/advisories/GHSA-m6fv-jmcg-4jfg"
+    },
+    "1112511": {
+      "findings": [
+        {
+          "version": "5.2.8",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue-jsx>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>vite",
+            "apps__mobile>vite"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1112511,
+      "title": "Vite has a `server.fs.deny` bypassed for `inline` and `raw` with `?import` query",
+      "module_name": "vite",
+      "vulnerable_versions": ">=5.0.0 <5.4.16",
+      "patched_versions": ">=5.4.16",
+      "severity": "moderate",
+      "cwe": "CWE-200, CWE-284",
+      "github_advisory_id": "GHSA-4r4m-qw57-chr8",
+      "url": "https://github.com/advisories/GHSA-4r4m-qw57-chr8"
+    },
+    "1113161": {
+      "findings": [
+        {
+          "version": "6.13.0",
+          "paths": [
+            "apps__mobile>@dcloudio/vite-plugin-uni>express>body-parser>qs"
+          ],
+          "dev": true,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "version": "6.11.0",
+          "paths": [
+            "apps__mobile>@dcloudio/vite-plugin-uni>express>qs"
+          ],
+          "dev": true,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1113161,
+      "title": "qs's arrayLimit bypass in comma parsing allows denial of service",
+      "module_name": "qs",
+      "vulnerable_versions": ">=6.7.0 <=6.14.1",
+      "patched_versions": ">=6.14.2",
+      "severity": "low",
+      "cwe": "CWE-20",
+      "github_advisory_id": "GHSA-w7fw-mjwx-w883",
+      "url": "https://github.com/advisories/GHSA-w7fw-mjwx-w883"
+    },
+    "1113719": {
+      "findings": [
+        {
+          "version": "6.13.0",
+          "paths": [
+            "apps__mobile>@dcloudio/vite-plugin-uni>express>body-parser>qs"
+          ],
+          "dev": true,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "version": "6.11.0",
+          "paths": [
+            "apps__mobile>@dcloudio/vite-plugin-uni>express>qs"
+          ],
+          "dev": true,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1113719,
+      "title": "qs's arrayLimit bypass in its bracket notation allows DoS via memory exhaustion",
+      "module_name": "qs",
+      "vulnerable_versions": "<6.14.1",
+      "patched_versions": ">=6.14.1",
+      "severity": "moderate",
+      "cwe": "CWE-20",
+      "github_advisory_id": "GHSA-6rw7-vpxm-498p",
+      "url": "https://github.com/advisories/GHSA-6rw7-vpxm-498p"
+    },
+    "1115527": {
+      "findings": [
+        {
+          "version": "0.1.10",
+          "paths": [
+            "apps__mobile>@dcloudio/vite-plugin-uni>express>path-to-regexp"
+          ],
+          "dev": true,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1115527,
+      "title": "path-to-regexp vulnerable to Regular Expression Denial of Service via multiple route parameters",
+      "module_name": "path-to-regexp",
+      "vulnerable_versions": "<0.1.13",
+      "patched_versions": ">=0.1.13",
+      "severity": "high",
+      "cwe": "CWE-1333",
+      "github_advisory_id": "GHSA-37ch-88jc-xwx2",
+      "url": "https://github.com/advisories/GHSA-37ch-88jc-xwx2"
+    },
+    "1116229": {
+      "findings": [
+        {
+          "version": "5.2.8",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue-jsx>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>vite",
+            "apps__mobile>vite"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1116229,
+      "title": "Vite Vulnerable to Path Traversal in Optimized Deps `.map` Handling",
+      "module_name": "vite",
+      "vulnerable_versions": "<=6.4.1",
+      "patched_versions": ">=6.4.2",
+      "severity": "moderate",
+      "cwe": "CWE-22, CWE-200",
+      "github_advisory_id": "GHSA-4w7w-66w2-5vf9",
+      "url": "https://github.com/advisories/GHSA-4w7w-66w2-5vf9"
+    },
+    "1117015": {
+      "findings": [
+        {
+          "version": "8.5.6",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@dcloudio/uni-nvue-styler>postcss"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1117015,
+      "title": "PostCSS has XSS via Unescaped </style> in its CSS Stringify Output",
+      "module_name": "postcss",
+      "vulnerable_versions": "<8.5.10",
+      "patched_versions": ">=8.5.10",
+      "severity": "moderate",
+      "cwe": "CWE-79",
+      "github_advisory_id": "GHSA-qx2v-qp2m-jg93",
+      "url": "https://github.com/advisories/GHSA-qx2v-qp2m-jg93"
+    },
+    "1119108": {
+      "findings": [
+        {
+          "version": "8.18.0",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-mp-weixin>ws"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1119108,
+      "title": "ws: Uninitialized memory disclosure",
+      "module_name": "ws",
+      "vulnerable_versions": ">=8.0.0 <8.20.1",
+      "patched_versions": ">=8.20.1",
+      "severity": "moderate",
+      "cwe": "CWE-908",
+      "github_advisory_id": "GHSA-58qx-3vcg-4xpx",
+      "url": "https://github.com/advisories/GHSA-58qx-3vcg-4xpx"
+    },
+    "1119502": {
+      "findings": [
+        {
+          "version": "6.13.0",
+          "paths": [
+            "apps__mobile>@dcloudio/vite-plugin-uni>express>body-parser>qs"
+          ],
+          "dev": true,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1119502,
+      "title": "qs has a remotely triggerable DoS: qs.stringify crashes with TypeError on null/undefined entries in comma-format arrays when encodeValuesOnly is set",
+      "module_name": "qs",
+      "vulnerable_versions": ">=6.11.1 <=6.15.1",
+      "patched_versions": ">=6.15.2",
+      "severity": "moderate",
+      "cwe": "CWE-476",
+      "github_advisory_id": "GHSA-q8mj-m7cp-5q26",
+      "url": "https://github.com/advisories/GHSA-q8mj-m7cp-5q26"
+    },
+    "1120061": {
+      "findings": [
+        {
+          "version": "5.2.8",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue-jsx>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>vite",
+            "apps__mobile>vite"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1120061,
+      "title": "launch-editor vulnerable to command injection via the crafted request on Windows",
+      "module_name": "vite",
+      "vulnerable_versions": "<=5.4.8",
+      "patched_versions": ">=5.4.9",
+      "severity": "high",
+      "cwe": "CWE-77",
+      "github_advisory_id": "GHSA-c27g-q93r-2cwf",
+      "url": "https://github.com/advisories/GHSA-c27g-q93r-2cwf"
+    },
+    "1120784": {
+      "findings": [
+        {
+          "version": "5.2.8",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue-jsx>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>vite",
+            "apps__mobile>vite"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1120784,
+      "title": "launch-editor: NTLMv2 hash disclosure via UNC path handling on Windows",
+      "module_name": "vite",
+      "vulnerable_versions": "<=6.4.2",
+      "patched_versions": ">=6.4.3",
+      "severity": "moderate",
+      "cwe": "CWE-73, CWE-522",
+      "github_advisory_id": "GHSA-v6wh-96g9-6wx3",
+      "url": "https://github.com/advisories/GHSA-v6wh-96g9-6wx3"
+    },
+    "1123259": {
+      "findings": [
+        {
+          "version": "8.18.0",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-mp-weixin>ws"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1123259,
+      "title": "ws: Memory exhaustion DoS from tiny fragments and data chunks",
+      "module_name": "ws",
+      "vulnerable_versions": ">=8.0.0 <8.21.0",
+      "patched_versions": ">=8.21.0",
+      "severity": "high",
+      "cwe": "CWE-400, CWE-770, CWE-1050",
+      "github_advisory_id": "GHSA-96hv-2xvq-fx4p",
+      "url": "https://github.com/advisories/GHSA-96hv-2xvq-fx4p"
+    },
+    "1123525": {
+      "findings": [
+        {
+          "version": "5.2.8",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vitejs/plugin-basic-ssl>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue-jsx>vite",
+            "apps__mobile>@dcloudio/vite-plugin-uni>vite",
+            "apps__mobile>vite"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1123525,
+      "title": "vite: `server.fs.deny` bypass on Windows alternate paths",
+      "module_name": "vite",
+      "vulnerable_versions": "<=6.4.2",
+      "patched_versions": ">=6.4.3",
+      "severity": "high",
+      "cwe": "CWE-22, CWE-200",
+      "github_advisory_id": "GHSA-fx2h-pf6j-xcff",
+      "url": "https://github.com/advisories/GHSA-fx2h-pf6j-xcff"
+    },
+    "1123528": {
+      "findings": [
+        {
+          "version": "7.25.2",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@babel/core",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@babel/core",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@babel/core",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@babel/core",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>@babel/core",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>@babel/core",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@babel/core",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@babel/core",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@babel/core",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>@babel/core",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>@babel/core",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-cli-shared>@babel/core",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>@babel/core",
+            "apps__mobile>@dcloudio/uni-cli-shared>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@babel/plugin-syntax-import-meta>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@babel/plugin-transform-typescript>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@babel/plugin-transform-typescript>@babel/helper-create-class-features-plugin>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@babel/plugin-transform-typescript>@babel/helper-create-class-features-plugin>@babel/helper-replace-supers>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@babel/plugin-transform-typescript>@babel/plugin-syntax-typescript>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@dcloudio/uni-cli-shared>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-bugfix-firefox-class-in-computed-class-key>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-bugfix-safari-class-field-initializer-scope>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-bugfix-safari-id-destructuring-collision-in-function-expression>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-bugfix-safari-rest-destructuring-rhs-array>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-bugfix-v8-spread-parameters-in-optional-chaining>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-bugfix-v8-spread-parameters-in-optional-chaining>@babel/plugin-transform-optional-chaining>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-bugfix-v8-static-class-fields-redefine-readonly>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-proposal-private-property-in-object>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-syntax-import-assertions>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-syntax-import-attributes>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-syntax-unicode-sets-regex>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-syntax-unicode-sets-regex>@babel/helper-create-regexp-features-plugin>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-arrow-functions>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-async-generator-functions>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-async-generator-functions>@babel/helper-remap-async-to-generator>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-async-to-generator>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-async-to-generator>@babel/helper-remap-async-to-generator>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-block-scoped-functions>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-block-scoping>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-class-properties>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-class-properties>@babel/helper-create-class-features-plugin>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-class-properties>@babel/helper-create-class-features-plugin>@babel/helper-replace-supers>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-class-static-block>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-class-static-block>@babel/helper-create-class-features-plugin>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-class-static-block>@babel/helper-create-class-features-plugin>@babel/helper-replace-supers>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-classes>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-classes>@babel/helper-replace-supers>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-computed-properties>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-destructuring>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-dotall-regex>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-dotall-regex>@babel/helper-create-regexp-features-plugin>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-duplicate-keys>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-duplicate-named-capturing-groups-regex>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-duplicate-named-capturing-groups-regex>@babel/helper-create-regexp-features-plugin>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-dynamic-import>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-explicit-resource-management>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-explicit-resource-management>@babel/plugin-transform-destructuring>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-exponentiation-operator>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-export-namespace-from>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-for-of>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-function-name>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-json-strings>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-literals>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-logical-assignment-operators>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-member-expression-literals>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-modules-amd>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-modules-amd>@babel/helper-module-transforms>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-modules-commonjs>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-modules-commonjs>@babel/helper-module-transforms>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-modules-systemjs>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-modules-systemjs>@babel/helper-module-transforms>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-modules-umd>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-modules-umd>@babel/helper-module-transforms>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-named-capturing-groups-regex>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-named-capturing-groups-regex>@babel/helper-create-regexp-features-plugin>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-new-target>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-nullish-coalescing-operator>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-numeric-separator>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-object-rest-spread>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-object-rest-spread>@babel/plugin-transform-destructuring>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-object-rest-spread>@babel/plugin-transform-parameters>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-object-super>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-object-super>@babel/helper-replace-supers>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-optional-catch-binding>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-optional-chaining>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-parameters>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-private-methods>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-private-methods>@babel/helper-create-class-features-plugin>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-private-methods>@babel/helper-create-class-features-plugin>@babel/helper-replace-supers>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-private-property-in-object>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-private-property-in-object>@babel/helper-create-class-features-plugin>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-private-property-in-object>@babel/helper-create-class-features-plugin>@babel/helper-replace-supers>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-property-literals>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-regenerator>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-regexp-modifiers>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-regexp-modifiers>@babel/helper-create-regexp-features-plugin>@babel/core",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-legacy>@babel/preset-env>@babel/plugin-transform-reserved-words>@babel/core"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1123528,
+      "title": "@babel/core: Arbitrary File Read via sourceMappingURL Comment",
+      "module_name": "@babel/core",
+      "vulnerable_versions": "<=7.29.0",
+      "patched_versions": ">=7.29.1",
+      "severity": "low",
+      "cwe": "CWE-22, CWE-200",
+      "github_advisory_id": "GHSA-4x5r-pxfx-6jf8",
+      "url": "https://github.com/advisories/GHSA-4x5r-pxfx-6jf8"
+    },
+    "1123686": {
+      "findings": [
+        {
+          "version": "0.5.16",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@dcloudio/uni-cli-shared>adm-zip"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1123686,
+      "title": "adm-zip: Crafted ZIP file triggers 4GB memory allocation",
+      "module_name": "adm-zip",
+      "vulnerable_versions": "<0.6.0",
+      "patched_versions": ">=0.6.0",
+      "severity": "high",
+      "cwe": "CWE-400, CWE-789",
+      "github_advisory_id": "GHSA-xcpc-8h2w-3j85",
+      "url": "https://github.com/advisories/GHSA-xcpc-8h2w-3j85"
+    },
+    "1123977": {
+      "findings": [
+        {
+          "version": "1.20.3",
+          "paths": [
+            "apps__mobile>@dcloudio/vite-plugin-uni>express>body-parser"
+          ],
+          "dev": true,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1123977,
+      "title": "body-parser vulnerable to denial of service when invalid limit value silently disables size enforcement",
+      "module_name": "body-parser",
+      "vulnerable_versions": "<1.20.6",
+      "patched_versions": ">=1.20.6",
+      "severity": "low",
+      "cwe": "CWE-770",
+      "github_advisory_id": "GHSA-v422-hmwv-36x6",
+      "url": "https://github.com/advisories/GHSA-v422-hmwv-36x6"
+    },
+    "1124252": {
+      "findings": [
+        {
+          "version": "8.5.6",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@dcloudio/uni-nvue-styler>postcss"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1124252,
+      "title": "PostCSS: Arbitrary file read and information disclosure via attacker-controlled sourceMappingURL in CSS comments",
+      "module_name": "postcss",
+      "vulnerable_versions": "<=8.5.11",
+      "patched_versions": ">=8.5.12",
+      "severity": "high",
+      "cwe": "CWE-22, CWE-200",
+      "github_advisory_id": "GHSA-6g55-p6wh-862q",
+      "url": "https://github.com/advisories/GHSA-6g55-p6wh-862q"
+    },
+    "1130709": {
+      "findings": [
+        {
+          "version": "8.5.6",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@dcloudio/uni-nvue-styler>postcss"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1130709,
+      "title": "PostCSS: incomplete fix of GHSA-6g55-p6wh-862q — attacker-controlled sourceMappingURL reads arbitrary .map files when `from` is unset",
+      "module_name": "postcss",
+      "vulnerable_versions": "<=8.5.22",
+      "patched_versions": ">=8.5.23",
+      "severity": "moderate",
+      "cwe": "CWE-22, CWE-200",
+      "github_advisory_id": "GHSA-fxqj-rqcc-2cmp",
+      "url": "https://github.com/advisories/GHSA-fxqj-rqcc-2cmp"
+    },
+    "1139510": {
+      "findings": [
+        {
+          "version": "8.5.6",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@dcloudio/uni-nvue-styler>postcss"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1139510,
+      "title": "PostCSS: Path Traversal in Previous Source Map Auto-Loading (sourceMappingURL) leads to Arbitrary .map File Disclosure",
+      "module_name": "postcss",
+      "vulnerable_versions": "<=8.5.17",
+      "patched_versions": ">=8.5.18",
+      "severity": "high",
+      "cwe": "CWE-22",
+      "github_advisory_id": "GHSA-r28c-9q8g-f849",
+      "url": "https://github.com/advisories/GHSA-r28c-9q8g-f849"
+    },
+    "1146054": {
+      "findings": [
+        {
+          "version": "9.1.9",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/core-base",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/core-base",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/core-base",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@intlify/core-base",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>@intlify/core-base",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>@intlify/core-base",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/core-base",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/core-base",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/core-base",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>@intlify/core-base",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>@intlify/core-base",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-cli-shared>@intlify/core-base",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>@intlify/core-base",
+            "apps__mobile>@dcloudio/uni-cli-shared>@intlify/core-base",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@dcloudio/uni-cli-shared>@intlify/core-base"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1146054,
+      "title": "Vue I18n Allows Prototype Pollution in `handleFlatJson`",
+      "module_name": "@intlify/core-base",
+      "vulnerable_versions": ">=9.1.0 <9.1.11",
+      "patched_versions": ">=9.1.11",
+      "severity": "high",
+      "cwe": "CWE-1321",
+      "github_advisory_id": "GHSA-p2ph-7g93-hw3m",
+      "url": "https://github.com/advisories/GHSA-p2ph-7g93-hw3m"
+    },
+    "1146058": {
+      "findings": [
+        {
+          "version": "9.1.9",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/runtime>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/runtime>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/vue-devtools>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/vue-devtools>@intlify/runtime>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/vue-devtools>@intlify/runtime>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/vue-devtools>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/vue-devtools>@intlify/runtime>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/vue-devtools>@intlify/runtime>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/runtime>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/runtime>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/vue-devtools>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/vue-devtools>@intlify/runtime>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/vue-devtools>@intlify/runtime>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/vue-devtools>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/vue-devtools>@intlify/runtime>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/vue-devtools>@intlify/runtime>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/runtime>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/runtime>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/vue-devtools>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/vue-devtools>@intlify/runtime>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/vue-devtools>@intlify/runtime>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/vue-devtools>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/vue-devtools>@intlify/runtime>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/vue-devtools>@intlify/runtime>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/runtime>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/runtime>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/vue-devtools>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/vue-devtools>@intlify/runtime>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/vue-devtools>@intlify/runtime>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@intlify/vue-devtools>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@intlify/vue-devtools>@intlify/runtime>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@intlify/vue-devtools>@intlify/runtime>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/runtime>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/runtime>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/vue-devtools>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/vue-devtools>@intlify/runtime>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/vue-devtools>@intlify/runtime>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>@intlify/vue-devtools>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>@intlify/vue-devtools>@intlify/runtime>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>@intlify/vue-devtools>@intlify/runtime>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/runtime>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/runtime>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/vue-devtools>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/vue-devtools>@intlify/runtime>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/vue-devtools>@intlify/runtime>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>@intlify/vue-devtools>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>@intlify/vue-devtools>@intlify/runtime>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>@intlify/vue-devtools>@intlify/runtime>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/runtime>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/runtime>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/vue-devtools>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/vue-devtools>@intlify/runtime>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/vue-devtools>@intlify/runtime>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/vue-devtools>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/vue-devtools>@intlify/runtime>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@intlify/vue-devtools>@intlify/runtime>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/runtime>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/runtime>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/vue-devtools>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/vue-devtools>@intlify/runtime>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/vue-devtools>@intlify/runtime>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/vue-devtools>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/vue-devtools>@intlify/runtime>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/vue-devtools>@intlify/runtime>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/runtime>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/runtime>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/vue-devtools>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/vue-devtools>@intlify/runtime>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/vue-devtools>@intlify/runtime>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/vue-devtools>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/vue-devtools>@intlify/runtime>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@intlify/vue-devtools>@intlify/runtime>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/runtime>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/runtime>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/vue-devtools>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/vue-devtools>@intlify/runtime>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>@intlify/core-base>@intlify/vue-devtools>@intlify/runtime>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>@intlify/vue-devtools>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>@intlify/vue-devtools>@intlify/runtime>@intlify/message-compiler>@intlify/message-resolver",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>@intlify/vue-devtools>@intlify/runtime>@intlify/message-resolver"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1146058,
+      "title": "Vue I18n Allows Prototype Pollution in `handleFlatJson`",
+      "module_name": "@intlify/message-resolver",
+      "vulnerable_versions": ">=9.1.0 <9.1.11",
+      "patched_versions": ">=9.1.11",
+      "severity": "high",
+      "cwe": "CWE-1321",
+      "github_advisory_id": "GHSA-p2ph-7g93-hw3m",
+      "url": "https://github.com/advisories/GHSA-p2ph-7g93-hw3m"
+    },
+    "1153170": {
+      "findings": [
+        {
+          "version": "6.1.2",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-h5>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-cli-shared>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-cli-shared>postcss-selector-parser",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@dcloudio/uni-cli-shared>postcss-selector-parser"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1153170,
+      "title": "postcss-selector-parser allows denial of service through uncontrolled AST recursion",
+      "module_name": "postcss-selector-parser",
+      "vulnerable_versions": ">=6.1.0 <6.1.3",
+      "patched_versions": ">=6.1.3",
+      "severity": "low",
+      "cwe": "CWE-404",
+      "github_advisory_id": "GHSA-w9m9-85wc-3x92",
+      "url": "https://github.com/advisories/GHSA-w9m9-85wc-3x92"
+    },
+    "1158507": {
+      "findings": [
+        {
+          "version": "6.13.0",
+          "paths": [
+            "apps__mobile>@dcloudio/vite-plugin-uni>express>body-parser>qs"
+          ],
+          "dev": true,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "version": "6.11.0",
+          "paths": [
+            "apps__mobile>@dcloudio/vite-plugin-uni>express>qs"
+          ],
+          "dev": true,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1158507,
+      "title": "qs: Denial of Service via Attacker Controlled isBuffer",
+      "module_name": "qs",
+      "vulnerable_versions": ">=2.2.5 <6.16.0",
+      "patched_versions": ">=6.16.0",
+      "severity": "moderate",
+      "cwe": "CWE-248, CWE-703",
+      "github_advisory_id": "GHSA-4mjr-xmp4-gh2g",
+      "url": "https://github.com/advisories/GHSA-4mjr-xmp4-gh2g"
+    },
+    "1193734": {
+      "findings": [
+        {
+          "version": "0.5.16",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@dcloudio/uni-cli-shared>adm-zip"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1193734,
+      "title": "adm-zip extraction follows destination symlinks, allowing arbitrary file overwrite",
+      "module_name": "adm-zip",
+      "vulnerable_versions": ">=0.5.9 <=0.6.0",
+      "patched_versions": ">=0.6.1",
+      "severity": "moderate",
+      "cwe": "CWE-59",
+      "github_advisory_id": "GHSA-vwc7-r8mq-g2x9",
+      "url": "https://github.com/advisories/GHSA-vwc7-r8mq-g2x9"
+    },
+    "1239030": {
+      "findings": [
+        {
+          "version": "0.5.16",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@dcloudio/uni-cli-shared>adm-zip"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1239030,
+      "title": "adm-zip: Uncontrolled memory allocation via the declared uncompressed size (DoS)",
+      "module_name": "adm-zip",
+      "vulnerable_versions": "<0.6.1",
+      "patched_versions": ">=0.6.1",
+      "severity": "high",
+      "cwe": "CWE-789",
+      "github_advisory_id": "GHSA-7q85-xj36-vmfc",
+      "url": "https://github.com/advisories/GHSA-7q85-xj36-vmfc"
+    },
+    "1240032": {
+      "findings": [
+        {
+          "version": "0.5.16",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@dcloudio/uni-cli-shared>adm-zip"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1240032,
+      "title": "adm-zip: Decompression-bomb protection (fix for CVE-2026-39244) can be bypassed by declaring uncompressed size as 0",
+      "module_name": "adm-zip",
+      "vulnerable_versions": "<=0.6.0",
+      "patched_versions": ">=0.6.1",
+      "severity": "high",
+      "cwe": "CWE-409",
+      "github_advisory_id": "GHSA-rcw4-f5rp-g42v",
+      "url": "https://github.com/advisories/GHSA-rcw4-f5rp-g42v"
+    },
+    "1240034": {
+      "findings": [
+        {
+          "version": "0.5.16",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@dcloudio/uni-cli-shared>adm-zip"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1240034,
+      "title": "adm-zip extraction preserves SUID/SGID bits from untrusted ZIPs -> local privilege escalation",
+      "module_name": "adm-zip",
+      "vulnerable_versions": "<=0.6.0",
+      "patched_versions": ">=0.6.1",
+      "severity": "high",
+      "cwe": "CWE-732",
+      "github_advisory_id": "GHSA-j5f4-cc29-5x44",
+      "url": "https://github.com/advisories/GHSA-j5f4-cc29-5x44"
+    },
+    "1240064": {
+      "findings": [
+        {
+          "version": "0.5.16",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@dcloudio/uni-cli-shared>adm-zip"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1240064,
+      "title": "adm-zip: Duplicate ZIP entry names: getEntry() and extractAllTo() resolve to different content",
+      "module_name": "adm-zip",
+      "vulnerable_versions": "<=0.6.0",
+      "patched_versions": ">=0.6.1",
+      "severity": "moderate",
+      "cwe": "CWE-436, CWE-696",
+      "github_advisory_id": "GHSA-p634-w6r4-rjp2",
+      "url": "https://github.com/advisories/GHSA-p634-w6r4-rjp2"
+    },
+    "1240065": {
+      "findings": [
+        {
+          "version": "0.5.16",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@dcloudio/uni-cli-shared>adm-zip"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1240065,
+      "title": "adm-zip: getDataAsync() bypasses the maxOutputLength size guard enforced by the synchronous getData() path",
+      "module_name": "adm-zip",
+      "vulnerable_versions": "<=0.6.0",
+      "patched_versions": ">=0.6.1",
+      "severity": "moderate",
+      "cwe": "CWE-400, CWE-770",
+      "github_advisory_id": "GHSA-c6fg-446q-cg94",
+      "url": "https://github.com/advisories/GHSA-c6fg-446q-cg94"
+    },
+    "1240066": {
+      "findings": [
+        {
+          "version": "0.5.16",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/uni-cli-shared>adm-zip",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@dcloudio/uni-cli-shared>adm-zip"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1240066,
+      "title": "adm-zip: Unhandled error event in async DEFLATE decompression crashes Node.js process (DoS)",
+      "module_name": "adm-zip",
+      "vulnerable_versions": "<=0.6.0",
+      "patched_versions": ">=0.6.1",
+      "severity": "high",
+      "cwe": "CWE-248, CWE-400",
+      "github_advisory_id": "GHSA-8238-w5pm-2374",
+      "url": "https://github.com/advisories/GHSA-8238-w5pm-2374"
+    },
+    "1240992": {
+      "findings": [
+        {
+          "version": "3.0.3",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>chokidar>braces",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>unimport>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>unplugin-auto-import>unimport>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>chokidar>braces",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>unimport>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>unplugin-auto-import>unimport>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>chokidar>braces",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>unimport>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>unplugin-auto-import>unimport>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>chokidar>braces",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>unimport>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>unplugin-auto-import>unimport>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>chokidar>braces",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>unimport>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>unplugin-auto-import>unimport>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>chokidar>braces",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>unimport>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>unplugin-auto-import>unimport>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>chokidar>braces",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>unimport>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>unplugin-auto-import>unimport>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>chokidar>braces",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>unimport>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>unplugin-auto-import>unimport>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>chokidar>braces",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>unimport>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>unplugin-auto-import>unimport>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>chokidar>braces",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>unimport>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>unplugin-auto-import>unimport>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>chokidar>braces",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>unimport>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>unplugin-auto-import>unimport>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-cli-shared>chokidar>braces",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-cli-shared>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-cli-shared>unimport>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-cli-shared>unplugin-auto-import>unimport>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>chokidar>braces",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>unimport>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>unplugin-auto-import>unimport>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-cli-shared>chokidar>braces",
+            "apps__mobile>@dcloudio/uni-cli-shared>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-cli-shared>unimport>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/uni-cli-shared>unplugin-auto-import>unimport>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@dcloudio/uni-cli-shared>chokidar>braces",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@dcloudio/uni-cli-shared>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@dcloudio/uni-cli-shared>unimport>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@dcloudio/uni-cli-shared>unplugin-auto-import>unimport>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/vite-plugin-uni>fast-glob>micromatch>braces",
+            "apps__mobile>@dcloudio/vite-plugin-uni>unplugin-auto-import>unimport>fast-glob>micromatch>braces"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1240992,
+      "title": "braces vulnerable to stack-exhaustion denial of service through deeply nested patterns",
+      "module_name": "braces",
+      "vulnerable_versions": "<=3.0.3",
+      "patched_versions": ">=3.0.4",
+      "severity": "high",
+      "cwe": "CWE-674",
+      "github_advisory_id": "GHSA-vfj7-8cjw-p6xm",
+      "url": "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm"
+    },
+    "1241209": {
+      "findings": [
+        {
+          "version": "1.2.1",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@vue/compiler-sfc>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@vue/compiler-sfc>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@vue/compiler-sfc>@vue/compiler-ssr>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@vue/compiler-sfc>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@vue/compiler-ssr>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@vue/server-renderer>@vue/compiler-ssr>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@vue/server-renderer>vue>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@vue/server-renderer>vue>@vue/compiler-sfc>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@vue/server-renderer>vue>@vue/compiler-sfc>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@vue/server-renderer>vue>@vue/compiler-sfc>@vue/compiler-ssr>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@vue/server-renderer>vue>@vue/compiler-sfc>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@vue/compiler-sfc>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@vue/compiler-sfc>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@vue/compiler-sfc>@vue/compiler-ssr>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@vue/compiler-sfc>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@vue/compiler-ssr>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@vue/server-renderer>@vue/compiler-ssr>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@vue/server-renderer>vue>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@vue/server-renderer>vue>@vue/compiler-sfc>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@vue/server-renderer>vue>@vue/compiler-sfc>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@vue/server-renderer>vue>@vue/compiler-sfc>@vue/compiler-ssr>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@vue/server-renderer>vue>@vue/compiler-sfc>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@vue/compiler-sfc>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@vue/compiler-sfc>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@vue/compiler-sfc>@vue/compiler-ssr>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@vue/compiler-sfc>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@vue/compiler-ssr>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@vue/server-renderer>@vue/compiler-ssr>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@vue/server-renderer>vue>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@vue/server-renderer>vue>@vue/compiler-sfc>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@vue/server-renderer>vue>@vue/compiler-sfc>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@vue/server-renderer>vue>@vue/compiler-sfc>@vue/compiler-ssr>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@vue/server-renderer>vue>@vue/compiler-sfc>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vue/compiler-sfc>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vue/compiler-sfc>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vue/compiler-sfc>@vue/compiler-ssr>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vue/compiler-sfc>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vue/server-renderer>@vue/compiler-ssr>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vue/server-renderer>vue>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vue/server-renderer>vue>@vue/compiler-sfc>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vue/server-renderer>vue>@vue/compiler-sfc>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vue/server-renderer>vue>@vue/compiler-sfc>@vue/compiler-ssr>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vue/server-renderer>vue>@vue/compiler-sfc>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vue>@vue/server-renderer>@vue/compiler-ssr>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vue>@vue/server-renderer>vue>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vue>@vue/server-renderer>vue>@vue/compiler-sfc>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vue>@vue/server-renderer>vue>@vue/compiler-sfc>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vue>@vue/server-renderer>vue>@vue/compiler-sfc>@vue/compiler-ssr>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vue>@vue/server-renderer>vue>@vue/compiler-sfc>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@vue/server-renderer>@vue/compiler-ssr>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@vue/server-renderer>vue>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@vue/server-renderer>vue>@vue/compiler-sfc>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@vue/server-renderer>vue>@vue/compiler-sfc>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@vue/server-renderer>vue>@vue/compiler-sfc>@vue/compiler-ssr>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@vue/server-renderer>vue>@vue/compiler-sfc>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>vue-router>vue>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>vue-router>vue>@vue/compiler-sfc>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>vue-router>vue>@vue/compiler-sfc>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>vue-router>vue>@vue/compiler-sfc>@vue/compiler-ssr>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>vue-router>vue>@vue/compiler-sfc>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>vue-router>vue>@vue/server-renderer>@vue/compiler-ssr>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@vue/compiler-sfc>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@vue/compiler-sfc>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@vue/compiler-sfc>@vue/compiler-ssr>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@vue/compiler-sfc>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@vue/compiler-ssr>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@vue/server-renderer>@vue/compiler-ssr>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@vue/server-renderer>vue>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@vue/server-renderer>vue>@vue/compiler-sfc>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@vue/server-renderer>vue>@vue/compiler-sfc>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@vue/server-renderer>vue>@vue/compiler-sfc>@vue/compiler-ssr>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@vue/server-renderer>vue>@vue/compiler-sfc>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>@dcloudio/uni-nvue-styler>postcss>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>@vue/compiler-sfc>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>@vue/compiler-sfc>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>@vue/compiler-sfc>@vue/compiler-ssr>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>@vue/compiler-sfc>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>@vue/compiler-ssr>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>@vue/server-renderer>@vue/compiler-ssr>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>@vue/server-renderer>vue>@vue/compiler-dom>@vue/compiler-core>source-map-js",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>@vue/server-renderer>vue>@vue/compiler-sfc>@vue/compiler-core>source-map-js"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1241209,
+      "title": "source-map-js allows event-loop denial of service through indexed source-map section offsets",
+      "module_name": "source-map-js",
+      "vulnerable_versions": ">=1.0.0 <1.2.2",
+      "patched_versions": ">=1.2.2",
+      "severity": "high",
+      "cwe": "CWE-1284",
+      "github_advisory_id": "GHSA-68fv-2mgg-jv7q",
+      "url": "https://github.com/advisories/GHSA-68fv-2mgg-jv7q"
+    },
+    "1241232": {
+      "findings": [
+        {
+          "version": "6.1.2",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-h5>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-cli-shared>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>postcss-selector-parser",
+            "apps__mobile>@dcloudio/uni-cli-shared>postcss-selector-parser",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@dcloudio/uni-cli-shared>postcss-selector-parser"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1241232,
+      "title": "PostCSS: Quadratic complexity in flat selector parsing allows CPU exhaustion",
+      "module_name": "postcss-selector-parser",
+      "vulnerable_versions": "<7.1.6",
+      "patched_versions": ">=7.1.6",
+      "severity": "moderate",
+      "cwe": "CWE-400, CWE-407",
+      "github_advisory_id": "GHSA-rj75-hqrm-r3gf",
+      "url": "https://github.com/advisories/GHSA-rj75-hqrm-r3gf"
+    },
+    "1241259": {
+      "findings": [
+        {
+          "version": "3.4.21",
+          "paths": [
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@vue/server-renderer",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@vue/server-renderer",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@vue/server-renderer",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vue/server-renderer",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vue>@vue/server-renderer",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>@vue/server-renderer",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-components>@dcloudio/uni-h5>vue-router>vue>@vue/server-renderer",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-console>@dcloudio/uni-cli-shared>@vue/server-renderer",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-push>@dcloudio/uni-cli-shared>@vue/server-renderer",
+            "apps__mobile>@dcloudio/uni-app>@dcloudio/uni-stat>@dcloudio/uni-cli-shared>@vue/server-renderer",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-cloud>@dcloudio/uni-cli-shared>@vue/server-renderer",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@vue/server-renderer",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vue/server-renderer",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@dcloudio/uni-h5-vue>@vue/server-renderer",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>@vue/server-renderer",
+            "apps__mobile>@dcloudio/uni-components>@dcloudio/uni-h5>vue-router>vue>@vue/server-renderer",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@dcloudio/uni-cli-shared>@vue/server-renderer",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vite>@vue/server-renderer",
+            "apps__mobile>@dcloudio/uni-h5>@dcloudio/uni-h5-vue>@vue/server-renderer",
+            "apps__mobile>@dcloudio/uni-h5>@vue/server-renderer",
+            "apps__mobile>@dcloudio/uni-h5>vue-router>vue>@vue/server-renderer",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-cli-shared>@vue/server-renderer",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>@vue/server-renderer",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-cli-shared>@vue/server-renderer",
+            "apps__mobile>@dcloudio/uni-mp-weixin>@dcloudio/uni-mp-vite>@dcloudio/uni-mp-compiler>@dcloudio/uni-cli-shared>@vue/server-renderer",
+            "apps__mobile>vue>@vue/server-renderer",
+            "apps__mobile>vue-i18n>vue>@vue/server-renderer",
+            "apps__mobile>@dcloudio/uni-cli-shared>@vue/server-renderer",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@dcloudio/uni-cli-shared>@vue/server-renderer",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue>vue>@vue/server-renderer",
+            "apps__mobile>@dcloudio/vite-plugin-uni>@vitejs/plugin-vue-jsx>vue>@vue/server-renderer"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1241259,
+      "title": "@vue/server-renderer: XSS via missing CR in attribute-name blacklist",
+      "module_name": "@vue/server-renderer",
+      "vulnerable_versions": "<3.5.42",
+      "patched_versions": ">=3.5.42",
+      "severity": "high",
+      "cwe": "CWE-79, CWE-116",
+      "github_advisory_id": "GHSA-g2v6-rqmx-r4w6",
+      "url": "https://github.com/advisories/GHSA-g2v6-rqmx-r4w6"
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 8,
+      "moderate": 25,
+      "high": 18,
+      "critical": 0
+    },
+    "dependencies": 342,
+    "devDependencies": 245,
+    "optionalDependencies": 140,
+    "totalDependencies": 686
+  }
+}

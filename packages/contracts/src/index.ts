@@ -1,0 +1,16 @@
+export type { Domain } from "./domain.generated";
+export type { Responses } from "./responses.generated";
+import type { Domain } from "./domain.generated";
+import type { Responses } from "./responses.generated";
+export type ProductRecord = Domain["ProductRecord"];
+export type DraftContent = Domain["DraftContent"];
+export type CreateProduct = Domain["CreateProduct"];
+export type Template = Responses["Template"];
+export type Category = Responses["AdminCategory"];
+export type AdminDraft = Responses["AdminDraft"];
+export type AdminProductRow = Responses["AdminProductRow"];
+export type PublicProductSummary = Responses["PublicProductSummary"];
+export type ApiErrorBody = Domain["Error"];
+export type Page = { nextCursor: string | null; hasMore: boolean };
+export type ListResponse<T> = { data: T[]; page: Page; requestId: string };
+export type ObjectResponse<T> = { data: T; requestId: string };

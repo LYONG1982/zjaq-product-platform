@@ -1,0 +1,122 @@
+{
+  "baselineFiles": 161,
+  "protectedFilesUnchanged": 67,
+  "protectedPrefixes": [
+    "delivery/",
+    "data/"
+  ],
+  "acceptanceDefinitionsUnchanged": true,
+  "changedBaselineFiles": [
+    {
+      "path": "AGENTS.md",
+      "before": "7fc41b370b63b4a3bc8d84b23b5e2553e38aa97bf31ff956f72d4ba36c563305",
+      "after": "3228da442aa7bedc32ffcc123925f0b5f219f1d4710451f0771a135293a1960d"
+    },
+    {
+      "path": "apps/admin/package.json",
+      "before": "b7f51ea0bd7d275a136bf108f478874df27e6a2f140e1d235208439198fdf29c",
+      "after": "8b937ac267d4de0c2d1ca73c2bdc287d0461f468a8142229518f4378cd237693"
+    },
+    {
+      "path": "apps/admin/src/App.vue",
+      "before": "0e1b9a115becae3a55274853c4435bb3c48ea6535e973e7386600c38f1580d60",
+      "after": "e90f01e809f7d0f31fcb28293c8cf7e9a20917e361e410715266b3faefb69706"
+    },
+    {
+      "path": "apps/admin/src/style.css",
+      "before": "a3eadb8e676b83a96c76b4c352d169927d6016e6e1ac3d38ec8cea1fb41eba82",
+      "after": "939dcfa6fa0f9ae3d6a900c8f8e100739646059b50097e9b5200e4b51d996c4c"
+    },
+    {
+      "path": "apps/mobile/src/components/CatalogView.vue",
+      "before": "718be17c1bf8dd88f20c4af97b9f8277c8690fe72b206f5a13fde4a6c7d80035",
+      "after": "01919baba00dcc0f3871d7dce5fa05d02d7f59704f62f878ed46876c70ebf134"
+    },
+    {
+      "path": "apps/portal/app/globals.css",
+      "before": "a815f41b2941fe7bbf55aa35879cfbd48fd8d4948b1a2b48d320693065b42bf4",
+      "after": "ec0c212a90be435651e04c18d548792d0fbf7a11712514ac0f21e1bb53ac03c1"
+    },
+    {
+      "path": "apps/portal/app/materials/page.tsx",
+      "before": "649227caf538b9994d0fe8eebe9035d898b72f1190347ca691237fabe127e6d4",
+      "after": "37fdc667fe07dce99443aa39ced9e64cc401d300cb3e3ac53a3ce9adc230f355"
+    },
+    {
+      "path": "apps/portal/app/products/page.tsx",
+      "before": "25019a6e4a8c2e5e34dcca374d42e06c4facf6308841bdf63bfcdce49d12cd17",
+      "after": "15edd22e7cd48a8d3e0b2a7cef1044c95dc869fcebbef3540c4f05a04677600b"
+    },
+    {
+      "path": "apps/portal/components/catalog.tsx",
+      "before": "c26d7765a7945d3a999619554d1b00dfeb9138add71c09999b321cf9d35aa108",
+      "after": "999050fd6ff80be25999387aa16ef06901b169e7e30659ac2f6d0d72c1b663db"
+    },
+    {
+      "path": "package.json",
+      "before": "5ee8eff99ed21b177308a6e1e925a10a35d41ffe5e52d54212b2cdc56aa8329b",
+      "after": "6738148564a93fc4a38911c8740927937f8770b5caa6d235a507fe1c7c8f0597"
+    },
+    {
+      "path": "packages/api-client/src/index.ts",
+      "before": "aa15ae962218daab4601a3e1155134335de991eb0e531de8a298d3377f768f96",
+      "after": "27bfaf88405dd8d20bd18f65cdf0dc22ea017ac02087171d7c07bf456d6161a5"
+    },
+    {
+      "path": "packages/contracts/src/domain.generated.d.ts",
+      "before": "98854b2918d5da43833c598222c6b8f1707ac34ddf17d7a183fa0ed32ddc6305",
+      "after": "e8a691427379ec6d929f699c8164f8f38749b8360696667861efc20419a128ab"
+    },
+    {
+      "path": "packages/contracts/src/responses.generated.d.ts",
+      "before": "50346182e810f30f643449eb226656bba3505a3994c803826b841d23aadfd108",
+      "after": "acc574dfccb07747de9bd7a7d98ca4bb932e3473fa49c30b50094d52cb4588d0"
+    },
+    {
+      "path": "packages/template-registry/src/index.ts",
+      "before": "cfeac3152f6b562853510d522c851af7f3eb53a7ef3064440bc9d8763486b980",
+      "after": "0c58ce7eb6816231b844d21dee4bc7b42b87da89ed6c2df612803ce85a28d255"
+    },
+    {
+      "path": "playwright.config.ts",
+      "before": "30b60a94e9bf5dfc6c9af22ecebdb8b2cfd395f72d245847c43b9326a2d18f5d",
+      "after": "fcad400dec5db3df7efeeb89d64f49cc51bc9a08c2b945a76ecd2b1a5501b8d0"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "before": "67c08a0527294c157e5345a5e2369eab015e98aebfb713cddcfbaed0a5566927",
+      "after": "67a3c40efed9d6243c5a9d48b92f6df84a8256f31d5f4d72948a17e10cfa1bfd"
+    },
+    {
+      "path": "scripts/generate.ts",
+      "before": "443fc28c242e4462fd704da47d0fb4b3cc3b1e686b36d8ef96313b5c07ffc1ca",
+      "after": "fc6ef8b42e17c5ffea448f8358d6d2e9a842298f79a8e831c94b9aefb23b8ae9"
+    },
+    {
+      "path": "services/mock-api/package.json",
+      "before": "2a02fda4875287a8b7eaf431e9a59e2ae966e0723e0cda2a6fae16e284deeea3",
+      "after": "8eff4fde83dee459979fc646187068b5cdc60a89fd46b8f56839b721b6e945df"
+    },
+    {
+      "path": "services/mock-api/src/main.ts",
+      "before": "0e29b71661924e0156545aac5ec687adae80bc6ec6bf341b69580dc0d56d9e1e",
+      "after": "6fc3b56e702d57c72caed4d6db1cf5ba9205d3428723a3f16a2f17d3a79dc542"
+    },
+    {
+      "path": "services/mock-api/src/server.ts",
+      "before": "83f0a484f7c337a819cc905484e04809456c2faa7771167ee158f648ec8f6649",
+      "after": "38927a1c79931121c50c023e3a382ad854398fbbaeeb0edc1e179fb39a044a10"
+    },
+    {
+      "path": "tests/browser/smoke.spec.ts",
+      "before": "fdbfbd99444e46f0ca488ca391766528b7eaa526e9817aea100a0c9da6706226",
+      "after": "19bfd485c1cd1e4517139b2d7d79665a6eabb9a55e51bb887fda41ff67327dc9"
+    },
+    {
+      "path": "tests/unit/api.test.ts",
+      "before": "0c9196b90633f795149ab525159c18d0111609c5e6f8ec1a98535d47d213ca79",
+      "after": "9054d330b348488fafbc77064bc24a39c0dd233cb6e868a4f95836f2a00f8792"
+    }
+  ],
+  "result": "PASS"
+}

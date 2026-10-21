@@ -1,0 +1,819 @@
+{
+  "definitionsUnchanged": true,
+  "formalPassCount": 0,
+  "localCoverageCounts": {
+    "LOCAL_PASS": 27,
+    "PARTIAL": 31,
+    "NOT_RUN": 6
+  },
+  "results": [
+    {
+      "testId": "AT-001",
+      "title": "首批名单与顺序",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "单元检查首批顺序；未做真实环境导入",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-002",
+      "title": "27主档不自动发布",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "原27条文件及本地内存内容逐条一致；无生产导入",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-003",
+      "title": "已发布动态检索",
+      "status": "LOCAL_PASS",
+      "scope": "local loopback Mock only",
+      "actual": "非首批产品在生产构建门户及 H5 检索可见",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-004",
+      "title": "草稿不进搜索",
+      "status": "LOCAL_PASS",
+      "scope": "local loopback Mock only",
+      "actual": "公共投影排除草稿，最终 DRAFT／OFFLINE 样例返回404",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-005",
+      "title": "当前快照搜索",
+      "status": "LOCAL_PASS",
+      "scope": "local loopback Mock only",
+      "actual": "旧发布名称可检索，新草稿名称和别名不可检索",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-006",
+      "title": "关键词异常字符",
+      "status": "LOCAL_PASS",
+      "scope": "local loopback Mock only",
+      "actual": "特殊字符按字面查询，既有查询长度校验",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-007",
+      "title": "分页与分类过滤",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "本地API过滤后跨页无重复，基本分页控件；未做所有阅读端返回场景",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-008",
+      "title": "分类推荐模板",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "默认推荐已实现，浏览器只实际创建software；未遍历所有分类",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-009",
+      "title": "支持模板切换",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "向导支持兼容模板切换，未遍历四模板组合的全部UI",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-010",
+      "title": "非法模板组合",
+      "status": "LOCAL_PASS",
+      "scope": "local loopback Mock only",
+      "actual": "非法分类模板组合422",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-011",
+      "title": "新增第28款",
+      "status": "LOCAL_PASS",
+      "scope": "local loopback Mock only",
+      "actual": "干净库新增ZJ-028并立即编辑",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-012",
+      "title": "连续新增与并发编号",
+      "status": "LOCAL_PASS",
+      "scope": "local loopback Mock only",
+      "actual": "并发新增分配两个不同编号",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-013",
+      "title": "重复创建幂等",
+      "status": "LOCAL_PASS",
+      "scope": "local loopback Mock only",
+      "actual": "重复请求同编号、同结果",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-014",
+      "title": "同key不同内容",
+      "status": "LOCAL_PASS",
+      "scope": "local loopback Mock only",
+      "actual": "同key不同内容409",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-015",
+      "title": "取消向导",
+      "status": "LOCAL_PASS",
+      "scope": "local loopback Mock only",
+      "actual": "取消向导提示放弃，不创建记录",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-016",
+      "title": "创建后逐步填写",
+      "status": "LOCAL_PASS",
+      "scope": "local loopback Mock only",
+      "actual": "创建后允许不完整草稿，发布422",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-017",
+      "title": "模板发布必填",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "发布必填和定位已检查，未逐个实测原用例的软件与AI所有缺项组合",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-018",
+      "title": "可选参数空值",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "API与草稿预览过滤空技术字段，完整公共详情未实现",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-019",
+      "title": "模板版本不被替换",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "模板注册表旧版本读取单测，未上架真实新版本",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-020",
+      "title": "双窗口保存冲突",
+      "status": "LOCAL_PASS",
+      "scope": "local loopback Mock only",
+      "actual": "同版本后写409，页面本地输入保留并显示对比",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-021",
+      "title": "名称与状态隔离",
+      "status": "LOCAL_PASS",
+      "scope": "local loopback Mock only",
+      "actual": "草稿名称不改变当前发布内容，有未发布修改标志",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-022",
+      "title": "离开未保存编辑",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "脏表单离开提示和继续编辑已测，未逐一浏览器执行保存离开与放弃分支",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-023",
+      "title": "草稿预览无审批",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "草稿预览无新增业务状态；返回和完整日志核查非独立完整用例",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-024",
+      "title": "匿名访问草稿预览",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "匿名API401已测；固定开发身份不能替代真实登录隔离",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-025",
+      "title": "预览版本冲突",
+      "status": "LOCAL_PASS",
+      "scope": "local loopback Mock only",
+      "actual": "旧draftVersion预览409",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-026",
+      "title": "预览布局与前台",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "后台PC／390预览已观察，完整公共详情对照待做",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-027",
+      "title": "同人直接发布",
+      "status": "LOCAL_PASS",
+      "scope": "local loopback Mock only",
+      "actual": "同一模拟制作人完成发布，无审批状态",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-028",
+      "title": "最低发布材料",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "1份PDF无封面可以发布，后台中性占位已观察；完整公共详情待做",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-029",
+      "title": "发布字段缺失",
+      "status": "LOCAL_PASS",
+      "scope": "local loopback Mock only",
+      "actual": "更新稿缺必填发布422，旧资源仍可用",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-030",
+      "title": "发布幂等",
+      "status": "LOCAL_PASS",
+      "scope": "local loopback Mock only",
+      "actual": "相同发布key仅生成一份release",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-031",
+      "title": "保存与发布竞争",
+      "status": "LOCAL_PASS",
+      "scope": "local loopback Mock only",
+      "actual": "旧草稿版本发布409",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-032",
+      "title": "发布与下架竞争",
+      "status": "LOCAL_PASS",
+      "scope": "local loopback Mock only",
+      "actual": "同publicationVersion发布／下架竞争仅一方成功",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-033",
+      "title": "发布事务失败",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "同步内存提交故障前后快照不变；没有真实数据库事务故障",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-034",
+      "title": "仅保存更新不生效",
+      "status": "LOCAL_PASS",
+      "scope": "local loopback Mock only",
+      "actual": "资料v2仅保存时公共仍读v1",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-035",
+      "title": "发布更新原子生效",
+      "status": "LOCAL_PASS",
+      "scope": "local loopback Mock only",
+      "actual": "发布更新整体切换，旧资源请求409",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-036",
+      "title": "下架全链路",
+      "status": "LOCAL_PASS",
+      "scope": "local loopback Mock only",
+      "actual": "下架后列表／详情／预览／媒体新请求不可用",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-037",
+      "title": "下架不受草稿阻塞",
+      "status": "LOCAL_PASS",
+      "scope": "local loopback Mock only",
+      "actual": "未保存或不完整草稿不阻塞下架",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-038",
+      "title": "下架保留与重新发布",
+      "status": "LOCAL_PASS",
+      "scope": "local loopback Mock only",
+      "actual": "重新发布生成新release，保留历史",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-039",
+      "title": "公开直接预览",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "匿名当前资料API可读；完整公开查看器UI待做",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-040",
+      "title": "当前资料不按上传排序",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "v2未发布不影响v1；上传未绑定路径未单独完整验收",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-041",
+      "title": "同次预览版本一致",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "当前资源绑定release/version并拒绝旧请求；多端查看器续页体验待做",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-042",
+      "title": "PC H5 PDF预览",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "后台PDF两页canvas翻页已测，完整公共PC/H5查看器及全屏待做",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-043",
+      "title": "小程序PDF真机",
+      "status": "NOT_RUN",
+      "scope": "local loopback Mock only",
+      "actual": "不在本轮交付范围，需后续独立计划与环境证据",
+      "evidence": [],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-044",
+      "title": "有序图片预览",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "后台三图显式排序和预览已测；各阅读端尚未验收",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-045",
+      "title": "预览失败恢复",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "文件拒绝与错误状态已测试，未覆盖所有超时／损坏响应的UI重试场景",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-046",
+      "title": "上传字节校验",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "空文件、伪装PDF、超限、大小不符及损坏XML已测；不是恶意代码扫描",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-047",
+      "title": "只有源件不能发布",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "source用途不可充当preview，由归属校验拒绝；未独立完整走仅PPTX发布UI",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-048",
+      "title": "对象私有与源文件隔离",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "本地私有目录和源件投影隔离，云对象私有ACL未验证",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-049",
+      "title": "跨产品资产归属",
+      "status": "LOCAL_PASS",
+      "scope": "local loopback Mock only",
+      "actual": "跨产品资产引用422，后台跨产品资源拒绝",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-050",
+      "title": "不可原位替换",
+      "status": "LOCAL_PASS",
+      "scope": "local loopback Mock only",
+      "actual": "READY文件PUT覆盖409，新上传生成新assetId",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-051",
+      "title": "Range与状态检查",
+      "status": "LOCAL_PASS",
+      "scope": "local loopback Mock only",
+      "actual": "单段Range200/206/416与下架404",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-052",
+      "title": "动态新增分类",
+      "status": "NOT_RUN",
+      "scope": "local loopback Mock only",
+      "actual": "不在本轮交付范围，需后续独立计划与环境证据",
+      "evidence": [],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-053",
+      "title": "分类被引用不能停用",
+      "status": "NOT_RUN",
+      "scope": "local loopback Mock only",
+      "actual": "不在本轮交付范围，需后续独立计划与环境证据",
+      "evidence": [],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-054",
+      "title": "分类更新模板兼容",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "模板版本固定和不兼容组合拒绝，未逐个UI切分类测试",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-055",
+      "title": "后台账号与角色",
+      "status": "NOT_RUN",
+      "scope": "local loopback Mock only",
+      "actual": "不在本轮交付范围，需后续独立计划与环境证据",
+      "evidence": [],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-056",
+      "title": "禁用与最后管理员",
+      "status": "NOT_RUN",
+      "scope": "local loopback Mock only",
+      "actual": "不在本轮交付范围，需后续独立计划与环境证据",
+      "evidence": [],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-057",
+      "title": "操作日志真实性",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "服务端模拟操作者与版本日志实现，失败／重复发布日志已测；真实身份日志未验收",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-058",
+      "title": "所有阅读入口无旧流程",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "本轮未添加旧流程；完整阅读入口还未完成",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-059",
+      "title": "长名窄屏键盘",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "320/390 H5、1440后台和720CSS重排、键盘弹窗已检查；原生200%缩放未跑",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-060",
+      "title": "生产构建与缓存",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "本地生产构建中更新／下架生效；真实生产缓存链未验证",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-061",
+      "title": "存储持久化与恢复",
+      "status": "NOT_RUN",
+      "scope": "local loopback Mock only",
+      "actual": "不在本轮交付范围，需后续独立计划与环境证据",
+      "evidence": [],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-062",
+      "title": "演示与真实内容分离",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "原27种子和原交付快照未改，演示件只入本地Mock；无生产静态部署审计",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-063",
+      "title": "负向路由测试",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "既有契约没有旧流程；本轮未完成全部负向HTTP路由矩阵",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-064",
+      "title": "完整新增闭环演示",
+      "status": "PARTIAL",
+      "scope": "local loopback Mock only",
+      "actual": "浏览器完成新增上传预览发布更新下架；原附录与所有阅读端逐项验收未完成",
+      "evidence": [
+        "round-02-evidence/tests-delivery.log",
+        "round-02-evidence/browser-final.log",
+        "round-02-evidence/preview-verified.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    }
+  ]
+}

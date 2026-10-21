@@ -1,0 +1,907 @@
+{
+  "definitionsUnchanged": true,
+  "formalPassCount": 0,
+  "localCoverageCounts": {
+    "PARTIAL": 33,
+    "LOCAL_PASS": 30,
+    "NOT_RUN": 1
+  },
+  "results": [
+    {
+      "testId": "AT-001",
+      "title": "首批名单与顺序",
+      "status": "PARTIAL",
+      "actual": "本地单元及原主档种子核对顺序；未实际云环境导入",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-002",
+      "title": "27主档不自动发布",
+      "status": "PARTIAL",
+      "actual": "27 条主档哈希与本地内容未变，全部草稿；真实导入未执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-003",
+      "title": "已发布动态检索",
+      "status": "LOCAL_PASS",
+      "actual": "非首批产品在生产构建门户及 H5 检索可见；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-004",
+      "title": "草稿不进搜索",
+      "status": "LOCAL_PASS",
+      "actual": "公共投影排除草稿，最终 DRAFT／OFFLINE 样例返回404；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-005",
+      "title": "当前快照搜索",
+      "status": "LOCAL_PASS",
+      "actual": "旧发布名称可检索，新草稿名称和别名不可检索；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-006",
+      "title": "关键词异常字符",
+      "status": "LOCAL_PASS",
+      "actual": "特殊字符按字面查询，既有查询长度校验；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-007",
+      "title": "分页与分类过滤",
+      "status": "PARTIAL",
+      "actual": "本地分类/查询/分页与返回筛选通过；未做大数据跨设备分页验收",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-008",
+      "title": "分类推荐模板",
+      "status": "PARTIAL",
+      "actual": "默认推荐已实现，浏览器只实际创建software；未遍历所有分类；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-009",
+      "title": "支持模板切换",
+      "status": "PARTIAL",
+      "actual": "向导支持兼容模板切换，未遍历四模板组合的全部UI；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-010",
+      "title": "非法模板组合",
+      "status": "LOCAL_PASS",
+      "actual": "非法分类模板组合422；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-011",
+      "title": "新增第28款",
+      "status": "LOCAL_PASS",
+      "actual": "干净库新增ZJ-028并立即编辑；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-012",
+      "title": "连续新增与并发编号",
+      "status": "LOCAL_PASS",
+      "actual": "并发新增分配两个不同编号；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-013",
+      "title": "重复创建幂等",
+      "status": "LOCAL_PASS",
+      "actual": "重复请求同编号、同结果；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-014",
+      "title": "同key不同内容",
+      "status": "LOCAL_PASS",
+      "actual": "同key不同内容409；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-015",
+      "title": "取消向导",
+      "status": "LOCAL_PASS",
+      "actual": "取消向导提示放弃，不创建记录；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-016",
+      "title": "创建后逐步填写",
+      "status": "LOCAL_PASS",
+      "actual": "创建后允许不完整草稿，发布422；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-017",
+      "title": "模板发布必填",
+      "status": "PARTIAL",
+      "actual": "发布必填和定位已检查，未逐个实测原用例的软件与AI所有缺项组合；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-018",
+      "title": "可选参数空值",
+      "status": "LOCAL_PASS",
+      "actual": "PC/H5 Demo 详情隐藏空部署参数；浏览器断言可选标题不存在",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-019",
+      "title": "模板版本不被替换",
+      "status": "PARTIAL",
+      "actual": "模板注册表旧版本读取单测，未上架真实新版本；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-020",
+      "title": "双窗口保存冲突",
+      "status": "LOCAL_PASS",
+      "actual": "同版本后写409，页面本地输入保留并显示对比；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-021",
+      "title": "名称与状态隔离",
+      "status": "LOCAL_PASS",
+      "actual": "草稿名称不改变当前发布内容，有未发布修改标志；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-022",
+      "title": "离开未保存编辑",
+      "status": "PARTIAL",
+      "actual": "脏表单离开提示和继续编辑已测，未逐一浏览器执行保存离开与放弃分支；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-023",
+      "title": "草稿预览无审批",
+      "status": "PARTIAL",
+      "actual": "草稿预览无新增业务状态；返回和完整日志核查非独立完整用例；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-024",
+      "title": "匿名访问草稿预览",
+      "status": "PARTIAL",
+      "actual": "匿名API401已测；固定开发身份不能替代真实登录隔离；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-025",
+      "title": "预览版本冲突",
+      "status": "LOCAL_PASS",
+      "actual": "旧draftVersion预览409；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-026",
+      "title": "预览布局与前台",
+      "status": "PARTIAL",
+      "actual": "草稿与公共详情按模板字段展示并区分未发布；两端像素级等价未单列验收",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-027",
+      "title": "同人直接发布",
+      "status": "LOCAL_PASS",
+      "actual": "同一模拟制作人完成发布，无审批状态；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-028",
+      "title": "最低发布材料",
+      "status": "PARTIAL",
+      "actual": "1份PDF无封面可以发布，后台中性占位已观察；完整公共详情待做；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-029",
+      "title": "发布字段缺失",
+      "status": "LOCAL_PASS",
+      "actual": "更新稿缺必填发布422，旧资源仍可用；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-030",
+      "title": "发布幂等",
+      "status": "LOCAL_PASS",
+      "actual": "相同发布key仅生成一份release；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-031",
+      "title": "保存与发布竞争",
+      "status": "LOCAL_PASS",
+      "actual": "旧草稿版本发布409；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-032",
+      "title": "发布与下架竞争",
+      "status": "LOCAL_PASS",
+      "actual": "同publicationVersion发布／下架竞争仅一方成功；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-033",
+      "title": "发布事务失败",
+      "status": "PARTIAL",
+      "actual": "Mock 与事务仓储替身均注入提交失败并检查回滚；没有真实 CloudBase 事务证据",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-034",
+      "title": "仅保存更新不生效",
+      "status": "LOCAL_PASS",
+      "actual": "资料v2仅保存时公共仍读v1；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-035",
+      "title": "发布更新原子生效",
+      "status": "PARTIAL",
+      "actual": "本地公开快照整体切换且旧资源请求 409，打开的 PC 查看器提示版本变化；未真实云缓存测试",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-036",
+      "title": "下架全链路",
+      "status": "LOCAL_PASS",
+      "actual": "下架后列表／详情／预览／媒体新请求不可用；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-037",
+      "title": "下架不受草稿阻塞",
+      "status": "LOCAL_PASS",
+      "actual": "未保存或不完整草稿不阻塞下架；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-038",
+      "title": "下架保留与重新发布",
+      "status": "LOCAL_PASS",
+      "actual": "重新发布生成新release，保留历史；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-039",
+      "title": "公开直接预览",
+      "status": "LOCAL_PASS",
+      "actual": "PC/H5 无登录打开真实 PDF/图片字节，无授权申请入口",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-040",
+      "title": "当前资料不按上传排序",
+      "status": "PARTIAL",
+      "actual": "v2未发布不影响v1；上传未绑定路径未单独完整验收；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-041",
+      "title": "同次预览版本一致",
+      "status": "PARTIAL",
+      "actual": "PC 打开后发布/下架、重载均拒绝旧版本；H5 共用检查器，原生微信未真机验证",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-042",
+      "title": "PC H5 PDF预览",
+      "status": "PARTIAL",
+      "actual": "PC PDF 页码/缩放/键盘/全屏通过；H5 320/390 的中文 PDF 与翻页通过，移动端未做全屏专项",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-043",
+      "title": "小程序PDF真机",
+      "status": "NOT_RUN",
+      "actual": "小程序编译通过，但开发者工具、AppID、iOS/Android 真机 PDF 未验证",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-044",
+      "title": "有序图片预览",
+      "status": "PARTIAL",
+      "actual": "本地有序图片、缺页/重号拒绝、PC 图集到第 3 页通过；原生真机未验收",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-045",
+      "title": "预览失败恢复",
+      "status": "PARTIAL",
+      "actual": "H5 断网显示实际错误与重试；PC 版本/下架错误与当前版本入口通过，弱网/单页重试未全面覆盖",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-046",
+      "title": "上传字节校验",
+      "status": "PARTIAL",
+      "actual": "空文件、伪装PDF、超限、大小不符及损坏XML已测；不是恶意代码扫描；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-047",
+      "title": "只有源件不能发布",
+      "status": "PARTIAL",
+      "actual": "source用途不可充当preview，由归属校验拒绝；未独立完整走仅PPTX发布UI；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-048",
+      "title": "对象私有与源文件隔离",
+      "status": "PARTIAL",
+      "actual": "本地 Public DTO 和代理无源件/私有对象 ID；适配器私有对象替身测试通过，真实桶策略未核验",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-049",
+      "title": "跨产品资产归属",
+      "status": "LOCAL_PASS",
+      "actual": "跨产品资产引用422，后台跨产品资源拒绝；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-050",
+      "title": "不可原位替换",
+      "status": "LOCAL_PASS",
+      "actual": "READY文件PUT覆盖409，新上传生成新assetId；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-051",
+      "title": "Range与状态检查",
+      "status": "PARTIAL",
+      "actual": "Mock 与适配器 HTTP Range/下架拒绝有测试；真实对象服务未连接",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-052",
+      "title": "动态新增分类",
+      "status": "LOCAL_PASS",
+      "actual": "分类写 API 与后台新增分类表单可用；动态引用目录，无硬编码新增分类",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-053",
+      "title": "分类被引用不能停用",
+      "status": "LOCAL_PASS",
+      "actual": "分类引用数与被引用禁用保护有单元测试；真实事务行为另待验收",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-054",
+      "title": "分类更新模板兼容",
+      "status": "LOCAL_PASS",
+      "actual": "模板兼容校验和版本冲突在共用领域/管理 API 测试通过",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-055",
+      "title": "后台账号与角色",
+      "status": "PARTIAL",
+      "actual": "本地管理员/内容管理员越权拒绝，后台账号新增/禁用表单通过；真实身份服务未联调",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-056",
+      "title": "禁用与最后管理员",
+      "status": "PARTIAL",
+      "actual": "禁用和最后管理员保护在 Mock 与事务仓储替身通过；真实并发事务未验收",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-057",
+      "title": "操作日志真实性",
+      "status": "PARTIAL",
+      "actual": "服务端主体上下文与操作事件同事务保存，本地断言无重复日志；真实主体/时钟未验证",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-058",
+      "title": "所有阅读入口无旧流程",
+      "status": "PARTIAL",
+      "actual": "本轮未添加旧流程；完整阅读入口还未完成；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-059",
+      "title": "长名窄屏键盘",
+      "status": "PARTIAL",
+      "actual": "1440、390、320 与键盘/720 等效视口通过；720 不是浏览器真实 200% 缩放，原生真机待验收",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-060",
+      "title": "生产构建与缓存",
+      "status": "PARTIAL",
+      "actual": "Next 生产模式、H5/后台构建产物的发布更新/下架通过；云缓存与真实部署未执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-061",
+      "title": "存储持久化与恢复",
+      "status": "PARTIAL",
+      "actual": "仓储适配器替身重建实例后读取与幂等通过，备份校验及 dry-run 可用；真实持久化/恢复未演练",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-062",
+      "title": "演示与真实内容分离",
+      "status": "PARTIAL",
+      "actual": "27 主档、4 旧验证样例和新独立 Demo 分离，原包未改且未进入构建；六款正式内容未准备",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-063",
+      "title": "负向路由测试",
+      "status": "PARTIAL",
+      "actual": "既有契约没有旧流程；本轮未完成全部负向HTTP路由矩阵；对应本地测试本轮再次执行",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    },
+    {
+      "testId": "AT-064",
+      "title": "完整新增闭环演示",
+      "status": "PARTIAL",
+      "actual": "独立测试服务完整新增—上传—预览—发布—更新—下架通过，19 浏览器测试；真实环境未演示",
+      "scope": "local Mock / transaction-object test harness only",
+      "evidence": [
+        "round-03-evidence/unit.log",
+        "round-03-evidence/browser.log",
+        "round-03-evidence/source-integrity.json",
+        "round-03-evidence/data-verification.json"
+      ],
+      "formalProductionStatus": "NOT_RUN"
+    }
+  ]
+}

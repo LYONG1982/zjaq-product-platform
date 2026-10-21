@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "name": "@zj/design-tokens",
+  "exports": {
+    "./tokens.css": "./tokens.css",
+    "./tokens.scss": "./tokens.scss",
+    "./mobile.css": "./mobile.css"
+  }
+}

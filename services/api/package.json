@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "name": "@zj/api",
+  "dependencies": {
+    "@zj/contracts": "workspace:*",
+    "@cloudbase/node-sdk": "3.18.7"
+  }
+}

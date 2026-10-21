@@ -1,0 +1,25 @@
+{
+  "version": "4.0.0-rc2",
+  "templates": [
+    {
+      "id": "software",
+      "version": 1,
+      "path": "software.v1.json"
+    },
+    {
+      "id": "device",
+      "version": 1,
+      "path": "device.v1.json"
+    },
+    {
+      "id": "delivery",
+      "version": 1,
+      "path": "delivery.v1.json"
+    },
+    {
+      "id": "ai",
+      "version": 1,
+      "path": "ai.v1.json"
+    }
+  ]
+}

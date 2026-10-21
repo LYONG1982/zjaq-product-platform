@@ -1,0 +1,63 @@
+{
+  "target": "http://127.0.0.1:3403",
+  "sessionId": "87f629b2-c353-424e-a638-be80a7d70a73",
+  "originalDraftsUnchanged": 27,
+  "adminCountOnFirstPage": 32,
+  "publicCountOnFirstPage": 3,
+  "records": [
+    {
+      "productId": "ZJ-028",
+      "name": "【验证数据】软件制作示例",
+      "template": "software",
+      "state": "PUBLISHED",
+      "draftVersion": 3,
+      "publicationVersion": 1,
+      "hasUnpublishedChanges": true,
+      "draftMaterialVersion": "v2",
+      "publishedMaterialVersion": "v1",
+      "previewKind": "pdf",
+      "pages": 2
+    },
+    {
+      "productId": "ZJ-029",
+      "name": "【验证数据】设备资料示例",
+      "template": "device",
+      "state": "PUBLISHED",
+      "draftVersion": 2,
+      "publicationVersion": 1,
+      "hasUnpublishedChanges": false,
+      "draftMaterialVersion": "v1",
+      "publishedMaterialVersion": "v1",
+      "previewKind": "images",
+      "pages": 3
+    },
+    {
+      "productId": "ZJ-030",
+      "name": "【验证数据】交付方案示例",
+      "template": "delivery",
+      "state": "DRAFT",
+      "draftVersion": 2,
+      "publicationVersion": 0,
+      "hasUnpublishedChanges": false,
+      "draftMaterialVersion": "v1",
+      "publishedMaterialVersion": null,
+      "previewKind": null,
+      "pages": null
+    },
+    {
+      "productId": "ZJ-031",
+      "name": "【验证数据】AI边界示例",
+      "template": "ai",
+      "state": "OFFLINE",
+      "draftVersion": 2,
+      "publicationVersion": 2,
+      "hasUnpublishedChanges": false,
+      "draftMaterialVersion": "v1",
+      "publishedMaterialVersion": null,
+      "previewKind": null,
+      "pages": null
+    }
+  ],
+  "result": "PASS",
+  "scope": "Live local Mock verification; no cloud or device acceptance"
+}
