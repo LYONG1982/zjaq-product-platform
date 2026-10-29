@@ -1,3 +1,4 @@
+import { loopbackDevGuard } from "../../scripts/dev-server-guard";
 import { defineConfig } from "vite";
 import uniModule from "@dcloudio/vite-plugin-uni";
 // DCloud's compiler is CommonJS; Vite's ESM config may wrap its default export.
@@ -7,6 +8,7 @@ const uni: typeof uniModule =
     : (uniModule as unknown as { default: typeof uniModule }).default;
 export default defineConfig({
   plugins: [
+    loopbackDevGuard(),
     uni(),
     {
       name: "workspace-h5-chunk-names",

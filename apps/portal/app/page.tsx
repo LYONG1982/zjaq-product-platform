@@ -3,11 +3,11 @@ import { api } from "../components/public-api";
 import { ProductCard } from "../components/cards";
 export const dynamic = "force-dynamic";
 export default async function Home() {
+  const c = await api("/");
   let rows: import("@zj/contracts").Responses["PublicProductSummary"][] = [],
     categories: import("@zj/contracts").Responses["PublicCategory"][] = [],
     failed = false;
   try {
-    const c = api();
     const [p, k] = await Promise.all([
       c.publicProducts({ limit: 100 }),
       c.publicCategories(),
@@ -105,15 +105,6 @@ export default async function Home() {
                 </Link>
               </div>
             )}
-          </section>
-          <section className="material-callout">
-            <div>
-              <h2>查找产品资料</h2>
-              <p>产品介绍、操作说明与演示资料。</p>
-            </div>
-            <Link className="primary-button" href="/materials">
-              进入资料中心 →
-            </Link>
           </section>
         </>
       )}

@@ -10,6 +10,9 @@ const step = ref(1),
   templateId = ref(""),
   name = ref(""),
   owner = ref(""),
+  model = ref(""),
+  productType = ref<Domain["CreateProduct"]["productType"] | "">(""),
+  ownership = ref<Domain["CreateProduct"]["ownership"] | "">(""),
   aliases = ref(""),
   busy = ref(false),
   error = ref(""),
@@ -41,14 +44,14 @@ function changeCategory() {
 }
 changeCategory();
 function close() {
-  if (name.value || owner.value || aliases.value) confirmCancel.value = true;
+  if (name.value || owner.value || model.value || productType.value || ownership.value || aliases.value) confirmCancel.value = true;
   else emit("cancel");
 }
 async function create() {
   if (busy.value) return;
   error.value = "";
-  if (!name.value.trim() || !owner.value.trim() || !chosen.value) {
-    error.value = "请填写产品名称、负责人并选择有效模板。";
+  if (!name.value.trim() || !owner.value.trim() || !model.value.trim() || !productType.value || !ownership.value || !chosen.value) {
+    error.value = "请填写产品名称、产品资料负责人、型号，并选择产品类型和属性。";
     return;
   }
   busy.value = true;
@@ -61,6 +64,9 @@ async function create() {
     const body: Domain["CreateProduct"] = {
       name: name.value.trim(),
       owner: owner.value.trim(),
+      model: model.value.trim(),
+      productType: productType.value,
+      ownership: ownership.value,
       categoryId: categoryId.value,
       templateId: chosen.value.id as Domain["CreateProduct"]["templateId"],
       templateVersion: chosen.value.version,
@@ -96,6 +102,7 @@ async function create() {
           </select></label
         >
         <p class="helper">{{ hint }}</p>
+        <div v-if="['miding', 'miyi', 'mishu', 'ai'].includes(categoryId)" class="series-selection-icon"><img :src="'/series/' + categoryId + '.svg'" alt="" aria-hidden="true" /><span>已自动匹配{{ category?.shortName }}系列图标</span></div>
         <div class="wizard-templates">
           <button
             v-for="t in choices"
@@ -129,10 +136,16 @@ async function create() {
             @input="allowDuplicate = false"
             autocomplete="off" /></label
         ><label class="field"
-          >负责人<input
+          >产品资料负责人<input
             v-model="owner"
             maxlength="80"
             autocomplete="off" /></label
+        ><label class="field"
+          >产品型号<input v-model="model" maxlength="80" autocomplete="off" /></label
+        ><label class="field"
+          >产品类型<select v-model="productType"><option value="">请选择</option><option value="SOFTWARE">软件</option><option value="HARDWARE">软硬件</option></select></label
+        ><label class="field"
+          >产品属性<select v-model="ownership"><option value="">请选择</option><option value="SELF_DEVELOPED">自研</option><option value="PARTNER">合作</option></select></label
         ><label class="field"
           >别名（可选，用逗号分隔）<textarea
             v-model="aliases"

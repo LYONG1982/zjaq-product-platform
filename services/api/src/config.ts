@@ -1,3 +1,4 @@
+import { isIP } from "node:net";
 export function requireRealConfiguration(env: NodeJS.ProcessEnv) {
   if (env.DATA_PROVIDER !== "cloudbase")
     throw new Error("REAL_API_REQUIRES_CLOUDBASE: Mock fallback is forbidden");
@@ -15,6 +16,7 @@ export function requireRealConfiguration(env: NodeJS.ProcessEnv) {
   const port = Number(env.API_PORT ?? 3101);
   if (!Number.isInteger(port) || port < 1024 || port > 65535)
     throw new Error("INVALID_PORT");
+  if (env.TRUSTED_PROXY_ADDRESSES && env.TRUSTED_PROXY_ADDRESSES.split(",").some((value) => !isIP(value.trim()))) throw new Error("INVALID_TRUSTED_PROXY_ADDRESS");
   if (env.ADMIN_IDENTITY_PROVIDER !== "cloudbase")
     throw new Error("UNSUPPORTED_IDENTITY_PROVIDER");
 }

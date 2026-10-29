@@ -7,6 +7,9 @@ export interface Transaction {
 }
 export interface Repository extends Transaction {
   list<T>(collection: string): Promise<T[]>;
+  pruneExpired?(collection: string, before: Date): Promise<void>;
+  scan?<T>(collection: string): AsyncIterable<T>;
+  entries?<T>(collection: string): AsyncIterable<{ id: string; value: T }>;
   transaction<T>(fn: (tx: Transaction) => Promise<T>): Promise<T>;
 }
 export const collections = [
@@ -22,6 +25,8 @@ export const collections = [
   "users",
   "subjects",
   "audit",
+  "feedback",
+  "analytics",
   "rates",
 ] as const;
 function clean<T>(value: T): T {
@@ -104,6 +109,35 @@ export class CloudBaseRepository implements Repository {
     throw new Error(
       "COLLECTION_LIMIT: export or query requires a paged production adapter above 10000 records",
     );
+  }
+  async *scan<T>(name: string): AsyncIterable<T> {
+    let cursor = "";
+    for (;;) {
+      const query = this.db.collection(this.collection(name));
+      const rows = await (cursor ? query.where({ _id: this.db.command.gt(cursor) }) : query).orderBy("_id", "asc").limit(100).get();
+      for (const row of rows.data) yield clean(row) as T;
+      if (rows.data.length < 100) return;
+      cursor = String(rows.data[rows.data.length - 1]._id);
+    }
+  }
+  async *entries<T>(name: string): AsyncIterable<{ id: string; value: T }> {
+    let cursor = "";
+    for (;;) {
+      const query = this.db.collection(this.collection(name));
+      const rows = await (cursor ? query.where({ _id: this.db.command.gt(cursor) }) : query).orderBy("_id", "asc").limit(100).get();
+      for (const row of rows.data) yield { id: String(row._id), value: clean(row) as T };
+      if (rows.data.length < 100) return;
+      cursor = String(rows.data[rows.data.length - 1]._id);
+    }
+  }
+  async pruneExpired(name: string, before: Date) {
+    requireValue(name === "analytics" || name === "rates", 500, "CONFIGURATION_ERROR", "此集合不支持到期清理");
+    // Bounded batches prevent loading raw IP history into process memory.
+    for (;;) {
+      const rows = await this.db.collection(this.collection(name)).where({ expiresAt: this.db.command.lte(before) }).limit(100).get();
+      if (!rows.data.length) return;
+      for (const row of rows.data) await this.db.collection(this.collection(name)).doc(String(row._id)).remove();
+    }
   }
   async transaction<T>(fn: (tx: Transaction) => Promise<T>): Promise<T> {
     let result!: T;

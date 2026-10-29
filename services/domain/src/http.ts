@@ -12,7 +12,11 @@ import { queryTemplates, type TemplateQuery } from "@zj/template-registry";
 import { validateQuery, checkResponse } from "../../mock-api/src/contract";
 import type { Backend } from "../../domain/src/backend";
 import { AppError, requireValue, validateBody } from "./errors";
+import { mediaSessions } from "./media-session";
+import { zipDownload } from "./zip-download";
 import { actorContext } from "./identity";
+import { visibleSiteBanner } from "./site-banner";
+import { publicAnalyticsSettings, analyticsSummary, filterAnalytics, sourceIp } from "./analytics";
 const allowedOrigins = new Set(
   [3200, 3201, 3202, 3300, 3301, 3302, 3400, 3401, 3402].flatMap((p) => [
     "http://127.0.0.1:" + p,
@@ -88,15 +92,28 @@ async function binary(
   req: IncomingMessage,
   res: ServerResponse,
   checkCurrent?: () => void | Promise<unknown>,
+  downloadName?: string,
+  downloadPurpose?: "source" | "preview",
+  onCompletedDownload?: () => Promise<void>,
 ) {
-  const { path, size, upload, cleanup } = await store.bytes(productId, assetId);
+  const { path, size, upload, cleanup } = await store.bytes(productId, assetId, downloadName !== undefined);
+  if (req.aborted || res.destroyed) { await cleanup?.(); return; }
   res.on("close", () => {
     void cleanup?.();
   });
+  const sendingDeadline = setTimeout(() => res.destroy(), 15 * 60 * 1000); sendingDeadline.unref();
+  res.setTimeout(30000, () => res.destroy());
+  res.once("close", () => clearTimeout(sendingDeadline));
   let start = 0,
     end = size - 1,
     status = 200;
   const range = req.headers.range;
+  // Recheck before any response, including 416, so a revoked resource does not
+  // disclose its length through an invalid Range request.
+  await store.assertProductReadable(productId);
+  await checkCurrent?.();
+  if (downloadName !== undefined)
+    requireValue(upload.purpose === downloadPurpose, 404, "RESOURCE_UNAVAILABLE", "此资料没有可下载文件");
   if (range) {
     const m = range.match(/^bytes=(\d*)-(\d*)$/);
     let valid = Boolean(m && (m[1] || m[2]));
@@ -126,14 +143,21 @@ async function binary(
     }
     status = 206;
   }
-  await checkCurrent?.();
   res.setHeader("Content-Type", upload.mimeType!);
   res.setHeader("Content-Length", String(end - start + 1));
   res.setHeader("Accept-Ranges", "bytes");
-  res.setHeader("Content-Disposition", "inline");
+  const originalExtension = upload.fileExtension ?? upload.type;
+  const extension = ["pptx", "docx", "pdf", "mp4", "mov", "webm", "png", "jpg", "jpeg", "webp"].includes(originalExtension.toLowerCase()) ? "." + originalExtension : "";
+  const safeName = downloadName?.replace(/[\u0000-\u001f\u007f/\\]/g, " ").trim().slice(0, 100) || "material";
+  const encodedName = encodeURIComponent(Buffer.from(safeName + extension, "utf8").toString("utf8")).replace(/[!'()*]/g, (c) => "%" + c.charCodeAt(0).toString(16).toUpperCase());
+  res.setHeader("Content-Disposition", downloadName === undefined ? "inline" : `attachment; filename="material${extension}"; filename*=UTF-8''${encodedName}`);
   res.setHeader("Content-Security-Policy", "sandbox; default-src 'none'");
   if (status === 206)
     res.setHeader("Content-Range", `bytes ${start}-${end}/${size}`);
+  if (status === 200 && downloadName !== undefined && onCompletedDownload) res.once("finish", () => {
+    // Count one complete server response, never preview/range chunks or aborted transfers.
+    void onCompletedDownload().catch(() => console.error(JSON.stringify({ event: "analytics_capture_failed" })));
+  });
   res.writeHead(status);
   const stream = createReadStream(path, { start, end });
   stream.on("error", () => res.destroy());
@@ -142,15 +166,16 @@ async function binary(
 }
 export function makeApiServer(
   store: Backend,
-  options: { origins?: string[]; hosts?: string[] } = {},
+  options: { origins?: string[]; hosts?: string[]; trustedProxyAddresses?: string[] } = {},
 ) {
+  const media = mediaSessions(store.provider === "cloudbase", process.env.ADMIN_MEDIA_SESSION_SECRET);
   const rates = new Map<string, { minute: number; count: number }>();
   const server = createServer((req, res) => {
     actorContext.run(undefined as never, () => {
       void handle(req, res);
     });
   });
-  server.requestTimeout = 30000;
+  server.requestTimeout = 15 * 60 * 1000;
   server.headersTimeout = 10000;
   server.maxRequestsPerSocket = 100;
   async function handle(req: IncomingMessage, res: ServerResponse) {
@@ -211,6 +236,7 @@ export function makeApiServer(
       );
       if (origin) {
         res.setHeader("Access-Control-Allow-Origin", origin);
+        res.setHeader("Access-Control-Allow-Credentials", "true");
         res.setHeader("Vary", "Origin");
       }
       res.setHeader(
@@ -230,7 +256,7 @@ export function makeApiServer(
         res.end();
         return;
       }
-      const ip = req.socket.remoteAddress ?? "",
+      const ip = sourceIp(req, options.trustedProxyAddresses),
         minute = Math.floor(Date.now() / 60000),
         rate = rates.get(ip);
       if (!rate || rate.minute !== minute) rates.set(ip, { minute, count: 1 });
@@ -253,8 +279,32 @@ export function makeApiServer(
             : undefined;
       let currentIdentity;
       if (path.startsWith("/api/v1/admin/")) {
-        currentIdentity = await store.authenticate(req.headers.authorization);
+        const mediaCookie = method === "GET" && /^\/api\/v1\/admin\/products\/[^/]+\/assets\/[^/]+\/content$/.test(path)
+          ? req.headers.cookie?.split(";").map(v => v.trim()).find(v => v.startsWith("zj_admin_media="))?.slice(15) : undefined;
+        currentIdentity = await store.authenticate(req.headers.authorization ?? (media.read(mediaCookie) ? "Bearer " + media.read(mediaCookie) : undefined));
+        requireValue(
+          currentIdentity.role === "ADMIN" ||
+            currentIdentity.role === "CONTENT_MANAGER",
+          403,
+          "FORBIDDEN",
+          "此接口仅限后台身份",
+        );
         actorContext.enterWith(currentIdentity);
+      } else if (path.startsWith("/api/v1/sales/")) {
+        currentIdentity = await store.authenticate(req.headers.authorization);
+        requireValue(
+          currentIdentity.role === "SALES",
+          403,
+          "FORBIDDEN",
+          "此接口仅限销售身份",
+        );
+        actorContext.enterWith(currentIdentity);
+      }
+      if (path === "/api/v1/admin/media-session" && method === "POST") {
+        requireValue(!!req.headers.authorization?.startsWith("Bearer "), 401, "SESSION_EXPIRED", "请重新登录");
+        // Read-only media cookie is never accepted for mutations or other admin APIs.
+        res.setHeader("Set-Cookie", "zj_admin_media=" + media.issue(req.headers.authorization!.slice(7)) + "; HttpOnly; SameSite=Strict; Max-Age=300; Path=/api/v1/admin/products/" + (store.provider === "cloudbase" ? "; Secure" : ""));
+        res.writeHead(204); res.end(); return;
       }
       if (path === "/health" && method === "GET") {
         send(200, {
@@ -267,6 +317,127 @@ export function makeApiServer(
         return;
       }
       if (method === "GET") {
+        if (path === "/api/v1/catalog/analytics") {
+          query("getAnalyticsNotice", url);
+          success("getAnalyticsNotice", { data: publicAnalyticsSettings(await store.analyticsSettings()) });
+          return;
+        }
+        if (path === "/api/v1/admin/analytics/settings") {
+          requireValue(currentIdentity?.role === "ADMIN", 403, "FORBIDDEN", "仅管理员可维护统计设置");
+          query("getAnalyticsSettings", url);
+          success("getAnalyticsSettings", { data: await store.analyticsSettings() });
+          return;
+        }
+        if (path === "/api/v1/admin/analytics/events") {
+          requireValue(currentIdentity?.role === "ADMIN", 403, "FORBIDDEN", "仅管理员可查看统计记录");
+          const q = query("listAnalyticsEvents", url);
+          success("listAnalyticsEvents", page(filterAnalytics(await store.analyticsEvents(), q), q));
+          return;
+        }
+        if (path === "/api/v1/admin/analytics/summary") {
+          requireValue(currentIdentity?.role === "ADMIN", 403, "FORBIDDEN", "仅管理员可查看数据看板");
+          query("getAnalyticsSummary", url);
+          requireValue((await store.analyticsSettings()).dashboardEnabled, 403, "FORBIDDEN", "数据看板已关闭，请在系统设置中启用");
+          success("getAnalyticsSummary", { data: analyticsSummary(await store.analyticsEvents()) });
+          return;
+        }
+        if (path === "/api/v1/admin/feedback") {
+          requireValue(currentIdentity?.role === "ADMIN", 403, "FORBIDDEN", "仅管理员可查看反馈");
+          const q = query("listFeedback", url);
+          success("listFeedback", page(await store.listFeedback(), q));
+          return;
+        }
+        if (path === "/api/v1/catalog/site-contact") {
+          query("getPublicSiteContact", url);
+          success("getPublicSiteContact", { data: await store.siteContact() });
+          return;
+        }
+        if (path === "/api/v1/admin/site-contact") {
+          requireValue(currentIdentity?.role === "ADMIN", 403, "FORBIDDEN", "仅管理员可维护联系方式");
+          query("getAdminSiteContact", url);
+          success("getAdminSiteContact", { data: await store.siteContact() });
+          return;
+        }
+        if (path === "/api/v1/catalog/site-banner") {
+          query("getPublicSiteBanner", url);
+          success("getPublicSiteBanner", { data: visibleSiteBanner(await store.siteBanner()) });
+          return;
+        }
+        if (path === "/api/v1/admin/site-banner") {
+          requireValue(currentIdentity?.role === "ADMIN", 403, "FORBIDDEN", "仅管理员可维护 Banner");
+          query("getAdminSiteBanner", url);
+          success("getAdminSiteBanner", { data: await store.siteBanner() });
+          return;
+        }
+        if (path === "/api/v1/sales/catalog/products") {
+          const q = query("listSalesProducts", url);
+          for (const date of [q.updatedFrom, q.updatedTo]) {
+            if (date) {
+              const value = String(date), parsed = new Date(value + "T00:00:00Z");
+              requireValue(Number.isFinite(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value, 400, "INVALID_ARGUMENT", "日期无效");
+            }
+          }
+          requireValue(!q.updatedFrom || !q.updatedTo || String(q.updatedFrom) <= String(q.updatedTo), 400, "INVALID_ARGUMENT", "开始日期不能晚于结束日期");
+          success("listSalesProducts", page(await store.listSalesProducts(q), q));
+          return;
+        }
+        if (path === "/api/v1/sales/catalog/materials") {
+          const q = query("listSalesMaterials", url);
+          success("listSalesMaterials", page(await store.listSalesMaterials(q), q));
+          return;
+        }
+        const salesMedia = path.match(/^\/api\/v1\/sales\/catalog\/products\/([^/]+)\/media\/([^/]+)$/);
+        if (salesMedia) {
+          const q = query("streamSalesMedia", url), id = decodeURIComponent(salesMedia[1]), mediaId = decodeURIComponent(salesMedia[2]);
+          const resolve = () => store.mediaAsset(id, mediaId, String(q.releaseId));
+          const asset = await resolve();
+          await binary(store, await store.resolvePublicId(id), asset, req, res, async () => {
+            requireValue(await resolve() === asset, 409, "VERSION_CHANGED", "产品资料已更新");
+          });
+          return;
+        }
+        const salesProduct = path.match(/^\/api\/v1\/sales\/catalog\/products\/([^/]+)$/);
+        if (salesProduct) {
+          query("getSalesProduct", url);
+          success("getSalesProduct", { data: await store.salesProduct(decodeURIComponent(salesProduct[1])) });
+          return;
+        }
+        const salesFile = path.match(/^\/api\/v1\/sales\/catalog\/products\/([^/]+)\/materials\/([^/]+)\/(preview(?:\/content)?|source)$/);
+        if (salesFile) {
+          const id = decodeURIComponent(salesFile[1]), materialId = decodeURIComponent(salesFile[2]);
+          if (salesFile[3] === "preview") {
+            query("getSalesPreview", url);
+            success("getSalesPreview", { data: await store.salesManifest(id, materialId) });
+          } else if (salesFile[3] === "preview/content") {
+            const q = query("streamSalesPreview", url);
+            const resolve = () => store.salesPreviewAsset(id, materialId, String(q.releaseId), String(q.versionId), String(q.part));
+            const asset = await resolve();
+            await binary(store, await store.resolvePublicId(id), asset, req, res, async () => {
+              requireValue(await resolve() === asset, 409, "VERSION_CHANGED", "资料已更新，请打开当前版本");
+            });
+          } else {
+            const q = query("downloadSalesSource", url);
+            const resolve = () => store.salesSourceAsset(id, materialId, String(q.releaseId), String(q.versionId));
+            const source = await resolve();
+            const checkDownload = async () => {
+              const current = await resolve();
+              requireValue(current.assetId === source.assetId && JSON.stringify(current.assetIds) === JSON.stringify(source.assetIds) && current.purpose === source.purpose, 409, "VERSION_CHANGED", "资料已更新，请打开当前版本");
+            };
+            const recordDownload = async () => {
+              await store.captureAnalytics({ kind: "DOWNLOAD", productId: id, materialId, releaseId: String(q.releaseId), versionId: String(q.versionId), client: "SALES_PC", eventKey: requestId, sourceIp: ip });
+            };
+            if (source.assetIds) {
+              res.once("finish", () => { if (res.statusCode === 200 && res.writableFinished) void recordDownload().catch(() => console.error(JSON.stringify({ event: "analytics_capture_failed", kind: "DOWNLOAD" }))); });
+              await zipDownload(store, await store.resolvePublicId(id), source.assetIds, res, checkDownload, source.name);
+            } else await binary(store, await store.resolvePublicId(id), source.assetId!, req, res, checkDownload, source.name, source.purpose, recordDownload);
+          }
+          return;
+        }
+        if (path === "/api/v1/sales/me") {
+          query("getSalesMe", url);
+          success("getSalesMe", { data: currentIdentity });
+          return;
+        }
         if (path === "/api/v1/admin/me") {
           query("getAdminMe", url);
           success("getAdminMe", { data: currentIdentity });
@@ -298,6 +469,7 @@ export function makeApiServer(
         }
         if (path === "/api/v1/admin/products") {
           const q = query("listAdminProducts", url);
+          if (q.removed === true) requireValue(currentIdentity?.role === "ADMIN", 403, "FORBIDDEN", "仅管理员可查看已移除产品");
           if (q.publicationState)
             requireValue(
               ["DRAFT", "PUBLISHED", "OFFLINE"].includes(
@@ -314,6 +486,12 @@ export function makeApiServer(
         if (path === "/api/v1/admin/audit-events") {
           const q = query("listAuditEvents", url);
           success("listAuditEvents", page(await store.listAudit(q), q));
+          return;
+        }
+        const history = path.match(/^\/api\/v1\/admin\/products\/([^/]+)\/material-versions$/);
+        if (history) {
+          const q = query("listMaterialVersions", url);
+          success("listMaterialVersions", page(await store.materialVersions(decodeURIComponent(history[1])), q));
           return;
         }
         const productMatch = path.match(
@@ -405,7 +583,7 @@ export function makeApiServer(
                 String(q.versionId),
                 String(q.part),
               );
-            await binary(store, id, assetId, req, res, async () => {
+            await binary(store, await store.resolvePublicId(id), assetId, req, res, async () => {
               await store.previewAsset(
                 id,
                 m,
@@ -425,7 +603,7 @@ export function makeApiServer(
             id = decodeURIComponent(media[1]);
           await binary(
             store,
-            id,
+            await store.resolvePublicId(id),
             await store.mediaAsset(
               id,
               decodeURIComponent(media[2]),
@@ -443,6 +621,36 @@ export function makeApiServer(
           );
           return;
         }
+      }
+      if (method === "POST" && path === "/api/v1/catalog/analytics/views") {
+        query("submitAnalyticsView", url);
+        await store.submitAnalyticsView(await jsonBody(req), ip);
+        success("submitAnalyticsView", { data: { accepted: true } });
+        return;
+      }
+      if (method === "PUT" && path === "/api/v1/admin/analytics/settings") {
+        requireValue(currentIdentity?.role === "ADMIN", 403, "FORBIDDEN", "仅管理员可维护统计设置");
+        query("updateAnalyticsSettings", url);
+        success("updateAnalyticsSettings", { data: await store.writeAnalyticsSettings(await jsonBody(req), requestId) });
+        return;
+      }
+      if (method === "POST" && path === "/api/v1/catalog/feedback") {
+        query("submitFeedback", url);
+        await store.submitFeedback(await jsonBody(req), ip);
+        success("submitFeedback", { data: { accepted: true } });
+        return;
+      }
+      if (method === "PUT" && path === "/api/v1/admin/site-contact") {
+        requireValue(currentIdentity?.role === "ADMIN", 403, "FORBIDDEN", "仅管理员可维护联系方式");
+        query("updateAdminSiteContact", url);
+        success("updateAdminSiteContact", { data: await store.writeSiteContact(await jsonBody(req), requestId) });
+        return;
+      }
+      if (method === "PUT" && path === "/api/v1/admin/site-banner") {
+        requireValue(currentIdentity?.role === "ADMIN", 403, "FORBIDDEN", "仅管理员可维护 Banner");
+        query("updateAdminSiteBanner", url);
+        success("updateAdminSiteBanner", { data: await store.writeSiteBanner(await jsonBody(req), requestId) });
+        return;
       }
       const management = path.match(
         /^\/api\/v1\/admin\/(categories|users)(?:\/([^/]+))?$/,
@@ -508,6 +716,15 @@ export function makeApiServer(
                 ? await store.publish(id, body, key, requestId)
                 : await store.unpublish(id, body, key, requestId),
         });
+        return;
+      }
+      const removal = path.match(/^\/api\/v1\/admin\/products\/([^/]+)\/(remove|restore)$/);
+      if (method === "POST" && removal) {
+        requireValue(currentIdentity?.role === "ADMIN", 403, "FORBIDDEN", "仅管理员可移除或恢复产品");
+        const id = decodeURIComponent(removal[1]), operation = removal[2] === "remove" ? "removeProduct" : "restoreProduct";
+        query(operation, url);
+        const body = await jsonBody(req);
+        success(operation, { data: removal[2] === "remove" ? await store.removeProduct(id, body, key, requestId) : await store.restoreProduct(id, body, key, requestId) });
         return;
       }
       if (method === "POST" && path === "/api/v1/admin/uploads") {

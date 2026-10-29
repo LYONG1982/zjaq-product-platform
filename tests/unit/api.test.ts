@@ -63,13 +63,15 @@ test("loopback API preserves private baseline, supports contracts, and validates
     );
     for (const path of [
       "/catalog/products",
-      "/catalog/categories",
       "/catalog/materials",
     ]) {
       const r = await read("/api/v1" + path, false);
       assert.deepEqual(r.body.data, []);
       assert.ok(!JSON.stringify(r.body).includes("保密工作管理系统"));
     }
+    const publicCategories = await read("/api/v1/catalog/categories", false);
+    assert.equal(publicCategories.body.data.length, 4);
+    assert.ok(publicCategories.body.data.every((category: { productCount: number }) => category.productCount === 0));
     assert.equal(
       (await read("/api/v1/catalog/products/ZJ-001", false)).response.status,
       404,

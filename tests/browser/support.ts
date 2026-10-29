@@ -40,3 +40,18 @@ export async function json(
   });
   return { status: response.status(), body: await response.json() };
 }
+export async function publicProductId(request: APIRequestContext, name: string, releaseId?: string) {
+  const result = await json(request, "/catalog/products?q=" + encodeURIComponent(name));
+  expect(result.status).toBe(200);
+  const matches = result.body.data.filter((item: { name: string; releaseId: string }) => item.name === name && (!releaseId || item.releaseId === releaseId));
+  expect(matches).toHaveLength(1);
+  return matches[0].productId as string;
+}
+
+/** Explicit test-only login. Production does not enable this session flow. */
+export async function loginSales(page: import("@playwright/test").Page) {
+  const response = await page.request.post(urls.portal + "/api/sales/session", {
+    headers: { Origin: urls.portal, "Content-Type": "application/json" }, data: { localValidation: true },
+  });
+  expect(response.status(), "local PC session should be enabled only on the isolated development server").toBe(200);
+}

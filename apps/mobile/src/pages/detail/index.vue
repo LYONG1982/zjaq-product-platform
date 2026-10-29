@@ -1,22 +1,61 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { onLoad, onShow } from "@dcloudio/uni-app";
 import type { Responses } from "@zj/contracts";
 import { api } from "../../api";
 import ProductVisual from "../../components/ProductVisual.vue";
+import ContactBlock from "../../components/ContactBlock.vue";
 import { safeSource, backToSource } from "../../navigation";
 const product = ref<Responses["PublicProduct"]>(),
   error = ref(""),
   loading = ref(true);
+const themeClass = computed(() => {
+  switch (product.value?.category.id) {
+    case "miding":
+      return "theme-miding";
+    case "miyi":
+      return "theme-miyi";
+    case "mishu":
+      return "theme-mishu";
+    case "ai":
+      return "theme-ai";
+    default:
+      return "";
+  }
+});
 let source = "/pages/products/index";
 let id = "",
   sequence = 0;
 const groups = [
   ["problemValues", "问题与价值"],
-  ["features", "核心能力"],
   ["scenarios", "应用场景"],
+  ["features", "核心能力"],
 ] as const;
+const summaryParagraphs = computed(() => (product.value?.summary ?? "").split(/\r\n|\r|\n/).filter(line => line.trim().length > 0));
 import { technicalLabels as labels } from "@zj/api-client";
+function hasText(value: string | null | undefined): boolean {
+  return typeof value === "string" && value.trim().length > 0;
+}
+const visibleGroups = computed(() => {
+  if (!product.value) return [];
+  return groups
+    .map(([key, label]) => ({
+      key,
+      label,
+      items: product.value![key].filter(
+        (item) => hasText(item.title) || hasText(item.text),
+      ),
+    }))
+    .filter((group) => group.items.length > 0);
+});
+function hasGroup(key: (typeof groups)[number][0]): boolean {
+  return visibleGroups.value.some((group) => group.key === key);
+}
+const technicalEntries = computed(() =>
+  Object.entries(product.value?.technical ?? {}).filter(([, value]) =>
+    hasText(value),
+  ),
+);
 
 async function load() {
   if (!id) {
@@ -53,6 +92,9 @@ function back() {
 function jump(section: string) {
   uni.pageScrollTo({ selector: "#section-" + section, duration: 160 });
 }
+function showCapability(item: { title: string; text: string }) {
+  uni.showModal({ title: item.title || "核心能力", content: item.text || item.title, showCancel: false });
+}
 function preview(materialId: string) {
   uni.navigateTo({
     url:
@@ -66,7 +108,7 @@ function preview(materialId: string) {
 }
 </script>
 <template>
-  <view class="detail-page"
+  <view :class="['detail-page', themeClass]"
     ><button class="back-link" @click="back">← 返回上一页</button
     ><view v-if="error" class="empty" role="alert"
       ><text>{{ error }}</text
@@ -77,57 +119,61 @@ function preview(materialId: string) {
       ><view class="detail-intro"
         ><text class="category-label">{{ product.category.name }}</text
         ><text class="detail-title">{{ product.name }}</text
-        ><text class="tagline">{{ product.tagline }}</text
-        ><text class="paragraph">{{ product.summary }}</text
-        ><text v-if="product.audiences" class="paragraph"
-          >适用对象：{{ product.audiences }}</text
-        ></view
+        ><text v-if="product.model" class="paragraph">产品型号：{{ product.model }}</text
+        ><text v-if="hasText(product.tagline)" class="tagline">{{
+          product.tagline
+        }}</text
+        ><button v-if="product.materials.length" class="view-materials" @click="jump('materials')">查看产品资料</button></view
+      ><view v-if="summaryParagraphs.length || hasText(product.audiences)" class="detail-section product-introduction"><text class="section-title">产品介绍</text><text v-for="(paragraph, index) in summaryParagraphs" :key="index" class="paragraph summary">{{ paragraph }}</text><text v-if="hasText(product.audiences)" class="paragraph">适用对象：{{ product.audiences }}</text></view
       ><view class="section-nav" aria-label="产品详情分区"
         ><button
-          v-if="product.problemValues.length"
+          v-if="hasGroup('problemValues')"
           @click="jump('problemValues')"
         >
           价值</button
-        ><button v-if="product.features.length" @click="jump('features')">
+        ><button v-if="hasGroup('features')" @click="jump('features')">
           能力</button
-        ><button v-if="product.scenarios.length" @click="jump('scenarios')">
+        ><button v-if="hasGroup('scenarios')" @click="jump('scenarios')">
           场景</button
         ><button @click="jump('materials')">资料</button></view
-      ><template v-for="[key, label] in groups" :key="key"
+      ><template v-for="group in visibleGroups" :key="group.key"
         ><view
-          v-if="product[key].length"
-          :id="'section-' + key"
+          :id="'section-' + group.key"
           class="detail-section"
-          ><text class="section-title">{{ label }}</text
-          ><view
-            v-for="item in product[key]"
+          ><text class="section-title">{{ group.label }}</text
+          ><view v-if="group.key === 'features'" class="feature-tags"><button v-for="item in group.items" :key="item.id" class="capability-tag" :aria-label="item.title || item.text" @click="showCapability(item)">{{ item.title || item.text }}</button></view><template v-else><view
+            v-for="item in group.items"
             :key="item.id"
             class="feature-card"
-            ><text class="feature-title">{{ item.title }}</text
-            ><text class="paragraph">{{ item.text }}</text></view
-          ></view
+            ><text v-if="hasText(item.title)" class="feature-title">{{
+              item.title
+            }}</text
+            ><text v-if="hasText(item.text)" class="paragraph">{{
+              item.text
+            }}</text></view
+          ></template></view
         ></template
       ><view v-if="product.media.length" class="media-list"
         ><text class="section-title">产品展示</text
         ><view v-for="m in product.media" :key="m.mediaId"
-          ><ProductVisual :path="m.path" :alt="m.alt" large /><text>{{
+          ><ProductVisual
+            :path="m.path"
+            :alt="hasText(m.alt) ? m.alt : product.name"
+            large /><text v-if="hasText(m.alt)">{{
             m.alt
           }}</text></view
         ></view
-      ><view v-if="Object.keys(product.technical).length" class="detail-section"
+      ><view v-if="technicalEntries.length" class="detail-section"
         ><text class="section-title">技术与使用说明</text
         ><view class="feature-card"
           ><view
-            v-for="(v, k) in product.technical"
+            v-for="[k, v] in technicalEntries"
             :key="k"
             class="technical-row"
             ><text class="feature-title">{{ labels[k] ?? k }}</text
             ><text class="paragraph">{{ v }}</text></view
           ></view
         ></view
-      ><view v-if="product.boundaries" class="boundary"
-        ><text class="feature-title">适用边界</text
-        ><text class="paragraph">{{ product.boundaries }}</text></view
       ><view id="section-materials" class="detail-section"
         ><text class="section-title">产品资料</text
         ><button
@@ -139,22 +185,41 @@ function preview(materialId: string) {
           <text class="feature-title">{{ m.name }}</text
           ><text class="material-meta"
             >{{ m.versionLabel }} ·
-            {{ m.previewKind === "pdf" ? "PDF" : "图片" }} ·
-            {{ m.pageCount }} 页 · {{ m.publishedAt.slice(0, 10) }}</text
+            {{ m.previewKind === "pdf" ? "PDF" : m.previewKind === "video" ? "视频" : "图片" }} ·
+            {{ m.previewKind === 'video' ? '' : m.pageCount + ' 页 · ' }}{{ m.publishedAt.slice(0, 10) }}</text
           ><text class="preview-link">预览 →</text></button
         ><text v-if="!product.materials.length" class="paragraph"
           >暂无可预览资料</text
         ></view
-      ></template
+      ><ContactBlock />
+      </template
     ></view
   >
 </template>
 <style scoped>
 .detail-page {
   padding: 12px 16px calc(32px + env(safe-area-inset-bottom));
+  --detail-accent: var(--zj-color-brand-hover);
 }
+.theme-miding {
+  --detail-accent: #165dff;
+}
+.theme-miyi {
+  --detail-accent: #2b7f71;
+}
+.theme-mishu {
+  --detail-accent: #386aab;
+}
+.theme-ai {
+  --detail-accent: #2b7dbe;
+}
+.detail-intro { padding: 20px; border-radius: 14px; background: var(--detail-accent); color: white; }
+.detail-intro .category-label, .detail-intro .paragraph { color: white; }
+.view-materials { margin: 20px 0 0; font-size: 16px; background: white; color: var(--detail-accent); line-height: 44px; }
+.feature-tags { display:flex; gap:10px; flex-wrap:wrap; }
+.capability-tag { margin: 0; padding: 8px 14px; font-size: 15px; line-height: 1.5; color: var(--detail-accent); background: white; border: 1px solid var(--detail-accent); border-radius: 20px; max-width:100%; overflow-wrap:anywhere; }
 .category-label {
-  color: var(--zj-color-brand-hover);
+  color: var(--detail-accent);
   font-size: 14px;
 }
 .detail-title {
@@ -162,6 +227,10 @@ function preview(materialId: string) {
   font-size: 24px;
   line-height: 1.45;
   font-weight: 650;
+  margin: 14px 0;
+}
+.summary {
+  text-indent: 2em;
   margin: 14px 0;
 }
 .tagline {
@@ -194,7 +263,7 @@ function preview(materialId: string) {
   font-size: 14px;
   line-height: 44px;
   padding: 0;
-  color: var(--zj-color-brand-hover);
+  color: var(--detail-accent);
   background: white;
   border: 1px solid var(--zj-color-border);
   border-radius: 6px;
@@ -204,6 +273,9 @@ function preview(materialId: string) {
   font-size: 20px;
   font-weight: 600;
   margin-bottom: 16px;
+  color: var(--detail-accent);
+  border-left: 4px solid var(--detail-accent);
+  padding-left: 10px;
 }
 .feature-card {
   padding: 16px;
@@ -222,12 +294,6 @@ function preview(materialId: string) {
   padding-top: 16px;
   margin-top: 16px;
 }
-.boundary {
-  background: #eaf3f4;
-  padding: 16px;
-  border-radius: 12px;
-  margin-top: 28px;
-}
 .material-card {
   text-align: left;
   line-height: 1.6;
@@ -245,7 +311,7 @@ function preview(materialId: string) {
 }
 .preview-link {
   font-size: 14px;
-  color: var(--zj-color-brand-hover);
+  color: var(--detail-accent);
   display: block;
   margin-top: 18px;
 }

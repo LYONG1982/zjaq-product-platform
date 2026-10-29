@@ -31,7 +31,8 @@ export class CloudBaseIdentity implements IdentityProvider {
         /^Bearer [A-Za-z0-9._~+\/-]+=*$/.test(header) &&
         header.length < 8192 &&
         !header.includes("local-mock") &&
-        !header.includes("local-admin"),
+        !header.includes("local-admin") &&
+        !header.includes("local-sales"),
       401,
       "SESSION_EXPIRED",
       "请重新登录",
@@ -75,7 +76,7 @@ export class CloudBaseIdentity implements IdentityProvider {
 export async function identityFor(
   tx: Transaction,
   subject: string,
-): Promise<Responses["AdminIdentity"]> {
+): Promise<Responses["AdminIdentity"] | Responses["SalesIdentity"]> {
   const index = await tx.get<{ userId: string }>(
     "subjects",
     subjectKey(subject),
@@ -90,7 +91,9 @@ export async function identityFor(
     "此身份未获后台访问权限",
   );
   const { version, ...identity } = user;
-  return identity;
+  return user.role === "SALES"
+    ? (identity as Responses["SalesIdentity"])
+    : (identity as Responses["AdminIdentity"]);
 }
 export async function authenticate(
   repo: Repository,

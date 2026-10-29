@@ -20,7 +20,7 @@
         },
         "productCount": {
           "type": "integer",
-          "minimum": 1
+          "minimum": 0
         }
       },
       "required": [
@@ -92,7 +92,8 @@
         "previewKind": {
           "enum": [
             "pdf",
-            "images"
+            "images",
+            "video"
           ]
         },
         "pageCount": {
@@ -241,9 +242,6 @@
             "type": "string"
           }
         },
-        "boundaries": {
-          "type": "string"
-        },
         "media": {
           "type": "array",
           "items": {
@@ -255,6 +253,9 @@
           "items": {
             "$ref": "#/$defs/PublicMaterial"
           }
+        },
+        "model": {
+          "type": "string"
         }
       },
       "required": [
@@ -271,7 +272,6 @@
         "features",
         "scenarios",
         "technical",
-        "boundaries",
         "media",
         "materials"
       ],
@@ -325,7 +325,8 @@
         "previewKind": {
           "enum": [
             "pdf",
-            "images"
+            "images",
+            "video"
           ]
         },
         "pageCount": {
@@ -406,6 +407,34 @@
       ],
       "additionalProperties": false
     },
+    "SalesIdentity": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "subjectId": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "role": {
+          "const": "SALES"
+        },
+        "enabled": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "userId",
+        "subjectId",
+        "displayName",
+        "role",
+        "enabled"
+      ],
+      "additionalProperties": false
+    },
     "AdminDraft": {
       "type": "object",
       "properties": {
@@ -451,6 +480,25 @@
             "string",
             "null"
           ]
+        },
+        "deletedAt": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "deletedBy": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "deletionReason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 300
         }
       },
       "required": [
@@ -509,6 +557,25 @@
             "string",
             "null"
           ]
+        },
+        "deletedAt": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "deletedBy": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "deletionReason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 300
         }
       },
       "required": [
@@ -887,6 +954,10 @@
         },
         "createdAt": {
           "type": "string"
+        },
+        "reason": {
+          "type": "string",
+          "maxLength": 300
         }
       },
       "required": [
@@ -918,7 +989,8 @@
         "role": {
           "enum": [
             "CONTENT_MANAGER",
-            "ADMIN"
+            "ADMIN",
+            "SALES"
           ]
         },
         "enabled": {
@@ -1328,6 +1400,22 @@
       "properties": {
         "data": {
           "$ref": "#/$defs/AdminIdentity"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "SalesIdentityResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/SalesIdentity"
         },
         "requestId": {
           "type": "string"
@@ -1896,6 +1984,539 @@
           "type": "array",
           "items": {
             "$ref": "#/$defs/AdminUser"
+          }
+        },
+        "page": {
+          "type": "object",
+          "properties": {
+            "nextCursor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "hasMore": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "nextCursor",
+            "hasMore"
+          ],
+          "additionalProperties": false
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "page",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "SiteBanner": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "imageData": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "link": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "startsAt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 40
+        },
+        "endsAt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 40
+        },
+        "introduction": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 120
+        },
+        "introLink": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 2048
+        },
+        "refreshAfterSeconds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 30
+        }
+      },
+      "required": [
+        "version",
+        "imageData",
+        "link"
+      ],
+      "additionalProperties": false
+    },
+    "SiteBannerResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/SiteBanner"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "SiteContact": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "officialQr": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "serviceQr": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "phone": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "officialQr",
+        "serviceQr",
+        "phone"
+      ],
+      "additionalProperties": false
+    },
+    "SiteContactResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/SiteContact"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "FeedbackItem": {
+      "type": "object",
+      "properties": {
+        "feedbackId": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "contact": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "feedbackId",
+        "content",
+        "contact",
+        "createdAt"
+      ],
+      "additionalProperties": false
+    },
+    "FeedbackListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/FeedbackItem"
+          }
+        },
+        "page": {
+          "type": "object",
+          "properties": {
+            "nextCursor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "hasMore": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "nextCursor",
+            "hasMore"
+          ],
+          "additionalProperties": false
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "page",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "FeedbackReceiptResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "accepted": {
+              "const": true
+            }
+          },
+          "required": [
+            "accepted"
+          ],
+          "additionalProperties": false
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "MaterialVersionListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "./domain.schema.json#/$defs/MaterialRef"
+          }
+        },
+        "page": {
+          "type": "object",
+          "properties": {
+            "nextCursor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "hasMore": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "nextCursor",
+            "hasMore"
+          ],
+          "additionalProperties": false
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "page",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "AnalyticsNotice": {
+      "type": "object",
+      "properties": {
+        "downloadEnabled": {
+          "type": "boolean"
+        },
+        "viewEnabled": {
+          "type": "boolean"
+        },
+        "retentionDays": {
+          "const": 90
+        },
+        "notice": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "downloadEnabled",
+        "viewEnabled",
+        "retentionDays",
+        "notice"
+      ],
+      "additionalProperties": false
+    },
+    "AnalyticsSettings": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "downloadEnabled": {
+          "type": "boolean"
+        },
+        "viewEnabled": {
+          "type": "boolean"
+        },
+        "retentionDays": {
+          "const": 90
+        },
+        "notice": {
+          "type": "string"
+        },
+        "dashboardEnabled": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "version",
+        "downloadEnabled",
+        "viewEnabled",
+        "retentionDays",
+        "notice",
+        "dashboardEnabled"
+      ],
+      "additionalProperties": false
+    },
+    "AnalyticsEvent": {
+      "type": "object",
+      "properties": {
+        "eventId": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "DOWNLOAD",
+            "VIEW"
+          ]
+        },
+        "productId": {
+          "type": "string"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "materialId": {
+          "type": "string"
+        },
+        "materialName": {
+          "type": "string"
+        },
+        "versionId": {
+          "type": "string"
+        },
+        "versionLabel": {
+          "type": "string"
+        },
+        "occurredAt": {
+          "type": "string"
+        },
+        "client": {
+          "enum": [
+            "SALES_PC",
+            "WECHAT",
+            "H5"
+          ]
+        },
+        "sourceIp": {
+          "type": "string"
+        },
+        "sharer": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "actorName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "eventId",
+        "kind",
+        "productId",
+        "productName",
+        "materialId",
+        "materialName",
+        "versionId",
+        "versionLabel",
+        "occurredAt",
+        "client",
+        "sourceIp",
+        "sharer",
+        "actorName"
+      ],
+      "additionalProperties": false
+    },
+    "AnalyticsMaterialSummary": {
+      "type": "object",
+      "properties": {
+        "productId": {
+          "type": "string"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "materialId": {
+          "type": "string"
+        },
+        "materialName": {
+          "type": "string"
+        },
+        "downloads": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "views": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "productId",
+        "productName",
+        "materialId",
+        "materialName",
+        "downloads",
+        "views"
+      ],
+      "additionalProperties": false
+    },
+    "AnalyticsSummary": {
+      "type": "object",
+      "properties": {
+        "retentionDays": {
+          "const": 90
+        },
+        "downloads": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "views": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "materials": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AnalyticsMaterialSummary"
+          }
+        }
+      },
+      "required": [
+        "retentionDays",
+        "downloads",
+        "views",
+        "materials"
+      ],
+      "additionalProperties": false
+    },
+    "AnalyticsNoticeResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/AnalyticsNotice"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "AnalyticsSettingsResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/AnalyticsSettings"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "AnalyticsSummaryResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/AnalyticsSummary"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "AnalyticsEventListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AnalyticsEvent"
           }
         },
         "page": {

@@ -1,4 +1,6 @@
-import { test, expect, urls } from "./support";
+import { test, expect, urls, publicProductId } from "./support";
+import { loginSales } from "./support";
+test.beforeEach(async ({ page }) => { await loginSales(page); });
 import { readFile } from "node:fs/promises";
 const name = "【Demo】资料问答助手";
 const mobileProducts = "/#/pages/products/index";
@@ -32,13 +34,13 @@ test("homepage branding and featured products never fall back to demo records", 
   ).toBeVisible();
 });
 
-test("PC explicit back keeps product filters through detail and PDF", async ({
+test("sales PC explicit back keeps official-name filter through detail and PDF", async ({
   page,
 }) => {
   await page.goto(
     urls.portal +
       "/products?q=" +
-      encodeURIComponent("知识查询演示") +
+      encodeURIComponent("资料问答") +
       "&categoryId=ai",
   );
   await page.locator(".product-card").filter({ hasText: name }).click();
@@ -52,7 +54,7 @@ test("PC explicit back keeps product filters through detail and PDF", async ({
   await page.getByRole("link", { name: "← 返回上一页", exact: true }).click();
   await expect(page.getByRole("heading", { name })).toBeVisible();
   await page.getByRole("link", { name: "← 返回上一页", exact: true }).click();
-  await expect(page.getByLabel("搜索产品")).toHaveValue("知识查询演示");
+  await expect(page.getByLabel("搜索产品")).toHaveValue("资料问答");
   await expect(page.locator(".chip.active")).toHaveText("AI+人工智能应用");
 });
 
@@ -247,9 +249,10 @@ test("H5 failed product image degrades and absent sections have no dead anchors"
   page,
   request,
 }) => {
+  const publicId = await publicProductId(request, name);
   const detail = (
     await (
-      await request.get(urls.api + "/api/v1/catalog/products/ZJ-032")
+      await request.get(urls.api + "/api/v1/catalog/products/" + publicId)
     ).json()
   ).data;
   detail.media = [
@@ -257,16 +260,16 @@ test("H5 failed product image degrades and absent sections have no dead anchors"
       mediaId: "broken",
       role: "screenshot",
       alt: "测试失败素材",
-      path: "/api/v1/catalog/products/ZJ-032/media/broken",
+      path: `/api/v1/catalog/products/${publicId}/media/broken`,
     },
   ];
   detail.problemValues = [];
-  await page.route("**/api/v1/catalog/products/ZJ-032", (r) =>
+  await page.route(`**/api/v1/catalog/products/${publicId}`, (r) =>
     r.fulfill({ json: { data: detail, requestId: "image-only" } }),
   );
   await page.route("**/media/broken", (r) => r.abort());
   await page.setViewportSize({ width: 375, height: 812 });
-  await page.goto(urls.h5 + "/#/pages/detail/index?id=ZJ-032");
+  await page.goto(urls.h5 + "/#/pages/detail/index?id=" + publicId);
   await expect(
     page.locator(".section-nav uni-button").filter({ hasText: "价值" }),
   ).toHaveCount(0);
@@ -281,15 +284,17 @@ test("H5 failed product image degrades and absent sections have no dead anchors"
 
 test("direct reader rejects external return destination and missing product recovers", async ({
   page,
+  request,
 }) => {
+  const publicId = await publicProductId(request, name);
   await page.goto(
     urls.portal +
-      "/viewer?productId=ZJ-032&materialId=demo-slides&from=" +
+      "/viewer?productId=" + publicId + "&materialId=demo-slides&from=" +
       encodeURIComponent("https://outside.example/"),
   );
   await expect(
     page.getByRole("link", { name: "← 返回上一页", exact: true }),
-  ).toHaveAttribute("href", "/products/ZJ-032");
+  ).toHaveAttribute("href", "/products/" + publicId);
   await page.goto(urls.h5 + "/#/pages/detail/index");
   await expect(page.getByText("产品暂不可用", { exact: true })).toBeVisible();
   await page.locator(".back-link").click();

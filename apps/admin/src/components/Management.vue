@@ -173,7 +173,7 @@ watch(() => [props.kind, props.canManage], load, { immediate: true });
           <tr v-for="u in users" :key="u.userId">
             <td>{{ u.displayName }}</td>
             <td>{{ u.subjectId }}</td>
-            <td>{{ u.role === "ADMIN" ? "管理员" : "内容制作人" }}</td>
+            <td>{{ u.role === "ADMIN" ? "管理员" : u.role === "SALES" ? "销售" : "内容制作人" }}</td>
             <td>{{ u.enabled ? "启用" : "禁用" }}</td>
             <td>
               <button class="text-button" @click="editUser(u)">修改</button>
@@ -252,10 +252,11 @@ watch(() => [props.kind, props.canManage], load, { immediate: true });
             required
             maxlength="100" /></label
         ><label class="field"
-          >角色<select v-model="user.role">
+          >角色<select v-model="user.role" aria-label="角色">
             <option value="CONTENT_MANAGER">内容制作人</option>
+            <option value="SALES">销售（仅销售工作台）</option>
             <option value="ADMIN">管理员</option>
-          </select></label
+          </select><small>销售身份仅可登录销售工作台，不具备管理后台权限。</small></label
         ><label class="checkbox-label"
           ><input v-model="user.enabled" type="checkbox" />启用账号</label
         ></template

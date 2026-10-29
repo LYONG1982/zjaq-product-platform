@@ -11,10 +11,11 @@ import { api } from "../api";
 const props = defineProps<{
   productId: string;
   assetIds: string[];
-  kind: "pdf" | "images";
+  kind: "pdf" | "images" | "video";
   alts?: string[];
 }>();
 const canvas = ref<HTMLCanvasElement>(),
+  videoSrc = ref(""),
   src = ref(""),
   error = ref(""),
   loading = ref(true),
@@ -25,6 +26,7 @@ let pdf: PDFDocumentProxy | undefined,
   task: RenderTask | undefined,
   seq = 0,
   loadingTask: PDFDocumentLoadingTask | undefined;
+let mediaRenewal: ReturnType<typeof setInterval> | undefined;
 async function draw() {
   const n = ++seq;
   error.value = "";
@@ -35,10 +37,10 @@ async function draw() {
       if (!pdf) {
         const { getDocument, GlobalWorkerOptions } = await import("pdfjs-dist");
         GlobalWorkerOptions.workerSrc = worker;
-        const blob = await api.asset(props.productId, props.assetIds[0]);
+        const request = api.assetRequest(props.productId, props.assetIds[0]);
         if (n !== seq) return;
         loadingTask = getDocument({
-          data: new Uint8Array(await blob.arrayBuffer()),
+          url: request.url, httpHeaders: request.headers, rangeChunkSize: 65536, disableAutoFetch: true, disableStream: true,
           enableXfa: false,
           useWasm: false,
           useSystemFonts: true,
@@ -58,6 +60,11 @@ async function draw() {
       c.height = v.height;
       task = p.render({ canvas: c, viewport: v });
       await task.promise;
+    } else if (props.kind === "video") {
+      videoSrc.value = await api.mediaAssetUrl(props.productId, props.assetIds[0]);
+      if (!mediaRenewal) mediaRenewal = setInterval(() => {
+        void api.mediaAssetUrl(props.productId, props.assetIds[0]).catch(() => { videoSrc.value = ""; error.value = "媒体会话已失效，请重新登录后重试"; });
+      }, 4 * 60 * 1000);
     } else {
       const blob = await api.asset(
         props.productId,
@@ -80,6 +87,8 @@ async function draw() {
 onMounted(draw);
 watch([page, scale], draw);
 onBeforeUnmount(() => {
+  if (mediaRenewal) clearInterval(mediaRenewal);
+  videoSrc.value = "";
   seq++;
   task?.cancel();
   void loadingTask?.destroy();
@@ -88,7 +97,7 @@ onBeforeUnmount(() => {
 </script>
 <template>
   <div class="asset-viewer">
-    <div class="viewer-toolbar">
+    <div v-if="kind !== 'video'" class="viewer-toolbar">
       <button :disabled="page <= 1 || loading" @click="page--">上一页</button
       ><span>第 {{ page }} / {{ total }} 页</span
       ><button :disabled="page >= total || loading" @click="page++">
@@ -118,7 +127,7 @@ onBeforeUnmount(() => {
         v-if="kind === 'pdf'"
         ref="canvas"
         aria-label="PDF 预览页面"
-      /><img
+      /><video v-else-if="kind === 'video' && videoSrc" :src="videoSrc" controls playsinline preload="metadata" style="width:100%;max-height:65vh" @error="error = '此浏览器无法播放此视频，或媒体会话已过期；请重试预览，必要时改用兼容的 MP4。'" /><img
         v-else-if="src"
         :src="src"
         :alt="alts?.[page - 1] || '资料第 ' + page + ' 页'"

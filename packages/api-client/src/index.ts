@@ -99,6 +99,26 @@ export function createClient(
     );
   }
   return {
+    assetRequest: (id: string, assetId: string) => ({ url: base + "/admin/products/" + encodeURIComponent(id) + "/assets/" + encodeURIComponent(assetId) + "/content", headers: headers() }),
+    async mediaAssetUrl(id: string, assetId: string) {
+      const response = await fetch(base + "/admin/media-session", { method: "POST", headers: headers(), credentials: "include", signal: AbortSignal.timeout(20000) });
+      if (response.status !== 204) checked({ status: response.status, body: await response.json() });
+      return base + "/admin/products/" + encodeURIComponent(id) + "/assets/" + encodeURIComponent(assetId) + "/content";
+    },
+    analyticsNotice: () => get<Responses["AnalyticsNoticeResponse"]>("/catalog/analytics"),
+    analyticsSettings: () => get<Responses["AnalyticsSettingsResponse"]>("/admin/analytics/settings"),
+    updateAnalyticsSettings: (body: Domain["AnalyticsSettingsWrite"]) => write<Responses["AnalyticsSettings"]>("PUT", "/admin/analytics/settings", body),
+    submitAnalyticsView: (body: Domain["AnalyticsViewSubmit"]) => write<{ accepted: true }>("POST", "/catalog/analytics/views", body),
+    analyticsEvents: (q: Record<string, string | number | undefined> = {}) => get<Responses["AnalyticsEventListResponse"]>("/admin/analytics/events", q),
+    analyticsSummary: () => get<Responses["AnalyticsSummaryResponse"]>("/admin/analytics/summary"),
+    publicSiteBanner: () => get<Responses["SiteBannerResponse"]>("/catalog/site-banner"),
+    adminSiteBanner: () => get<Responses["SiteBannerResponse"]>("/admin/site-banner"),
+    updateSiteBanner: (body: Domain["SiteBannerWrite"]) => write<Responses["SiteBanner"]>("PUT", "/admin/site-banner", body),
+    publicSiteContact: () => get<Responses["SiteContactResponse"]>("/catalog/site-contact"),
+    adminSiteContact: () => get<Responses["SiteContactResponse"]>("/admin/site-contact"),
+    updateSiteContact: (body: Domain["SiteContactWrite"]) => write<Responses["SiteContact"]>("PUT", "/admin/site-contact", body),
+    submitFeedback: (body: Domain["FeedbackSubmit"]) => write<{ accepted: true }>("POST", "/catalog/feedback", body),
+    feedback: (q: Record<string, string | number | undefined> = {}) => get<Responses["FeedbackListResponse"]>("/admin/feedback", q),
     publicCategories: () =>
       get<Responses["PublicCategoryListResponse"]>("/catalog/categories"),
     publicProducts: (q: Record<string, string | number | undefined> = {}) =>
@@ -152,6 +172,8 @@ export function createClient(
       get<ObjectResponse<AdminDraft>>(
         "/admin/products/" + encodeURIComponent(id) + "/draft",
       ),
+    materialVersions: (id: string, q: Record<string, string | number | undefined> = {}) =>
+      get<Responses["MaterialVersionListResponse"]>("/admin/products/" + encodeURIComponent(id) + "/material-versions", q),
     create: (body: Domain["CreateProduct"], key: string) =>
       write<AdminDraft>("POST", "/admin/products", body, key),
     save: (id: string, body: Domain["SaveDraft"]) =>
@@ -179,6 +201,8 @@ export function createClient(
         body,
         key,
       ),
+    removeProduct: (id: string, body: Domain["ProductRemoval"], key: string) => write<AdminDraft>("POST", "/admin/products/" + encodeURIComponent(id) + "/remove", body, key),
+    restoreProduct: (id: string, body: Domain["ProductRemoval"], key: string) => write<AdminDraft>("POST", "/admin/products/" + encodeURIComponent(id) + "/restore", body, key),
     audit: (q: Record<string, string | number | undefined> = {}) =>
       get<Responses["AuditEventListResponse"]>("/admin/audit-events", q),
     createUpload: (body: Domain["UploadIntent"], key: string) =>
@@ -192,18 +216,37 @@ export function createClient(
       get<Responses["UploadResultResponse"]>(
         "/admin/uploads/" + encodeURIComponent(id),
       ),
-    completeUpload: (id: string) =>
-      write<Responses["UploadResult"]>("POST", "/admin/uploads/complete", {
-        uploadId: id,
-      }),
-    async putBytes(id: string, body: Blob) {
+    async completeUpload(id: string) {
+      const response = await fetch(base + "/admin/uploads/complete", {
+        method: "POST", headers: { ...headers(), "Content-Type": "application/json" },
+        body: JSON.stringify({ uploadId: id }), signal: AbortSignal.timeout(35 * 60 * 1000),
+      });
+      return checked<Responses["UploadResultResponse"]>({ status: response.status, body: await response.json() });
+    },
+    async putBytes(id: string, body: Blob, onProgress?: (sent: number, total: number) => void) {
+      if (typeof XMLHttpRequest !== "undefined") {
+        // Native File/Blob upload keeps the payload outside JavaScript strings
+        // and provides progress without arrayBuffer/base64 copies.
+        return new Promise<Responses["UploadResultResponse"]>((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open("PUT", base + "/admin/uploads/" + encodeURIComponent(id) + "/content");
+          xhr.responseType = "json"; xhr.timeout = 15 * 60 * 1000;
+          for (const [key,value] of Object.entries({ ...headers(), "Content-Type": "application/octet-stream" })) xhr.setRequestHeader(key,value);
+          xhr.upload.onprogress = event => onProgress?.(event.loaded, event.lengthComputable ? event.total : body.size);
+          xhr.onload = () => { try { resolve(checked({status:xhr.status,body:xhr.response})); } catch (error) { reject(error); } };
+          xhr.onerror = () => reject(new ApiError(0,"NETWORK_ERROR","上传连接中断，请检查网络后重试"));
+          xhr.ontimeout = () => reject(new ApiError(408,"UPLOAD_TIMEOUT","上传超过 15 分钟，请检查网络后重试"));
+          xhr.onabort = () => reject(new ApiError(0,"UPLOAD_CANCELLED","上传已取消"));
+          xhr.send(body);
+        });
+      }
       const response = await fetch(
         base + "/admin/uploads/" + encodeURIComponent(id) + "/content",
         {
           method: "PUT",
           headers: { ...headers(), "Content-Type": "application/octet-stream" },
           body,
-          signal: AbortSignal.timeout(30000),
+          signal: AbortSignal.timeout(15 * 60 * 1000),
         },
       );
       return checked<Responses["UploadResultResponse"]>({

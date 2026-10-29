@@ -4,15 +4,15 @@ info:
   version: 4.0.0-rc2
   description: 待实现的机器可读契约；请求及响应Schema独立文件，域不变量见补充说明。不是已部署服务。
 servers:
-- url: http://localhost:3100
-  description: 约定本地API示例，实际端口由工程记录
+  - url: http://localhost:3100
+    description: 约定本地API示例，实际端口由工程记录
 paths:
   /api/v1/catalog/categories:
     get:
       operationId: listPublicCategories
-      summary: 仅包含至少一款当前已发布产品的启用分类；按sortOrder排序。
+      summary: 返回全部启用分类及公开产品数量（含零）；按sortOrder排序。
       tags:
-      - catalog
+        - catalog
       security: []
       x-required-role: public
       responses:
@@ -87,34 +87,34 @@ paths:
       operationId: listPublicProducts
       summary: 仅从当前发布快照检索；q/categoryId/cursor/limit；默认20最大100。
       tags:
-      - catalog
+        - catalog
       security: []
       x-required-role: public
       parameters:
-      - name: q
-        in: query
-        required: false
-        schema:
-          type: string
-          maxLength: 100
-      - name: categoryId
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: cursor
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: limit
-        in: query
-        required: false
-        schema:
-          type: integer
-          minimum: 1
-          default: 20
-          maximum: 100
+        - name: q
+          in: query
+          required: false
+          schema:
+            type: string
+            maxLength: 100
+        - name: categoryId
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 20
+            maximum: 100
       responses:
         '200':
           description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
@@ -187,15 +187,15 @@ paths:
       operationId: getPublicProduct
       summary: 返回PublicProduct DTO；不能返回完整ProductRecord或内部字段。
       tags:
-      - catalog
+        - catalog
       security: []
       x-required-role: public
       parameters:
-      - name: productId
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
@@ -268,44 +268,44 @@ paths:
       operationId: listCurrentMaterials
       summary: 聚合当前release引用的材料元数据；不包含历史及源文件。
       tags:
-      - catalog
+        - catalog
       security: []
       x-required-role: public
       parameters:
-      - name: q
-        in: query
-        required: false
-        schema:
-          type: string
-          maxLength: 100
-      - name: categoryId
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: cursor
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: limit
-        in: query
-        required: false
-        schema:
-          type: integer
-          minimum: 1
-          default: 20
-          maximum: 100
-      - name: productId
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: kind
-        in: query
-        required: false
-        schema:
-          type: string
+        - name: q
+          in: query
+          required: false
+          schema:
+            type: string
+            maxLength: 100
+        - name: categoryId
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 20
+            maximum: 100
+        - name: productId
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: kind
+          in: query
+          required: false
+          schema:
+            type: string
       responses:
         '200':
           description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
@@ -378,20 +378,20 @@ paths:
       operationId: getCurrentPreview
       summary: 解析当前版本，返回manifest和服务端预览资源路径，不返回对象URL。
       tags:
-      - catalog
+        - catalog
       security: []
       x-required-role: public
       parameters:
-      - name: productId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: materialId
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: materialId
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
@@ -464,40 +464,40 @@ paths:
       operationId: streamCurrentPreview
       summary: releaseId/versionId/part；每次核对当前绑定；支持Range；原件不可通过purpose参数取得。
       tags:
-      - catalog
+        - catalog
       security: []
       x-required-role: public
       parameters:
-      - name: productId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: materialId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: releaseId
-        in: query
-        required: true
-        schema:
-          type: string
-      - name: versionId
-        in: query
-        required: true
-        schema:
-          type: string
-      - name: part
-        in: query
-        required: true
-        schema:
-          type: string
-      - name: Range
-        in: header
-        required: false
-        schema:
-          type: string
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: materialId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: releaseId
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: versionId
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: part
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: Range
+          in: header
+          required: false
+          schema:
+            type: string
       responses:
         '200':
           description: '当前允许的二进制预览内容，Cache-Control: no-store；不返回永久存储路径。'
@@ -575,30 +575,30 @@ paths:
       operationId: streamCurrentMedia
       summary: releaseId必填；只提供当前发布引用的封面或截图；不暴露草稿媒体。
       tags:
-      - catalog
+        - catalog
       security: []
       x-required-role: public
       parameters:
-      - name: productId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: mediaId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: releaseId
-        in: query
-        required: true
-        schema:
-          type: string
-      - name: Range
-        in: header
-        required: false
-        schema:
-          type: string
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: mediaId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: releaseId
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: Range
+          in: header
+          required: false
+          schema:
+            type: string
       responses:
         '200':
           description: '当前允许的二进制预览内容，Cache-Control: no-store；不返回永久存储路径。'
@@ -676,9 +676,9 @@ paths:
       operationId: getAdminMe
       summary: 服务端验证CloudBase身份与后台白名单，返回角色；不是外部阅读登录。
       tags:
-      - admin
+        - admin
       security:
-      - AdminBearer: []
+        - AdminBearer: []
       x-required-role: CONTENT_MANAGER, ADMIN
       responses:
         '200':
@@ -747,50 +747,1007 @@ paths:
             application/json:
               schema:
                 $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/sales/catalog/products:
+    get:
+      operationId: listSalesProducts
+      summary: 仅从当前发布快照检索；q/categoryId/cursor/limit；默认20最大100。
+      tags:
+        - sales
+      security:
+        - AdminBearer: []
+      x-required-role: SALES
+      parameters:
+        - name: q
+          in: query
+          required: false
+          schema:
+            type: string
+            maxLength: 100
+        - name: categoryId
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: updatedFrom
+          in: query
+          required: false
+          schema:
+            type: string
+            pattern: '^\d{4}-\d{2}-\d{2}$'
+        - name: updatedTo
+          in: query
+          required: false
+          schema:
+            type: string
+            pattern: '^\d{4}-\d{2}-\d{2}$'
+        - name: ownership
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [ SELF_DEVELOPED, PARTNER ]
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 20
+            maximum: 100
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/PublicProductSummaryListResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/sales/catalog/products/{productId}:
+    get:
+      operationId: getSalesProduct
+      summary: 返回PublicProduct DTO；不能返回完整ProductRecord或内部字段。
+      tags:
+        - sales
+      security:
+        - AdminBearer: []
+      x-required-role: SALES
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/PublicProductResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/sales/catalog/products/{productId}/materials/{materialId}/preview:
+    get:
+      operationId: getSalesPreview
+      summary: 解析当前版本，返回manifest和服务端预览资源路径，不返回对象URL。
+      tags:
+        - sales
+      security:
+        - AdminBearer: []
+      x-required-role: SALES
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: materialId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/PreviewManifestResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/sales/catalog/products/{productId}/materials/{materialId}/preview/content:
+    get:
+      operationId: streamSalesPreview
+      summary: releaseId/versionId/part；每次核对当前绑定；支持Range；原件不可通过purpose参数取得。
+      tags:
+        - sales
+      security:
+        - AdminBearer: []
+      x-required-role: SALES
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: materialId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: releaseId
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: versionId
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: part
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: Range
+          in: header
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: '当前允许的二进制预览内容，Cache-Control: no-store；不返回永久存储路径。'
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '206':
+          description: 经过状态检查的部分内容；正确返回Content-Range。
+        '416':
+          description: 无效或超出范围的Range。
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/sales/catalog/products/{productId}/materials/{materialId}/source:
+    get:
+      operationId: downloadSalesSource
+      summary: 销售仅下载当前发布版本绑定的源文件，每次核对身份、版本、用途和归属。
+      tags:
+        - sales
+      security:
+        - AdminBearer: []
+      x-required-role: SALES
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: materialId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: releaseId
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: versionId
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: Range
+          in: header
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: '当前允许的二进制预览内容，Cache-Control: no-store；不返回永久存储路径。'
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '206':
+          description: 经过状态检查的部分内容；正确返回Content-Range。
+        '416':
+          description: 无效或超出范围的Range。
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/catalog/site-banner:
+    get:
+      operationId: getPublicSiteBanner
+      summary: 获取对外展示的首页 Banner 配置。
+      tags:
+        - catalog
+      security: []
+      x-required-role: public
+      responses:
+        '200':
+          description: Banner 配置。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/SiteBannerResponse
+        '400':
+          description: 请求无效。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 未登录。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 权限不足。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 配置版本冲突。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/admin/site-banner:
+    get:
+      operationId: getAdminSiteBanner
+      summary: 获取首页 Banner 配置。
+      tags:
+        - admin
+      security:
+        - AdminBearer: []
+      x-required-role: ADMIN
+      responses:
+        '200':
+          description: Banner 配置。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/SiteBannerResponse
+        '400':
+          description: 请求无效。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 未登录。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 权限不足。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 配置版本冲突。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+    put:
+      operationId: updateAdminSiteBanner
+      summary: 管理员替换或移除首页 Banner。
+      tags:
+        - admin
+      security:
+        - AdminBearer: []
+      x-required-role: ADMIN
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./domain.schema.json#/$defs/SiteBannerWrite
+      responses:
+        '200':
+          description: Banner 配置。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/SiteBannerResponse
+        '400':
+          description: 请求无效。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 未登录。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 权限不足。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 配置版本冲突。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/catalog/site-contact:
+    get:
+      operationId: getPublicSiteContact
+      summary: 获取对外展示的首页 联系方式 配置。
+      tags:
+        - catalog
+      security: []
+      x-required-role: public
+      responses:
+        '200':
+          description: 联系方式 配置。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/SiteContactResponse
+        '400':
+          description: 请求无效。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 未登录。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 权限不足。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 配置版本冲突。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/admin/site-contact:
+    get:
+      operationId: getAdminSiteContact
+      summary: 获取首页 联系方式 配置。
+      tags:
+        - admin
+      security:
+        - AdminBearer: []
+      x-required-role: ADMIN
+      responses:
+        '200':
+          description: 联系方式 配置。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/SiteContactResponse
+        '400':
+          description: 请求无效。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 未登录。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 权限不足。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 配置版本冲突。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+    put:
+      operationId: updateAdminSiteContact
+      summary: 管理员替换或移除首页 联系方式。
+      tags:
+        - admin
+      security:
+        - AdminBearer: []
+      x-required-role: ADMIN
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./domain.schema.json#/$defs/SiteContactWrite
+      responses:
+        '200':
+          description: 联系方式 配置。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/SiteContactResponse
+        '400':
+          description: 请求无效。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 未登录。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 权限不足。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 配置版本冲突。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/catalog/feedback:
+    post:
+      operationId: submitFeedback
+      summary: 匿名提交建议，不返回内部记录或联系人信息。
+      tags: [ catalog ]
+      security: []
+      x-required-role: public
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./domain.schema.json#/$defs/FeedbackSubmit
+      responses:
+        '200':
+          description: 已接受。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/FeedbackReceiptResponse
+  /api/v1/admin/feedback:
+    get:
+      operationId: listFeedback
+      summary: 仅管理员查看建议反馈。
+      tags: [ admin ]
+      security:
+        - AdminBearer: []
+      x-required-role: ADMIN
+      parameters:
+        - name: cursor
+          in: query
+          required: false
+          schema: { type: string }
+        - name: limit
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+      responses:
+        '200':
+          description: 反馈列表。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/FeedbackListResponse
+  /api/v1/sales/me:
+    get:
+      operationId: getSalesMe
+      summary: 服务端验证 CloudBase 身份及现有主体白名单，仅返回 SALES 身份。
+      tags:
+        - sales
+      security:
+        - AdminBearer: []
+      x-required-role: SALES
+      responses:
+        '200':
+          description: 销售身份信封。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/SalesIdentityResponse
+        '401':
+          description: 身份凭据无效或匿名请求。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 身份未加入白名单、已禁用或角色不符。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/catalog/analytics:
+    get:
+      operationId: getAnalyticsNotice
+      summary: 返回统计开关和采集告知，不返回统计数据或配置版本。
+      security: []
+      x-required-role: public
+      responses:
+        '200':
+          description: 采集告知。
+          content:
+            application/json:
+              schema: { $ref: './response.schema.json#/$defs/AnalyticsNoticeResponse' }
+  /api/v1/catalog/analytics/views:
+    post:
+      operationId: submitAnalyticsView
+      summary: 成功打开当前公开资料后采集一次浏览，按 viewId 去重，分享人只取可信服务端信息。
+      security: []
+      x-required-role: public
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: './domain.schema.json#/$defs/AnalyticsViewSubmit' }
+      responses:
+        '200':
+          description: 已接收或统计已关闭；均不返回日志。
+          content:
+            application/json:
+              schema: { $ref: './response.schema.json#/$defs/FeedbackReceiptResponse' }
+  /api/v1/admin/analytics/settings:
+    get:
+      operationId: getAnalyticsSettings
+      summary: 仅管理员查看统计开关。
+      security: [ { AdminBearer: [] } ]
+      x-required-role: ADMIN
+      responses:
+        '200':
+          description: 开关配置。
+          content:
+            application/json:
+              schema: { $ref: './response.schema.json#/$defs/AnalyticsSettingsResponse' }
+    put:
+      operationId: updateAnalyticsSettings
+      summary: 仅管理员修改统计开关，版本冲突保护并审计。
+      security: [ { AdminBearer: [] } ]
+      x-required-role: ADMIN
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: './domain.schema.json#/$defs/AnalyticsSettingsWrite' }
+      responses:
+        '200':
+          description: 已保存。
+          content:
+            application/json:
+              schema: { $ref: './response.schema.json#/$defs/AnalyticsSettingsResponse' }
+  /api/v1/admin/analytics/events:
+    get:
+      operationId: listAnalyticsEvents
+      summary: 仅管理员查看近90天资料浏览和完整下载记录，时间按北京时间。
+      security: [ { AdminBearer: [] } ]
+      x-required-role: ADMIN
+      parameters:
+        - { name: cursor, in: query, required: false, schema: { type: string } }
+        - { name: limit, in: query, required: false, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
+        - { name: q, in: query, required: false, schema: { type: string, maxLength: 100 } }
+        - { name: kind, in: query, required: false, schema: { enum: [ VIEW, DOWNLOAD ] } }
+        - { name: client, in: query, required: false, schema: { enum: [ SALES_PC, H5, WECHAT ] } }
+        - { name: from, in: query, required: false, schema: { type: string, pattern: '^\d{4}-\d{2}-\d{2}$' } }
+        - { name: to, in: query, required: false, schema: { type: string, pattern: '^\d{4}-\d{2}-\d{2}$' } }
+      responses:
+        '200':
+          description: 访问记录。
+          content:
+            application/json:
+              schema: { $ref: './response.schema.json#/$defs/AnalyticsEventListResponse' }
+  /api/v1/admin/analytics/summary:
+    get:
+      operationId: getAnalyticsSummary
+      summary: 仅管理员读取近90天统计；不依赖外部共享身份推断分享人。
+      security: [ { AdminBearer: [] } ]
+      x-required-role: ADMIN
+      responses:
+        '200':
+          description: 数据看板。
+          content:
+            application/json:
+              schema: { $ref: './response.schema.json#/$defs/AnalyticsSummaryResponse' }
+  /api/v1/admin/products/{productId}/material-versions:
+    get:
+      operationId: listMaterialVersions
+      summary: 后台查看已保存的资料历史版本，包括已从草稿移除的资料。
+      tags: [ admin ]
+      security:
+        - AdminBearer: []
+      x-required-role: CONTENT_MANAGER, ADMIN
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema: { type: string }
+        - name: cursor
+          in: query
+          required: false
+          schema: { type: string }
+        - name: limit
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+      responses:
+        '200':
+          description: 已保存的资料版本。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/MaterialVersionListResponse
   /api/v1/admin/products:
     get:
       operationId: listAdminProducts
       summary: 完整后台列表可含草稿；仅后台身份；所有产品可管理。
       tags:
-      - admin
+        - admin
       security:
-      - AdminBearer: []
+        - AdminBearer: []
       x-required-role: CONTENT_MANAGER, ADMIN
       parameters:
-      - name: q
-        in: query
-        required: false
-        schema:
-          type: string
-          maxLength: 100
-      - name: categoryId
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: cursor
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: limit
-        in: query
-        required: false
-        schema:
-          type: integer
-          minimum: 1
-          default: 20
-          maximum: 100
-      - name: publicationState
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: hasUnpublishedChanges
-        in: query
-        required: false
-        schema:
-          type: boolean
+        - name: q
+          in: query
+          required: false
+          schema:
+            type: string
+            maxLength: 100
+        - name: categoryId
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: owner
+          in: query
+          required: false
+          schema:
+            type: string
+            maxLength: 100
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 20
+            maximum: 100
+        - name: publicationState
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: hasUnpublishedChanges
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: removed
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: 仅管理员可设true查看已移除；默认隐藏。
       responses:
         '200':
           description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
@@ -862,18 +1819,18 @@ paths:
       operationId: createProduct
       summary: Idempotency-Key必填；事务分配编号并建立草稿。
       tags:
-      - admin
+        - admin
       security:
-      - AdminBearer: []
+        - AdminBearer: []
       x-required-role: CONTENT_MANAGER, ADMIN
       parameters:
-      - name: Idempotency-Key
-        in: header
-        required: true
-        schema:
-          type: string
-          minLength: 16
-          maxLength: 120
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 16
+            maxLength: 120
       requestBody:
         required: true
         content:
@@ -952,16 +1909,16 @@ paths:
       operationId: getProductDraft
       summary: 获取工作草稿与独立线上状态。
       tags:
-      - admin
+        - admin
       security:
-      - AdminBearer: []
+        - AdminBearer: []
       x-required-role: CONTENT_MANAGER, ADMIN
       parameters:
-      - name: productId
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
@@ -1033,16 +1990,16 @@ paths:
       operationId: saveProductDraft
       summary: expectedDraftVersion比较；content是全量结构化草稿替换，不接受状态、发布者或源码对象路径。
       tags:
-      - admin
+        - admin
       security:
-      - AdminBearer: []
+        - AdminBearer: []
       x-required-role: CONTENT_MANAGER, ADMIN
       parameters:
-      - name: productId
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -1121,22 +2078,22 @@ paths:
       operationId: previewProductDraft
       summary: expectedDraftVersion必填；版本变化409；只读、不产生预览或审批状态。
       tags:
-      - admin
+        - admin
       security:
-      - AdminBearer: []
+        - AdminBearer: []
       x-required-role: CONTENT_MANAGER, ADMIN
       parameters:
-      - name: productId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: expectedDraftVersion
-        in: query
-        required: true
-        schema:
-          type: integer
-          minimum: 1
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: expectedDraftVersion
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
       responses:
         '200':
           description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
@@ -1209,23 +2166,23 @@ paths:
       operationId: publishProduct
       summary: Idempotency-Key必填；版本比较＋完整性校验，事务发布。
       tags:
-      - admin
+        - admin
       security:
-      - AdminBearer: []
+        - AdminBearer: []
       x-required-role: CONTENT_MANAGER, ADMIN
       parameters:
-      - name: productId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: Idempotency-Key
-        in: header
-        required: true
-        schema:
-          type: string
-          minLength: 16
-          maxLength: 120
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 16
+            maxLength: 120
       requestBody:
         required: true
         content:
@@ -1304,23 +2261,23 @@ paths:
       operationId: unpublishProduct
       summary: Idempotency-Key必填；只检查线上版本，不受草稿完整性限制。
       tags:
-      - admin
+        - admin
       security:
-      - AdminBearer: []
+        - AdminBearer: []
       x-required-role: CONTENT_MANAGER, ADMIN
       parameters:
-      - name: productId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: Idempotency-Key
-        in: header
-        required: true
-        schema:
-          type: string
-          minLength: 16
-          maxLength: 120
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 16
+            maxLength: 120
       requestBody:
         required: true
         content:
@@ -1399,18 +2356,18 @@ paths:
       operationId: createUpload
       summary: Idempotency-Key必填；验证用途、类型及限额，创建暂存对象／短时上传目标。
       tags:
-      - admin
+        - admin
       security:
-      - AdminBearer: []
+        - AdminBearer: []
       x-required-role: CONTENT_MANAGER, ADMIN
       parameters:
-      - name: Idempotency-Key
-        in: header
-        required: true
-        schema:
-          type: string
-          minLength: 16
-          maxLength: 120
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 16
+            maxLength: 120
       requestBody:
         required: true
         content:
@@ -1489,9 +2446,9 @@ paths:
       operationId: completeUpload
       summary: 服务器根据uploadId读取真实对象并校验，生成READY或REJECTED；重复调用返回已有结果。
       tags:
-      - admin
+        - admin
       security:
-      - AdminBearer: []
+        - AdminBearer: []
       x-required-role: CONTENT_MANAGER, ADMIN
       requestBody:
         required: true
@@ -1571,16 +2528,16 @@ paths:
       operationId: getUpload
       summary: 查询真实检查结果；不伪造自动Office转换。
       tags:
-      - admin
+        - admin
       security:
-      - AdminBearer: []
+        - AdminBearer: []
       x-required-role: CONTENT_MANAGER, ADMIN
       parameters:
-      - name: uploadId
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: uploadId
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
@@ -1653,26 +2610,26 @@ paths:
       operationId: streamDraftAsset
       summary: 鉴权并检查该资产属于本产品；后台预览源文件／预览件／媒体。
       tags:
-      - admin
+        - admin
       security:
-      - AdminBearer: []
+        - AdminBearer: []
       x-required-role: CONTENT_MANAGER, ADMIN
       parameters:
-      - name: productId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: assetId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: Range
-        in: header
-        required: false
-        schema:
-          type: string
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: assetId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Range
+          in: header
+          required: false
+          schema:
+            type: string
       responses:
         '200':
           description: '当前允许的二进制预览内容，Cache-Control: no-store；不返回永久存储路径。'
@@ -1750,9 +2707,9 @@ paths:
       operationId: listAdminCategories
       summary: 返回全部分类及引用数，新增向导使用该API。
       tags:
-      - admin
+        - admin
       security:
-      - AdminBearer: []
+        - AdminBearer: []
       x-required-role: CONTENT_MANAGER, ADMIN
       responses:
         '200':
@@ -1825,9 +2782,9 @@ paths:
       operationId: createCategory
       summary: ADMIN；服务端生成分类ID；default必须在allowed内。
       tags:
-      - admin
+        - admin
       security:
-      - AdminBearer: []
+        - AdminBearer: []
       x-required-role: ADMIN
       requestBody:
         required: true
@@ -1907,26 +2864,26 @@ paths:
       operationId: updateCategory
       summary: ADMIN；expectedVersion必填；被引用分类停用返回409。
       tags:
-      - admin
+        - admin
       security:
-      - AdminBearer: []
+        - AdminBearer: []
       x-required-role: ADMIN
       parameters:
-      - name: categoryId
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: categoryId
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         required: true
         content:
           application/json:
             schema:
               allOf:
-              - $ref: ./domain.schema.json#/$defs/CategoryWrite
-              - type: object
-                required:
-                - expectedVersion
+                - $ref: ./domain.schema.json#/$defs/CategoryWrite
+                - type: object
+                  required:
+                    - expectedVersion
       responses:
         '200':
           description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
@@ -1999,29 +2956,29 @@ paths:
       operationId: listTemplates
       summary: 只读模板及字段；不能在线增删字段；可查询历史模板版本以渲染既有草稿。
       tags:
-      - admin
+        - admin
       security:
-      - AdminBearer: []
+        - AdminBearer: []
       x-required-role: CONTENT_MANAGER, ADMIN
       parameters:
-      - name: includeDisabled
-        in: query
-        required: false
-        schema:
-          type: boolean
-      - name: templateId
-        in: query
-        required: false
-        schema:
-          type: string
-          enum: [software, device, delivery, ai]
-      - name: version
-        in: query
-        required: false
-        description: 正整数；按版本精确查询，显式 templateId 与 version 组合可读取禁止新建的历史版本。
-        schema:
-          type: integer
-          minimum: 1
+        - name: includeDisabled
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: templateId
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [ software, device, delivery, ai ]
+        - name: version
+          in: query
+          required: false
+          description: 正整数；按版本精确查询，显式 templateId 与 version 组合可读取禁止新建的历史版本。
+          schema:
+            type: integer
+            minimum: 1
       responses:
         '200':
           description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
@@ -2094,34 +3051,34 @@ paths:
       operationId: listAuditEvents
       summary: 按产品／动作／时间筛选日志，不是审批记录。
       tags:
-      - admin
+        - admin
       security:
-      - AdminBearer: []
+        - AdminBearer: []
       x-required-role: CONTENT_MANAGER, ADMIN
       parameters:
-      - name: productId
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: action
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: cursor
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: limit
-        in: query
-        required: false
-        schema:
-          type: integer
-          minimum: 1
-          default: 20
-          maximum: 100
+        - name: productId
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: action
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 20
+            maximum: 100
       responses:
         '200':
           description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
@@ -2194,9 +3151,9 @@ paths:
       operationId: listAdminUsers
       summary: ADMIN；后台白名单，无外部会员或合作人员授权。
       tags:
-      - admin
+        - admin
       security:
-      - AdminBearer: []
+        - AdminBearer: []
       x-required-role: ADMIN
       responses:
         '200':
@@ -2269,9 +3226,9 @@ paths:
       operationId: createAdminUser
       summary: ADMIN；已有可信身份subjectId；唯一；禁止默认管理员密码。
       tags:
-      - admin
+        - admin
       security:
-      - AdminBearer: []
+        - AdminBearer: []
       x-required-role: ADMIN
       requestBody:
         required: true
@@ -2351,26 +3308,26 @@ paths:
       operationId: updateAdminUser
       summary: ADMIN；expectedVersion必填；不能禁用最后一个可用ADMIN。
       tags:
-      - admin
+        - admin
       security:
-      - AdminBearer: []
+        - AdminBearer: []
       x-required-role: ADMIN
       parameters:
-      - name: userId
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         required: true
         content:
           application/json:
             schema:
               allOf:
-              - $ref: ./domain.schema.json#/$defs/AdminUserWrite
-              - type: object
-                required:
-                - expectedVersion
+                - $ref: ./domain.schema.json#/$defs/AdminUserWrite
+                - type: object
+                  required:
+                    - expectedVersion
       responses:
         '200':
           description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
@@ -2443,16 +3400,16 @@ paths:
       operationId: putUploadBytes
       summary: 后台流式写入暂存对象；身份、uploadId归属、长度和状态校验；不公开原件。
       tags:
-      - admin
+        - admin
       security:
-      - AdminBearer: []
+        - AdminBearer: []
       x-required-role: CONTENT_MANAGER, ADMIN
       parameters:
-      - name: uploadId
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: uploadId
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -2475,6 +3432,425 @@ paths:
           description: 该上传已完成或对象不可覆盖
         '413':
           description: 超出当前限额
+  /api/v1/sales/catalog/materials:
+    get:
+      operationId: listSalesMaterials
+      summary: 销售资料目录：当前发布版本的全部分类，包含名称与内部别名搜索。
+      tags:
+        - sales
+      security:
+        - AdminBearer: []
+      x-required-role: SALES
+      parameters:
+        - name: q
+          in: query
+          required: false
+          schema:
+            type: string
+            maxLength: 100
+        - name: categoryId
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 20
+            maximum: 100
+        - name: productId
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: kind
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/CatalogMaterialRowListResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/sales/catalog/products/{productId}/media/{mediaId}:
+    get:
+      operationId: streamSalesMedia
+      summary: 销售当前产品图片；校验销售身份及发布版本。
+      tags:
+        - sales
+      security:
+        - AdminBearer: []
+      x-required-role: SALES
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: mediaId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: releaseId
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: Range
+          in: header
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: '当前允许的二进制预览内容，Cache-Control: no-store；不返回永久存储路径。'
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '206':
+          description: 经过状态检查的部分内容；正确返回Content-Range。
+        '416':
+          description: 无效或超出范围的Range。
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/admin/media-session:
+    post:
+      operationId: createAdminMediaSession
+      summary: 使用已有 Bearer 建立 5 分钟 HttpOnly 只读媒体 Cookie；仅同站后台资源 GET 使用，禁止在 URL 传递令牌。
+      tags: [ admin ]
+      security: [ { bearerAuth: [] } ]
+      x-required-role: admin
+      responses:
+        '204':
+          description: 已设置路径受限的 SameSite Strict Cookie；生产为 Secure。无响应正文。
+        '401':
+          description: 身份失效或未提供 Bearer。
+          content:
+            application/json:
+              schema: { $ref: './domain.schema.json#/$defs/Error' }
+  /api/v1/admin/products/{productId}/remove:
+    post:
+      operationId: removeProduct
+      summary: 管理员安全移除产品；保留全部身份和历史，不物理删除。
+      tags:
+        - admin
+      security:
+        - AdminBearer: []
+      x-required-role: ADMIN
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 16
+            maxLength: 120
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./domain.schema.json#/$defs/ProductRemoval
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/AdminDraftResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/admin/products/{productId}/restore:
+    post:
+      operationId: restoreProduct
+      summary: 管理员恢复产品；不会自动上架。
+      tags:
+        - admin
+      security:
+        - AdminBearer: []
+      x-required-role: ADMIN
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 16
+            maxLength: 120
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./domain.schema.json#/$defs/ProductRemoval
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/AdminDraftResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+
 components:
   securitySchemes:
     AdminBearer:

@@ -3,7 +3,7 @@
     "method": "get",
     "path": "/api/v1/catalog/categories",
     "operationId": "listPublicCategories",
-    "description": "仅包含至少一款当前已发布产品的启用分类；按sortOrder排序。",
+    "description": "返回全部启用分类及公开产品数量（含零）；按sortOrder排序。",
     "admin": false,
     "request": null,
     "response": "List",
@@ -78,6 +78,16 @@
     "request": null,
     "response": "Object",
     "role": "CONTENT_MANAGER, ADMIN"
+  },
+  {
+    "method": "get",
+    "path": "/api/v1/sales/me",
+    "operationId": "getSalesMe",
+    "description": "只验证现有主体白名单并返回 SALES 身份；不提供销售资源端点。",
+    "admin": true,
+    "request": null,
+    "response": "Object",
+    "role": "SALES"
   },
   {
     "method": "get",
@@ -278,5 +288,185 @@
     "request": null,
     "response": "UploadResult",
     "role": "CONTENT_MANAGER, ADMIN"
+  },
+  {
+    "method": "get",
+    "path": "/api/v1/sales/catalog/products",
+    "operationId": "listSalesProducts",
+    "description": "销售身份：仅访问当前发布版本并由服务端验证权限。",
+    "admin": false,
+    "request": null,
+    "response": "List",
+    "role": "SALES"
+  },
+  {
+    "method": "get",
+    "path": "/api/v1/sales/catalog/products/{productId}",
+    "operationId": "getSalesProduct",
+    "description": "销售身份：仅访问当前发布版本并由服务端验证权限。",
+    "admin": false,
+    "request": null,
+    "response": "Object",
+    "role": "SALES"
+  },
+  {
+    "method": "get",
+    "path": "/api/v1/sales/catalog/products/{productId}/materials/{materialId}/preview",
+    "operationId": "getSalesPreview",
+    "description": "销售身份：仅访问当前发布版本并由服务端验证权限。",
+    "admin": false,
+    "request": null,
+    "response": "Object",
+    "role": "SALES"
+  },
+  {
+    "method": "get",
+    "path": "/api/v1/sales/catalog/products/{productId}/materials/{materialId}/preview/content",
+    "operationId": "streamSalesPreview",
+    "description": "销售身份：仅访问当前发布版本并由服务端验证权限。",
+    "admin": false,
+    "request": null,
+    "response": "Binary",
+    "role": "SALES"
+  },
+  {
+    "method": "get",
+    "path": "/api/v1/sales/catalog/products/{productId}/materials/{materialId}/source",
+    "operationId": "downloadSalesSource",
+    "description": "销售身份：仅访问当前发布版本并由服务端验证权限。",
+    "admin": false,
+    "request": null,
+    "response": "Binary",
+    "role": "SALES"
+  },
+  {
+    "method": "get",
+    "path": "/api/v1/catalog/site-banner",
+    "operationId": "getPublicSiteBanner",
+    "description": "首页 Banner 配置。",
+    "admin": false,
+    "request": null,
+    "response": "Object",
+    "role": "public"
+  },
+  {
+    "method": "get",
+    "path": "/api/v1/admin/site-banner",
+    "operationId": "getAdminSiteBanner",
+    "description": "首页 Banner 配置。",
+    "admin": true,
+    "request": null,
+    "response": "Object",
+    "role": "ADMIN"
+  },
+  {
+    "method": "put",
+    "path": "/api/v1/admin/site-banner",
+    "operationId": "updateAdminSiteBanner",
+    "description": "首页 Banner 配置。",
+    "admin": true,
+    "request": "SiteBannerWrite",
+    "response": "Object",
+    "role": "ADMIN"
+  },
+  {
+    "method": "get",
+    "path": "/api/v1/catalog/site-contact",
+    "operationId": "getPublicSiteContact",
+    "description": "首页联系方式配置。",
+    "admin": false,
+    "request": null,
+    "response": "Object",
+    "role": "public"
+  },
+  {
+    "method": "get",
+    "path": "/api/v1/admin/site-contact",
+    "operationId": "getAdminSiteContact",
+    "description": "首页联系方式配置。",
+    "admin": true,
+    "request": null,
+    "response": "Object",
+    "role": "ADMIN"
+  },
+  {
+    "method": "put",
+    "path": "/api/v1/admin/site-contact",
+    "operationId": "updateAdminSiteContact",
+    "description": "首页联系方式配置。",
+    "admin": true,
+    "request": "SiteContactWrite",
+    "response": "Object",
+    "role": "ADMIN"
+  },
+  {
+    "method": "post",
+    "path": "/api/v1/catalog/feedback",
+    "operationId": "submitFeedback",
+    "description": "匿名提交建议反馈。",
+    "admin": false,
+    "request": "FeedbackSubmit",
+    "response": "Object",
+    "role": "public"
+  },
+  {
+    "method": "get",
+    "path": "/api/v1/admin/feedback",
+    "operationId": "listFeedback",
+    "description": "仅管理员查看反馈。",
+    "admin": true,
+    "request": null,
+    "response": "List",
+    "role": "ADMIN"
+  },
+  {
+    "method": "get",
+    "path": "/api/v1/admin/products/{productId}/material-versions",
+    "operationId": "listMaterialVersions",
+    "description": "后台查看保存的资料版本。",
+    "admin": true,
+    "request": null,
+    "response": "List",
+    "role": "CONTENT_MANAGER, ADMIN"
+  },
+  {
+    "method": "get",
+    "path": "/api/v1/sales/catalog/materials",
+    "operationId": "listSalesMaterials",
+    "description": "销售身份：当前发布版本。",
+    "admin": false,
+    "request": null,
+    "response": "List",
+    "role": "SALES"
+  },
+  {
+    "method": "get",
+    "path": "/api/v1/sales/catalog/products/{productId}/media/{mediaId}",
+    "operationId": "streamSalesMedia",
+    "description": "销售身份：当前发布版本。",
+    "admin": false,
+    "request": null,
+    "response": "Binary",
+    "role": "SALES"
+  },
+  {
+    "method": "post",
+    "path": "/api/v1/admin/products/{productId}/remove",
+    "operationId": "removeProduct",
+    "description": "管理员安全移除，保留身份与历史。",
+    "admin": true,
+    "request": "ProductRemoval",
+    "response": "Object",
+    "role": "ADMIN"
+  },
+  {
+    "method": "post",
+    "path": "/api/v1/admin/products/{productId}/restore",
+    "operationId": "restoreProduct",
+    "description": "管理员安全恢复，保留身份与历史。",
+    "admin": true,
+    "request": "ProductRemoval",
+    "response": "Object",
+    "role": "ADMIN"
   }
 ]

@@ -49,6 +49,7 @@ async function setup(store = new MockStore()) {
         categoryId: "miding",
         templateId: "software",
         templateVersion: 1,
+        model: name, productType: "SOFTWARE", ownership: "SELF_DEVELOPED",
         owner: "虚构验证人员",
       },
       key,
@@ -110,8 +111,10 @@ async function setup(store = new MockStore()) {
           materialId: randomUUID(),
           versionId: randomUUID(),
           name: "测试预览资料",
-          versionLabel: "v1",
           kind: "brochure",
+          category: "promotional",
+          subCategory: "deck",
+          versionLabel: "v1",
           preview: { kind: "pdf", assetId: a.assetId, pageCount: a.pageCount },
         },
       ],
@@ -147,12 +150,12 @@ test("creation idempotency, template boundaries, draft conflict, preserved templ
     ]);
     assert.equal(a.status, 200);
     assert.deepEqual(a.body.data, b.body.data);
-    assert.equal(a.body.data.productId, "ZJ-028");
+    assert.equal(a.body.data.productId, "ZJ-D-S-A-001");
     assert.equal((await t.create("不同内容", key)).status, 409);
     const next = await Promise.all([t.create("并发一"), t.create("并发二")]);
     assert.deepEqual(
       new Set(next.map((r) => r.body.data.productId)),
-      new Set(["ZJ-029", "ZJ-030"]),
+      new Set(["ZJ-D-S-A-002", "ZJ-D-S-A-003"]),
     );
     const invalid = await t.req(
       "/admin/products",
@@ -163,6 +166,7 @@ test("creation idempotency, template boundaries, draft conflict, preserved templ
         categoryId: "miding",
         templateId: "ai",
         templateVersion: 1,
+        model: "INVALID-TYPE", productType: "SOFTWARE", ownership: "SELF_DEVELOPED",
       },
       randomUUID(),
     );
@@ -276,7 +280,7 @@ test("publish snapshots, update version binding, range, unpublish and republish 
     );
     assert.equal(t.store.releases.size, 1);
     const publicDraft = await t.req(
-      "/catalog/products/" + id,
+      "/catalog/products/" + t.store.product(id).publicId,
       "GET",
       undefined,
       undefined,
@@ -300,7 +304,7 @@ test("publish snapshots, update version binding, range, unpublish and republish 
     const mat = d.content.materials[0],
       manifest = (
         await t.req(
-          `/catalog/products/${id}/materials/${mat.materialId}/preview`,
+          `/catalog/products/${t.store.product(id).publicId}/materials/${mat.materialId}/preview`,
           "GET",
           undefined,
           undefined,
@@ -357,10 +361,14 @@ test("publish snapshots, update version binding, range, unpublish and republish 
     });
     assert.equal(saved.status, 200);
     assert.equal(saved.body.data.hasUnpublishedChanges, true);
+    const history = await t.req("/admin/products/" + id + "/material-versions");
+    assert.equal(history.status, 200);
+    assert.deepEqual(new Set(history.body.data.map((item: { versionLabel: string }) => item.versionLabel)), new Set(["v1", "v2"]));
+    assert.equal((await t.req("/admin/products/" + id + "/material-versions", "GET", undefined, undefined, false)).status, 401);
     assert.equal(
       (
         await t.req(
-          "/catalog/products/" + id,
+          "/catalog/products/" + t.store.product(id).publicId,
           "GET",
           undefined,
           undefined,
@@ -396,7 +404,7 @@ test("publish snapshots, update version binding, range, unpublish and republish 
     assert.equal(
       (
         await t.req(
-          "/catalog/products/" + id,
+          "/catalog/products/" + t.store.product(id).publicId,
           "GET",
           undefined,
           undefined,
@@ -407,7 +415,7 @@ test("publish snapshots, update version binding, range, unpublish and republish 
     );
     const current = (
       await t.req(
-        `/catalog/products/${id}/materials/${mat.materialId}/preview`,
+        `/catalog/products/${t.store.product(id).publicId}/materials/${mat.materialId}/preview`,
         "GET",
         undefined,
         undefined,
@@ -454,7 +462,7 @@ test("publish snapshots, update version binding, range, unpublish and republish 
     assert.equal(
       (
         await t.req(
-          "/catalog/products/" + id,
+          "/catalog/products/" + t.store.product(id).publicId,
           "GET",
           undefined,
           undefined,
@@ -549,7 +557,7 @@ test("atomic failure and publication race do not mutate the previous snapshot or
     assert.equal(store.product(id).activeReleaseId, oldRelease);
     assert.equal(store.releases.size, 1);
     assert.equal(store.events.length, oldEventCount);
-    assert.equal((await t.req("/catalog/products/" + id)).status, 200);
+    assert.equal((await t.req("/catalog/products/" + t.store.product(id).publicId)).status, 200);
     fail = false;
     const race = await Promise.all([
       t.req(
@@ -586,12 +594,12 @@ test("file signature, length, type, ownership, metadata cleaning, material ident
             purpose: "preview",
             fileName: "bad.pdf",
             contentType: "application/pdf",
-            size: 31 * 1024 * 1024,
+            size: 501 * 1024 * 1024,
           },
           randomUUID(),
         )
       ).status,
-      413,
+      400,
     );
     assert.equal(
       (
@@ -811,12 +819,12 @@ test("Office source validation and image preview keep source bytes out of public
     );
     assert.equal(pub.status, 200);
     const publicData = (
-      await t.req("/catalog/products/" + id, "GET", undefined, undefined, false)
+      await t.req("/catalog/products/" + t.store.product(id).publicId, "GET", undefined, undefined, false)
     ).body;
     assert.ok(!JSON.stringify(publicData).includes(source.assetId));
     const m = (
       await t.req(
-        `/catalog/products/${id}/materials/${c.materials[0].materialId}/preview`,
+        `/catalog/products/${t.store.product(id).publicId}/materials/${c.materials[0].materialId}/preview`,
         "GET",
         undefined,
         undefined,
@@ -898,7 +906,7 @@ test("public pagination and literal search use releases, while invalid empty and
     assert.equal(second.page.hasMore, false);
     assert.deepEqual(
       new Set([...first.data, ...second.data].map((x) => x.productId)),
-      new Set(ids),
+      new Set(ids.map((id) => t.store.product(id).publicId)),
     );
     assert.equal(
       (

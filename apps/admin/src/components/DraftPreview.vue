@@ -95,13 +95,8 @@ const c = computed(() => props.draft.content),
             <strong>{{ m.name }}</strong>
             <p>
               {{ m.versionLabel }} ·
-              {{ m.preview.kind === "pdf" ? "PDF" : "有序图片" }} ·
-              {{
-                m.preview.kind === "pdf"
-                  ? m.preview.pageCount
-                  : m.preview.pages.length
-              }}
-              页
+              {{ m.preview.kind === "pdf" ? "PDF" : m.preview.kind === "video" ? "视频" : "有序图片" }} ·
+              <template v-if="m.preview.kind !== 'video'">{{ m.preview.kind === "pdf" ? m.preview.pageCount : m.preview.pages.length }} 页</template>
             </p>
           </div>
           <button @click="material = i">预览</button>
@@ -114,7 +109,7 @@ const c = computed(() => props.draft.content),
       :product-id="draft.productId"
       :kind="selected.preview.kind"
       :asset-ids="
-        selected.preview.kind === 'pdf'
+        selected.preview.kind !== 'images'
           ? [selected.preview.assetId]
           : selected.preview.pages.map((p) => p.assetId)
       "

@@ -58,20 +58,9 @@ export class PreviewSession {
         const lib = await import("pdfjs-dist");
         lib.GlobalWorkerOptions.workerSrc =
           this.assetsBase + "pdf.worker.min.mjs";
-        const response = await fetch(url(this.manifest.parts[0].path), {
-          cache: "no-store",
-          signal: AbortSignal.timeout(20000),
-        });
-        if (!response.ok)
-          throw new ApiError(
-            response.status,
-            "RESOURCE_UNAVAILABLE",
-            "资料不可用，请重新打开",
-          );
-        const bytes = new Uint8Array(await response.arrayBuffer());
         if (seq !== this.sequence || this.stopped) return;
         const loadingTask = lib.getDocument({
-          data: bytes,
+          url: url(this.manifest.parts[0].path), rangeChunkSize: 65536, disableAutoFetch: true, disableStream: true,
           cMapUrl: this.assetsBase + "cmaps/",
           cMapPacked: true,
           standardFontDataUrl: this.assetsBase + "standard_fonts/",

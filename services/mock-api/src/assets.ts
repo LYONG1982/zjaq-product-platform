@@ -1,11 +1,12 @@
-import { mkdtempSync, mkdirSync } from "node:fs";
-import { open, readFile, rename, stat, unlink } from "node:fs/promises";
+import { createReadStream, mkdtempSync, mkdirSync } from "node:fs";
+import { open, rename, stat, statfs, unlink } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { randomUUID, createHash } from "node:crypto";
 import { execFile } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import type { IncomingMessage } from "node:http";
 import type { Domain, Responses } from "@zj/contracts";
+import { MAX_ASSET_BYTES, UPLOAD_BUDGET_BYTES, CHECK_TIMEOUT_MS, UPLOAD_TIMEOUT_MS } from "./asset-limits";
 import { AppError, requireValue, clone } from "./errors";
 type Upload = Responses["UploadResult"] & {
   productId: string;
@@ -13,8 +14,10 @@ type Upload = Responses["UploadResult"] & {
   declaredSize: number;
   declaredMime: string;
   type: string;
+  fileExtension?: string;
   path: string;
   writing: boolean;
+  preview?: { path?: string; size: number; checksum: string; mimeType: string };
 };
 const formats: Record<
   string,
@@ -23,45 +26,48 @@ const formats: Record<
   pdf: {
     mime: "application/pdf",
     type: "pdf",
-    limit: 30 * 1024 * 1024,
+    limit: MAX_ASSET_BYTES,
     purposes: ["preview"],
   },
   png: {
     mime: "image/png",
     type: "png",
-    limit: 8 * 1024 * 1024,
+    limit: MAX_ASSET_BYTES,
     purposes: ["preview", "media"],
   },
   jpg: {
     mime: "image/jpeg",
     type: "jpeg",
-    limit: 8 * 1024 * 1024,
+    limit: MAX_ASSET_BYTES,
     purposes: ["preview", "media"],
   },
   jpeg: {
     mime: "image/jpeg",
     type: "jpeg",
-    limit: 8 * 1024 * 1024,
+    limit: MAX_ASSET_BYTES,
     purposes: ["preview", "media"],
   },
   webp: {
     mime: "image/webp",
     type: "webp",
-    limit: 8 * 1024 * 1024,
+    limit: MAX_ASSET_BYTES,
     purposes: ["preview", "media"],
   },
   docx: {
     mime: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     type: "docx",
-    limit: 50 * 1024 * 1024,
+    limit: MAX_ASSET_BYTES,
     purposes: ["source"],
   },
   pptx: {
     mime: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
     type: "pptx",
-    limit: 50 * 1024 * 1024,
+    limit: MAX_ASSET_BYTES,
     purposes: ["source"],
   },
+  mp4: { mime: "video/mp4", type: "mp4", limit: MAX_ASSET_BYTES, purposes: ["preview"] },
+  mov: { mime: "video/quicktime", type: "mov", limit: MAX_ASSET_BYTES, purposes: ["preview"] },
+  webm: { mime: "video/webm", type: "webm", limit: MAX_ASSET_BYTES, purposes: ["preview"] },
 };
 export class AssetStore {
   readonly uploads = new Map<string, Upload>();
@@ -105,11 +111,11 @@ export class AssetStore {
       intent.size <= format.limit,
       413,
       "FILE_TOO_LARGE",
-      "文件超过当前大小限制",
+      "单个文件不能超过 500 MiB（524,288,000 字节）",
     );
     requireValue(
       this.uploads.size < 500 &&
-        this.reserved + intent.size <= 256 * 1024 * 1024,
+        this.reserved + intent.size <= UPLOAD_BUDGET_BYTES,
       429,
       "RATE_LIMITED",
       "本地会话上传额度已满，请使用新的开发会话",
@@ -130,6 +136,7 @@ export class AssetStore {
       declaredSize: intent.size,
       declaredMime: intent.contentType,
       type: format.type,
+      fileExtension: intent.fileName.split(".").pop(),
       path: join(this.directory, assetId),
       writing: false,
     });
@@ -160,7 +167,13 @@ export class AssetStore {
     );
     return u;
   }
+  private activeWrites = 0;
   async put(id: string, req: IncomingMessage) {
+    requireValue(this.activeWrites < 2, 429, "UPLOAD_BUSY", "同时最多上传两个文件，请稍后重试");
+    this.activeWrites++;
+    try { return await this.putFile(id, req); } finally { this.activeWrites--; }
+  }
+  private async putFile(id: string, req: IncomingMessage) {
     const u = this.get(id);
     requireValue(
       u.status === "UPLOADING" && !u.writing,
@@ -181,7 +194,11 @@ export class AssetStore {
         "VALIDATION_FAILED",
         "实际文件大小与声明不符",
       );
+    const disk = await statfs(this.directory);
+    requireValue(disk.bavail * disk.bsize > u.declaredSize + 256 * 1024 * 1024, 507, "STORAGE_FULL", "临时存储空间不足，请稍后重试");
     u.writing = true;
+    const deadline = setTimeout(() => req.destroy(new Error("上传超过 15 分钟")), UPLOAD_TIMEOUT_MS);
+    req.setTimeout?.(30000, () => req.destroy(new Error("上传 30 秒未收到数据")));
     const temp = u.path + ".part";
     let file;
     try {
@@ -191,7 +208,11 @@ export class AssetStore {
         count += chunk.length;
         if (count > u.declaredSize)
           throw new AppError(413, "FILE_TOO_LARGE", "上传字节超出声明大小");
-        await file.write(chunk);
+        let offset = 0;
+        while (offset < chunk.length) {
+          const written = await file.write(chunk, offset, chunk.length - offset);
+          offset += written.bytesWritten;
+        }
       }
       requireValue(
         count === u.declaredSize,
@@ -210,6 +231,7 @@ export class AssetStore {
       await unlink(temp).catch(() => {});
       throw e;
     } finally {
+      clearTimeout(deadline);
       u.writing = false;
     }
   }
@@ -233,7 +255,7 @@ export class AssetStore {
     );
     this.processing++;
     const task = (async () => {
-      const normalized = u.path + ".normalized";
+      const normalized = u.path + ".preview.png";
       try {
         const parsed = await new Promise<{
           ok: boolean;
@@ -245,13 +267,13 @@ export class AssetStore {
           execFile(
             process.execPath,
             [
-              "--max-old-space-size=256",
+              "--max-old-space-size=384",
               fileURLToPath(new URL("./parse-file.mjs", import.meta.url)),
               u.path,
               normalized,
               u.type,
             ],
-            { timeout: 15000, maxBuffer: 16384 },
+            { timeout: CHECK_TIMEOUT_MS, maxBuffer: 16384, env: { ...process.env, NODE_OPTIONS: "" } },
             (error, stdout) => {
               try {
                 const data = JSON.parse(stdout.trim().split("\n").at(-1)!);
@@ -259,16 +281,23 @@ export class AssetStore {
                 else if (error) reject(error);
                 else resolve(data);
               } catch {
-                reject(new Error("文件无法解析，或超过 15 秒处理限制"));
+                reject(new Error("文件无法解析、缺少受信任解析工具或超过 120 秒处理限制"));
               }
             },
           );
         });
-        if (parsed.normalized) await rename(normalized, u.path);
-        const bytes = await readFile(u.path);
-        const extra = Math.max(0, bytes.length - u.declaredSize);
+        if (parsed.normalized) {
+          const { size: previewSize } = await stat(normalized);
+          const previewHash = createHash("sha256");
+          for await (const chunk of createReadStream(normalized)) previewHash.update(chunk);
+          u.preview = { path: normalized, size: previewSize, checksum: previewHash.digest("hex"), mimeType: "image/png" };
+        }
+        const { size } = await stat(u.path);
+        const hash = createHash("sha256");
+        for await (const chunk of createReadStream(u.path)) hash.update(chunk);
+        const extra = Math.max(0, size - u.declaredSize) + (u.preview?.size ?? 0);
         requireValue(
-          this.reserved + extra <= 256 * 1024 * 1024,
+          this.reserved + extra <= UPLOAD_BUDGET_BYTES,
           429,
           "RATE_LIMITED",
           "规范化文件超过本地会话额度",
@@ -276,14 +305,15 @@ export class AssetStore {
         this.reserved += extra;
         u.mimeType = parsed.mime;
         u.pageCount = parsed.pageCount;
-        u.size = bytes.length;
-        u.checksum = createHash("sha256").update(bytes).digest("hex");
+        u.size = size;
+        u.checksum = hash.digest("hex");
         u.status = "READY";
       } catch (e) {
         u.status = "REJECTED";
         u.error = e instanceof Error ? e.message : "文件检查失败";
         await unlink(u.path).catch(() => {});
         await unlink(normalized).catch(() => {});
+        this.reserved = Math.max(0, this.reserved - u.declaredSize);
       }
       return this.result(u);
     })();
@@ -295,9 +325,10 @@ export class AssetStore {
       this.processing--;
     }
   }
-  async bytes(productId: string, assetId: string) {
+  async bytes(productId: string, assetId: string, original = false) {
     const u = this.asset(productId, assetId);
-    const size = (await stat(u.path)).size;
-    return { upload: u, size, path: u.path };
+    const path = !original && u.preview?.path ? u.preview.path : u.path;
+    const size = (await stat(path)).size;
+    return { upload: !original && u.preview ? { ...u, mimeType: u.preview.mimeType } : u, size, path };
   }
 }

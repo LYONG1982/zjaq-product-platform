@@ -2,7 +2,7 @@ import Link from "next/link";
 import { api } from "./public-api";
 import { ProductCard, MaterialRow } from "./cards";
 import { ListPosition } from "./list-position";
-type Query = { q?: string; categoryId?: string; cursor?: string };
+type Query = { q?: string; categoryId?: string; cursor?: string; ownership?: string; updatedFrom?: string; updatedTo?: string };
 export async function Catalog({
   kind = "products",
   query = {},
@@ -10,6 +10,7 @@ export async function Catalog({
   kind?: "products" | "materials";
   query?: Query;
 }) {
+  query = Object.fromEntries(Object.entries(query).filter((entry): entry is [string, string] => typeof entry[1] === "string" && !!entry[1].trim()));
   let content: React.ReactNode;
   const sourceQuery = new URLSearchParams(
     Object.entries(query).filter(
@@ -22,12 +23,15 @@ export async function Catalog({
     pathname: "/" + kind,
     query: {
       ...(query.q ? { q: query.q } : {}),
+      ...(query.ownership ? { ownership: query.ownership } : {}),
+      ...(query.updatedFrom ? { updatedFrom: query.updatedFrom } : {}),
+      ...(query.updatedTo ? { updatedTo: query.updatedTo } : {}),
       ...(categoryId ? { categoryId } : {}),
       ...(cursor ? { cursor } : {}),
     },
   });
+  const client = await api(source);
   try {
-    const client = api();
     const [categories, result] = await Promise.all([
       client.publicCategories(),
       kind === "products"
@@ -144,7 +148,7 @@ export async function Catalog({
               : "查阅产品当前资料。"}
           </p>
         </div>
-        <form className="search-form" action={"/" + kind}>
+        <form className="search-form catalog-search" action={"/" + kind}>
           {query.categoryId && (
             <input type="hidden" name="categoryId" value={query.categoryId} />
           )}
@@ -157,7 +161,13 @@ export async function Catalog({
               kind === "products" ? "搜索产品名称或别名" : "搜索资料或产品名称"
             }
           />
+          {kind === "products" && <>
+            <label className="catalog-filter">产品属性<select name="ownership" defaultValue={query.ownership ?? ""}><option value="">全部属性</option><option value="SELF_DEVELOPED">自研</option><option value="PARTNER">合作</option></select></label>
+            <label className="catalog-filter">更新开始日期<input name="updatedFrom" type="date" defaultValue={query.updatedFrom ?? ""} /></label>
+            <label className="catalog-filter">更新结束日期<input name="updatedTo" type="date" defaultValue={query.updatedTo ?? ""} /></label>
+          </>}
           <button>搜索</button>
+          <Link className="clear-filter" href={"/" + kind}>重置</Link>
           {(query.q || query.categoryId) && (
             <Link className="clear-filter" href={"/" + kind}>
               清除筛选

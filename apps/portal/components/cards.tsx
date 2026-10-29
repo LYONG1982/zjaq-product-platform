@@ -10,6 +10,11 @@ export function ProductCard({
   item: Responses["PublicProductSummary"];
   source?: string;
 }) {
+  const nameCharacters = Array.from(item.name);
+  const shortName =
+    nameCharacters.length > 15
+      ? nameCharacters.slice(0, 15).join("") + "…"
+      : item.name;
   return (
     <Link
       className="product-card"
@@ -23,16 +28,18 @@ export function ProductCard({
           <ProductVisual
             src={item.coverPath ? mediaUrl(item.coverPath) : null}
             alt={item.name}
+            categoryId={item.categoryId}
           />
           <div>
-            <h3>{item.name}</h3>
+            <h3 aria-label={item.name} title={item.name}>
+              {shortName}
+            </h3>
             <span className="category-label">{item.categoryName}</span>
           </div>
         </div>
         <p>{item.tagline || "产品介绍待完善"}</p>
-        <span className="card-action">
-          了解产品 <span aria-hidden>→</span>
-        </span>
+        <small className="card-updated">更新于 {new Date(item.publishedAt).toLocaleDateString("zh-CN", { timeZone: "Asia/Shanghai" })}</small>
+        <span className="card-action">了解产品</span>
       </div>
     </Link>
   );
@@ -51,7 +58,7 @@ export function MaterialRow({
   return (
     <div className="material-row">
       <span className="format-icon">
-        {item.previewKind === "pdf" ? "PDF" : "图集"}
+        {item.previewKind === "pdf" ? "PDF" : item.previewKind === "video" ? "视频" : "图集"}
       </span>
       <div>
         <h3>{item.name}</h3>
@@ -67,7 +74,7 @@ export function MaterialRow({
           </Link>
         )}
         <small>
-          {item.versionLabel} · {item.pageCount} 页 ·{" "}
+          {item.versionLabel} · {item.previewKind === "video" ? "视频" : `${item.pageCount} 页`} ·{" "}
           {item.publishedAt.slice(0, 10)}
         </small>
       </div>

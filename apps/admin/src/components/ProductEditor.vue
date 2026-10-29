@@ -11,6 +11,7 @@ import { api, copy, requestKey, errorInfo, stateName } from "../api";
 import { uploadFile } from "../upload";
 import Modal from "./Modal.vue";
 import MaterialDrawer from "./MaterialDrawer.vue";
+import MaterialHistory from "./MaterialHistory.vue";
 import DraftPreview from "./DraftPreview.vue";
 const props = defineProps<{
   draft: AdminDraft;
@@ -29,6 +30,7 @@ const current = ref(copy(props.draft)),
   preview = ref<AdminDraft | null>(null),
   materialIndex = ref<number | null>(null),
   materialOpen = ref(false),
+  historyOpen = ref(false),
   publishOpen = ref(false),
   publicConfirmed = ref(false),
   offlineOpen = ref(false),
@@ -69,6 +71,9 @@ const groups = [
 const missing = computed(() => {
   const c = content.value as unknown as Record<string, unknown>;
   return [
+    ...([ ["model", "产品型号"], ["productType", "产品类型"], ["ownership", "产品属性"] ] as const)
+      .filter(([key]) => !content.value[key]?.trim())
+      .map(([key, message]) => ({ path: "/" + key, message })),
     ...(template.value?.publishRequired ?? [])
       .filter((k) => {
         const v = c[k];
@@ -84,7 +89,7 @@ const missing = computed(() => {
           (
             {
               name: "产品名称",
-              owner: "负责人",
+              owner: "产品资料负责人",
               tagline: "一句话定位",
               summary: "简介",
               problemValues: "问题与价值",
@@ -104,7 +109,10 @@ const missing = computed(() => {
 });
 const fieldLabels: Record<string, string> = {
   name: "产品名称",
-  owner: "负责人",
+  owner: "产品资料负责人",
+  model: "产品型号",
+  productType: "产品类型",
+  ownership: "产品属性",
   tagline: "一句话定位",
   summary: "简介",
   audiences: "适用对象",
@@ -406,13 +414,14 @@ function mediaSelected(e: Event) {
         <span :class="dirty ? 'warning' : 'muted'">{{
           dirty ? "有未保存修改" : "已保存"
         }}</span
-        ><button :disabled="busy || !dirty" @click="save">保存草稿</button
-        ><button :disabled="busy" @click="openPreview">预览</button
-        ><button class="primary" :disabled="busy" @click="openPublish">
+        ><button :disabled="busy || !dirty || !!current.deletedAt" @click="save">保存草稿</button
+        ><button :disabled="busy || !!current.deletedAt" @click="openPreview">预览</button
+        ><button class="primary" :disabled="busy || !!current.deletedAt" @click="openPublish">
           {{ current.publicationState === "PUBLISHED" ? "发布更新" : "发布" }}
         </button>
       </div>
     </div>
+    <div v-if="current.deletedAt" class="warning"><p>产品已移除，当前仅供管理员查看留档。{{ current.deletionReason }} · {{ current.deletedAt }}</p><button @click="historyOpen = true">查看历史版本</button></div>
     <div v-if="notice" class="success-banner" role="status">{{ notice }}</div>
     <div v-if="error" class="error-inline" role="alert">
       <strong>{{ error }}</strong>
@@ -443,14 +452,20 @@ function mediaSelected(e: Event) {
           <p v-if="!missing.length">字段已齐全，发布时仍将检查资料和版本。</p>
         </div>
       </nav>
-      <fieldset :disabled="busy" class="editor-form">
+      <fieldset :disabled="busy || !!current.deletedAt" class="editor-form">
         <section id="edit-basic" class="edit-section">
           <h2>基本信息</h2>
           <div class="form-grid">
             <label class="field"
               >产品名称<input v-model="content.name" maxlength="80" /></label
             ><label class="field"
-              >负责人<input v-model="content.owner" maxlength="80" /></label
+              >产品资料负责人<input v-model="content.owner" maxlength="80" /></label
+            ><label class="field"
+              >产品型号<input v-model="content.model" maxlength="80" placeholder="存量产品待确认" /></label
+            ><label class="field"
+              >产品类型<select :value="content.productType ?? ''" @change="content.productType = (($event.target as HTMLSelectElement).value || undefined) as typeof content.productType"><option value="">待确认</option><option value="SOFTWARE">软件</option><option value="HARDWARE">软硬件</option></select></label
+            ><label class="field"
+              >产品属性<select :value="content.ownership ?? ''" @change="content.ownership = (($event.target as HTMLSelectElement).value || undefined) as typeof content.ownership"><option value="">待确认</option><option value="SELF_DEVELOPED">自研</option><option value="PARTNER">合作</option></select></label
             ><label class="field"
               >所属分类<select v-model="content.categoryId">
                 <option v-for="c in compatible" :key="c.id" :value="c.id">
@@ -498,12 +513,7 @@ function mediaSelected(e: Event) {
           :key="group.key"
           class="edit-section"
         >
-          <div class="section-toolbar">
-            <h2>{{ group.title }}</h2>
-            <button @click="addItem(group.key)">
-              添加{{ group.title }}条目
-            </button>
-          </div>
+          <h2>{{ group.title }}</h2>
           <p v-if="!content[group.key].length" class="helper">
             发布至少需要一条；只填写可以准确说明的内容。
           </p>
@@ -529,6 +539,9 @@ function mediaSelected(e: Event) {
               移除此条目
             </button>
           </div>
+          <button class="add-item-button" type="button" @click="addItem(group.key)">
+            添加{{ group.title }}条目
+          </button>
         </section>
         <section id="edit-technical" class="edit-section">
           <h2>参数与边界</h2>
@@ -546,13 +559,7 @@ function mediaSelected(e: Event) {
               <summary>填写提示</summary>
               <small>{{ f.help }}</small>
             </details></label
-          ><label class="field"
-            >能力边界<textarea
-              v-model="content.boundaries"
-              maxlength="3000"
-              rows="4"
-            />
-          </label>
+          >
         </section>
         <section id="edit-media" class="edit-section">
           <h2>产品素材（可选）</h2>
@@ -574,7 +581,7 @@ function mediaSelected(e: Event) {
               <option value="diagram">示意图</option>
             </select></label
           ><label class="field"
-            >素材图片（≤8 MiB）<input
+            >素材图片（≤500 MiB，解码后最多 2000 万像素）<input
               type="file"
               accept=".png,.jpg,.jpeg,.webp"
               @change="mediaSelected"
@@ -593,6 +600,7 @@ function mediaSelected(e: Event) {
             >
               添加资料
             </button>
+            <button v-if="!current.deletedAt" @click="historyOpen = true">查看历史版本</button>
           </div>
           <p class="helper">
             至少一份可预览资料。替换或移除只影响草稿，发布更新后生效。
@@ -607,13 +615,8 @@ function mediaSelected(e: Event) {
               <strong>{{ m.name }}</strong>
               <p>
                 {{ m.versionLabel }} ·
-                {{ m.preview.kind === "pdf" ? "PDF" : "图片" }} ·
-                {{
-                  m.preview.kind === "pdf"
-                    ? m.preview.pageCount
-                    : m.preview.pages.length
-                }}
-                页
+                {{ m.preview.kind === "pdf" ? "PDF" : m.preview.kind === "video" ? "视频" : "图片" }} ·
+                <template v-if="m.preview.kind !== 'video'">{{ m.preview.kind === "pdf" ? m.preview.pageCount : m.preview.pages.length }} 页</template>
               </p>
             </div>
             <div>
@@ -626,7 +629,7 @@ function mediaSelected(e: Event) {
         </section>
       </fieldset>
     </div>
-    <div v-if="current.publicationState !== 'DRAFT'" class="danger-zone">
+    <div v-if="!current.deletedAt && current.publicationState !== 'DRAFT'" class="danger-zone">
       <div>
         <strong>下架产品</strong>
         <p>停止新的公开访问，保留草稿与历史；不要求先保存当前编辑。</p>
@@ -649,6 +652,7 @@ function mediaSelected(e: Event) {
     @save="putMaterial"
     @cancel="materialOpen = false"
   />
+  <MaterialHistory v-if="historyOpen" :product-id="current.productId" @close="historyOpen = false" />
   <Modal
     v-if="publishOpen"
     title="确认发布"

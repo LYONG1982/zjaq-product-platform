@@ -9,6 +9,7 @@ export interface Responses {
   CatalogMaterialRow: CatalogMaterialRow;
   PreviewManifest: PreviewManifest;
   AdminIdentity: AdminIdentity;
+  SalesIdentity: SalesIdentity;
   AdminDraft: AdminDraft;
   AdminProductRow: AdminProductRow;
   PublishResult: PublishResult;
@@ -34,6 +35,7 @@ export interface Responses {
   PreviewManifestResponse: PreviewManifestResponse;
   PreviewManifestListResponse: PreviewManifestListResponse;
   AdminIdentityResponse: AdminIdentityResponse;
+  SalesIdentityResponse: SalesIdentityResponse;
   AdminIdentityListResponse: AdminIdentityListResponse;
   AdminDraftResponse: AdminDraftResponse;
   AdminDraftListResponse: AdminDraftListResponse;
@@ -55,6 +57,23 @@ export interface Responses {
   AuditEventListResponse: AuditEventListResponse;
   AdminUserResponse: AdminUserResponse;
   AdminUserListResponse: AdminUserListResponse;
+  SiteBanner: SiteBanner;
+  SiteBannerResponse: SiteBannerResponse;
+  SiteContact: SiteContact;
+  SiteContactResponse: SiteContactResponse;
+  FeedbackItem: FeedbackItem;
+  FeedbackListResponse: FeedbackListResponse;
+  FeedbackReceiptResponse: FeedbackReceiptResponse;
+  MaterialVersionListResponse: MaterialVersionListResponse;
+  AnalyticsNotice: AnalyticsNotice;
+  AnalyticsSettings: AnalyticsSettings;
+  AnalyticsEvent: AnalyticsEvent;
+  AnalyticsMaterialSummary: AnalyticsMaterialSummary;
+  AnalyticsSummary: AnalyticsSummary;
+  AnalyticsNoticeResponse: AnalyticsNoticeResponse;
+  AnalyticsSettingsResponse: AnalyticsSettingsResponse;
+  AnalyticsSummaryResponse: AnalyticsSummaryResponse;
+  AnalyticsEventListResponse: AnalyticsEventListResponse;
 }
 /**
  * This interface was referenced by `Responses`'s JSON-Schema
@@ -88,7 +107,7 @@ export interface PublicMaterial {
   kind: 'brochure' | 'presentation' | 'technical' | 'other';
   versionLabel: string;
   applicableVersion: string | null;
-  previewKind: 'pdf' | 'images';
+  previewKind: 'pdf' | 'images' | 'video';
   pageCount: number;
   publishedAt: string;
   previewPath: string;
@@ -132,9 +151,9 @@ export interface PublicProduct {
   technical: {
     [k: string]: string;
   };
-  boundaries: string;
   media: PublicMedia[];
   materials: PublicMaterial[];
+  model?: string;
 }
 export interface TextItem {
   id: string;
@@ -162,7 +181,7 @@ export interface PreviewManifest {
   versionId: string;
   name: string;
   versionLabel: string;
-  previewKind: 'pdf' | 'images';
+  previewKind: 'pdf' | 'images' | 'video';
   pageCount: number;
   parts: {
     part: string;
@@ -184,6 +203,17 @@ export interface AdminIdentity {
 }
 /**
  * This interface was referenced by `Responses`'s JSON-Schema
+ * via the `definition` "SalesIdentity".
+ */
+export interface SalesIdentity {
+  userId: string;
+  subjectId: string;
+  displayName: string;
+  role: 'SALES';
+  enabled: boolean;
+}
+/**
+ * This interface was referenced by `Responses`'s JSON-Schema
  * via the `definition` "AdminDraft".
  */
 export interface AdminDraft {
@@ -197,6 +227,9 @@ export interface AdminDraft {
   content: DraftContent;
   updatedAt: string | null;
   updatedBy: string | null;
+  deletedAt?: string | null;
+  deletedBy?: string | null;
+  deletionReason?: string | null;
 }
 export interface DraftContent {
   name: string;
@@ -223,6 +256,9 @@ export interface DraftContent {
    * @maxItems 20
    */
   materials: MaterialRef[];
+  model?: string;
+  productType?: 'SOFTWARE' | 'HARDWARE';
+  ownership?: 'SELF_DEVELOPED' | 'PARTNER';
 }
 export interface MediaRef {
   mediaId: string;
@@ -235,6 +271,8 @@ export interface MaterialRef {
   versionId: string;
   name: string;
   kind: 'brochure' | 'presentation' | 'technical' | 'other';
+  category?: 'promotional' | 'technical';
+  subCategory?: 'deck' | 'onepager' | 'video' | 'whitepaper' | 'spec' | 'manual';
   versionLabel: string;
   applicableVersion?: string;
   sourceAssetId?: string | null;
@@ -255,6 +293,11 @@ export interface MaterialRef {
           pageIndex: number;
           alt: string;
         }[];
+      }
+    | {
+        kind: 'video';
+        assetId: string;
+        mimeType: 'video/mp4' | 'video/quicktime' | 'video/webm';
       };
 }
 /**
@@ -272,6 +315,9 @@ export interface AdminProductRow {
   draftVersion: number;
   hasUnpublishedChanges: boolean;
   updatedAt: string | null;
+  deletedAt?: string | null;
+  deletedBy?: string | null;
+  deletionReason?: string | null;
 }
 /**
  * This interface was referenced by `Responses`'s JSON-Schema
@@ -384,6 +430,7 @@ export interface AuditEvent {
   releaseSequence: number | null;
   requestId: string;
   createdAt: string;
+  reason?: string;
 }
 /**
  * This interface was referenced by `Responses`'s JSON-Schema
@@ -393,7 +440,7 @@ export interface AdminUser {
   userId: string;
   subjectId: string;
   displayName: string;
-  role: 'CONTENT_MANAGER' | 'ADMIN';
+  role: 'CONTENT_MANAGER' | 'ADMIN' | 'SALES';
   enabled: boolean;
   version: number;
 }
@@ -543,6 +590,14 @@ export interface PreviewManifestListResponse {
  */
 export interface AdminIdentityResponse {
   data: AdminIdentity;
+  requestId: string;
+}
+/**
+ * This interface was referenced by `Responses`'s JSON-Schema
+ * via the `definition` "SalesIdentityResponse".
+ */
+export interface SalesIdentityResponse {
+  data: SalesIdentity;
   requestId: string;
 }
 /**
@@ -751,6 +806,189 @@ export interface AdminUserResponse {
  */
 export interface AdminUserListResponse {
   data: AdminUser[];
+  page: {
+    nextCursor: string | null;
+    hasMore: boolean;
+  };
+  requestId: string;
+}
+/**
+ * This interface was referenced by `Responses`'s JSON-Schema
+ * via the `definition` "SiteBanner".
+ */
+export interface SiteBanner {
+  version: number;
+  imageData: string | null;
+  link: string | null;
+  startsAt?: string | null;
+  endsAt?: string | null;
+  introduction?: string | null;
+  introLink?: string | null;
+  refreshAfterSeconds?: number;
+}
+/**
+ * This interface was referenced by `Responses`'s JSON-Schema
+ * via the `definition` "SiteBannerResponse".
+ */
+export interface SiteBannerResponse {
+  data: SiteBanner;
+  requestId: string;
+}
+/**
+ * This interface was referenced by `Responses`'s JSON-Schema
+ * via the `definition` "SiteContact".
+ */
+export interface SiteContact {
+  version: number;
+  officialQr: string | null;
+  serviceQr: string | null;
+  phone: string | null;
+}
+/**
+ * This interface was referenced by `Responses`'s JSON-Schema
+ * via the `definition` "SiteContactResponse".
+ */
+export interface SiteContactResponse {
+  data: SiteContact;
+  requestId: string;
+}
+/**
+ * This interface was referenced by `Responses`'s JSON-Schema
+ * via the `definition` "FeedbackItem".
+ */
+export interface FeedbackItem {
+  feedbackId: string;
+  content: string;
+  contact: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Responses`'s JSON-Schema
+ * via the `definition` "FeedbackListResponse".
+ */
+export interface FeedbackListResponse {
+  data: FeedbackItem[];
+  page: {
+    nextCursor: string | null;
+    hasMore: boolean;
+  };
+  requestId: string;
+}
+/**
+ * This interface was referenced by `Responses`'s JSON-Schema
+ * via the `definition` "FeedbackReceiptResponse".
+ */
+export interface FeedbackReceiptResponse {
+  data: {
+    accepted: true;
+  };
+  requestId: string;
+}
+/**
+ * This interface was referenced by `Responses`'s JSON-Schema
+ * via the `definition` "MaterialVersionListResponse".
+ */
+export interface MaterialVersionListResponse {
+  data: MaterialRef[];
+  page: {
+    nextCursor: string | null;
+    hasMore: boolean;
+  };
+  requestId: string;
+}
+/**
+ * This interface was referenced by `Responses`'s JSON-Schema
+ * via the `definition` "AnalyticsNotice".
+ */
+export interface AnalyticsNotice {
+  downloadEnabled: boolean;
+  viewEnabled: boolean;
+  retentionDays: 90;
+  notice: string;
+}
+/**
+ * This interface was referenced by `Responses`'s JSON-Schema
+ * via the `definition` "AnalyticsSettings".
+ */
+export interface AnalyticsSettings {
+  version: number;
+  downloadEnabled: boolean;
+  viewEnabled: boolean;
+  retentionDays: 90;
+  notice: string;
+  dashboardEnabled: boolean;
+}
+/**
+ * This interface was referenced by `Responses`'s JSON-Schema
+ * via the `definition` "AnalyticsEvent".
+ */
+export interface AnalyticsEvent {
+  eventId: string;
+  kind: 'DOWNLOAD' | 'VIEW';
+  productId: string;
+  productName: string;
+  materialId: string;
+  materialName: string;
+  versionId: string;
+  versionLabel: string;
+  occurredAt: string;
+  client: 'SALES_PC' | 'WECHAT' | 'H5';
+  sourceIp: string;
+  sharer: string | null;
+  actorName: string | null;
+}
+/**
+ * This interface was referenced by `Responses`'s JSON-Schema
+ * via the `definition` "AnalyticsMaterialSummary".
+ */
+export interface AnalyticsMaterialSummary {
+  productId: string;
+  productName: string;
+  materialId: string;
+  materialName: string;
+  downloads: number;
+  views: number;
+}
+/**
+ * This interface was referenced by `Responses`'s JSON-Schema
+ * via the `definition` "AnalyticsSummary".
+ */
+export interface AnalyticsSummary {
+  retentionDays: 90;
+  downloads: number;
+  views: number;
+  materials: AnalyticsMaterialSummary[];
+}
+/**
+ * This interface was referenced by `Responses`'s JSON-Schema
+ * via the `definition` "AnalyticsNoticeResponse".
+ */
+export interface AnalyticsNoticeResponse {
+  data: AnalyticsNotice;
+  requestId: string;
+}
+/**
+ * This interface was referenced by `Responses`'s JSON-Schema
+ * via the `definition` "AnalyticsSettingsResponse".
+ */
+export interface AnalyticsSettingsResponse {
+  data: AnalyticsSettings;
+  requestId: string;
+}
+/**
+ * This interface was referenced by `Responses`'s JSON-Schema
+ * via the `definition` "AnalyticsSummaryResponse".
+ */
+export interface AnalyticsSummaryResponse {
+  data: AnalyticsSummary;
+  requestId: string;
+}
+/**
+ * This interface was referenced by `Responses`'s JSON-Schema
+ * via the `definition` "AnalyticsEventListResponse".
+ */
+export interface AnalyticsEventListResponse {
+  data: AnalyticsEvent[];
   page: {
     nextCursor: string | null;
     hasMore: boolean;

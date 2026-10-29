@@ -69,10 +69,11 @@ test("CloudBase adapter command contract: persistence, idempotency, rollback and
         categoryId: "ai",
         templateId: "ai",
         templateVersion: 1,
+        model: "MODEL-" + randomUUID(), productType: "SOFTWARE" as const, ownership: "SELF_DEVELOPED" as const,
         owner: "测试",
       };
     const created = await backend.create(body, key, "request");
-    assert.equal(created.productId, "ZJ-028");
+    assert.equal(created.productId, "ZJ-A-S-A-001");
     backend = new CloudBackend(repo, identity, storage);
     assert.equal(
       (await backend.create(body, key, "request-retry")).productId,
@@ -193,10 +194,17 @@ test("CloudBase adapter file and publication lifecycle uses durable metadata and
   const repo = new TransactionHarness();
   await initialize(repo, "trusted-admin");
   const objects = new Map<string, Buffer>();
+  let failUploadRead = false;
+  let failedUploadPath = "";
   const objectStorage = {
-    async upload(path: string, bytes: Buffer) {
+    async upload(path: string, filePath: string) {
       const id = "private-object:" + path;
-      objects.set(id, Buffer.from(bytes));
+      if (failUploadRead) {
+        failUploadRead = false;
+        failedUploadPath = filePath;
+        throw new Error("ENOENT: simulated object upload source read failure");
+      }
+      objects.set(id, await readFile(filePath));
       return id;
     },
     async download(id: string, path: string) {
@@ -229,6 +237,7 @@ test("CloudBase adapter file and publication lifecycle uses durable metadata and
           categoryId: "ai",
           templateId: "ai",
           templateVersion: 1,
+        model: "MODEL-" + randomUUID(), productType: "SOFTWARE" as const, ownership: "SELF_DEVELOPED" as const,
         },
         randomUUID(),
       )
@@ -251,6 +260,26 @@ test("CloudBase adapter file and publication lifecycle uses durable metadata and
     await api.putBytes(upload.uploadId, new Blob([new Uint8Array(bytes)]));
     const ready = (await api.completeUpload(upload.uploadId)).data;
     assert.equal(ready.status, "READY");
+    const failedUpload = (
+      await api.createUpload(
+        {
+          productId: d.productId,
+          purpose: "preview",
+          fileName: "read-failure.pdf",
+          contentType: "application/pdf",
+          size: bytes.length,
+        },
+        randomUUID(),
+      )
+    ).data;
+    failUploadRead = true;
+    await assert.rejects(
+      api.putBytes(
+        failedUpload.uploadId,
+        new Blob([new Uint8Array(bytes)]),
+      ),
+    );
+    await assert.rejects((await import("node:fs/promises")).stat(failedUploadPath));
     const item = { id: "test", title: "测试", text: "测试描述" };
     const saved = (
       await api.save(d.productId, {
@@ -274,6 +303,8 @@ test("CloudBase adapter file and publication lifecycle uses durable metadata and
               versionId: "v1",
               versionLabel: "v1",
               kind: "brochure",
+              category: "promotional",
+              subCategory: "deck",
               name: "PDF 测试资料",
               preview: { kind: "pdf", assetId: ready.assetId, pageCount: 3 },
             },
@@ -301,7 +332,7 @@ test("CloudBase adapter file and publication lifecycle uses durable metadata and
     const quotaId = "upload-" + new Date().toISOString().slice(0, 10);
     assert.equal(
       (await repo.get<{ count: number }>("control", quotaId))?.count,
-      1,
+      2,
     );
     await repo.set("control", quotaId, { count: 500, bytes: bytes.length });
     await assert.rejects(
@@ -317,8 +348,9 @@ test("CloudBase adapter file and publication lifecycle uses durable metadata and
       ),
       (e: unknown) => (e as { status: number }).status === 429,
     );
-    assert.equal((await repo.list("assets")).length, 1);
-    const manifest = (await api.manifest(d.productId, "test")).data;
+    assert.equal((await repo.list("assets")).length, 2);
+    const publicId = (await repo.get<{ publicId: string }>("products", d.productId))!.publicId;
+    const manifest = (await api.manifest(publicId, "test")).data;
     assert.ok(!JSON.stringify(manifest).includes("private-object"));
     const range = await fetch(origin + manifest.parts[0].path, {
       headers: { Range: "bytes=0-9" },
@@ -375,6 +407,10 @@ test("initialization is atomic and backup validation rejects incomplete aggregat
     files: [],
   };
   assert.equal(validateBackup(backup).records.products.length, 27);
+  const legacy = structuredClone(backup);
+  delete legacy.records.feedback;
+  assert.deepEqual(validateBackup(legacy).records.feedback, []);
+  assert.equal(Object.hasOwn(legacy.records, "feedback"), false);
   const missing = structuredClone(backup);
   missing.records.drafts.pop();
   assert.throws(() => validateBackup(missing), /MISSING_DRAFT/);
@@ -392,4 +428,68 @@ test("initialization is atomic and backup validation rejects incomplete aggregat
       }),
     /INVALID_FILE_MANIFEST/,
   );
+});
+
+test("site banner changes persist and serialize under the CloudBase transaction harness", async () => {
+  const repo = new TransactionHarness();
+  await initialize(repo, "trusted-admin");
+  const identity = { subject: async () => "trusted-admin" };
+  let backend = new CloudBackend(repo, identity, storage);
+  const actor = await backend.authenticate("test-only");
+  const { readFile } = await import("node:fs/promises");
+  const imageData = "data:image/png;base64," + (await readFile(new URL("../fixtures/validation/page-1.png", import.meta.url))).toString("base64");
+  await actorContext.run(actor, async () => {
+    const body = { expectedVersion: 0, imageData, link: "/pages/products/index" };
+    const results = await Promise.allSettled([backend.writeSiteBanner(body, "one"), backend.writeSiteBanner(body, "two")]);
+    assert.equal(results.filter((r) => r.status === "fulfilled").length, 1);
+    assert.equal(results.filter((r) => r.status === "rejected").length, 1);
+    backend = new CloudBackend(repo, identity, storage);
+    assert.deepEqual(await backend.siteBanner(), { version: 1, imageData, link: "/pages/products/index", startsAt: null, endsAt: null, introduction: null, introLink: null });
+    assert.equal((await repo.list<{ action: string }>("audit")).filter((e) => e.action === "UPDATE_SITE_BANNER").length, 1);
+  });
+});
+
+test("site contact persists with version conflicts under the transaction harness", async () => {
+  const repo = new TransactionHarness(); await initialize(repo, "trusted-admin");
+  const identity = { subject: async () => "trusted-admin" };
+  let backend = new CloudBackend(repo, identity, storage); const actor = await backend.authenticate("test-only");
+  await actorContext.run(actor, async () => {
+    const input = { expectedVersion: 0, officialQr: null, serviceQr: null, phone: "400-000-0000" };
+    const results = await Promise.allSettled([backend.writeSiteContact(input, "first"), backend.writeSiteContact(input, "second")]);
+    assert.equal(results.filter((result) => result.status === "fulfilled").length, 1);
+    assert.equal(results.filter((result) => result.status === "rejected").length, 1);
+    backend = new CloudBackend(repo, identity, storage);
+    assert.equal((await backend.siteContact()).phone, "400-000-0000");
+    assert.equal((await repo.list<{ action: string }>("audit")).filter((event) => event.action === "UPDATE_SITE_CONTACT").length, 1);
+  });
+});
+
+test("feedback is stored and rate-limited in the transaction harness", async () => {
+  const repo = new TransactionHarness(); await initialize(repo, "trusted-admin");
+  const identity = { subject: async () => "trusted-admin" };
+  let backend = new CloudBackend(repo, identity, storage);
+  for (let i = 0; i < 5; i++) await backend.submitFeedback({ content: `feedback ${i}`, contact: "" }, "127.0.0.1");
+  await assert.rejects(backend.submitFeedback({ content: "overflow", contact: "" }, "127.0.0.1"), { status: 429 });
+  backend = new CloudBackend(repo, identity, storage); const actor = await backend.authenticate("test-only");
+  await actorContext.run(actor, async () => assert.equal((await backend.listFeedback()).length, 5));
+  await assert.rejects(backend.listFeedback(), { status: 403 });
+});
+
+test("five-part codes allocate transactionally by combination and model uniqueness survives edits", async () => {
+  const repo = new TransactionHarness(); await initialize(repo, "trusted-admin");
+  const backend = new CloudBackend(repo, { subject: async () => "trusted-admin" }, storage);
+  const actor = await backend.authenticate("test-only");
+  await actorContext.run(actor, async () => {
+    const body = (model: string) => ({ name: "虚构测试产品", owner: "测试", model, categoryId: "miding", templateId: "software" as const, templateVersion: 1, productType: "SOFTWARE" as const, ownership: "SELF_DEVELOPED" as const });
+    const created = await Promise.all(Array.from({ length: 12 }, (_, i) => backend.create(body(`MODEL-${i}`), randomUUID(), `create-${i}`)));
+    assert.deepEqual(new Set(created.map((item) => item.productId)), new Set(Array.from({ length: 12 }, (_, i) => `ZJ-D-S-A-${String(i + 1).padStart(3, "0")}`)));
+    await assert.rejects(backend.create(body("  model-0  "), randomUUID(), "duplicate"), { status: 409 });
+    const other = await backend.create({ ...body("MODEL-OTHER"), ownership: "PARTNER" }, randomUUID(), "other");
+    assert.equal(other.productId, "ZJ-D-S-B-001");
+    const initial = created[0];
+    await backend.save(initial.productId, { expectedDraftVersion: initial.draftVersion, content: { ...initial.content, model: "NEW-MODEL", categoryId: "miyi", ownership: "PARTNER" } }, "edit");
+    assert.equal((await backend.draft(initial.productId)).productId, "ZJ-D-S-A-001");
+    await assert.rejects(backend.create(body("new-model"), randomUUID(), "duplicate-after-edit"), { status: 409 });
+    await assert.rejects(backend.create(body("MODEL-0"), randomUUID(), "reserved-old-model"), { status: 409 });
+  });
 });

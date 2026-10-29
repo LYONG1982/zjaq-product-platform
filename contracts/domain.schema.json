@@ -134,6 +134,33 @@
             "kind",
             "pages"
           ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "video"
+            },
+            "assetId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+            },
+            "mimeType": {
+              "enum": [
+                "video/mp4",
+                "video/quicktime",
+                "video/webm"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "assetId",
+            "mimeType"
+          ]
         }
       ]
     },
@@ -163,6 +190,22 @@
             "presentation",
             "technical",
             "other"
+          ]
+        },
+        "category": {
+          "enum": [
+            "promotional",
+            "technical"
+          ]
+        },
+        "subCategory": {
+          "enum": [
+            "deck",
+            "onepager",
+            "video",
+            "whitepaper",
+            "spec",
+            "manual"
           ]
         },
         "versionLabel": {
@@ -286,6 +329,23 @@
             "$ref": "#/$defs/MaterialRef"
           },
           "maxItems": 20
+        },
+        "model": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 80
+        },
+        "productType": {
+          "enum": [
+            "SOFTWARE",
+            "HARDWARE"
+          ]
+        },
+        "ownership": {
+          "enum": [
+            "SELF_DEVELOPED",
+            "PARTNER"
+          ]
         }
       },
       "additionalProperties": false,
@@ -345,6 +405,23 @@
             "minLength": 1,
             "maxLength": 80
           }
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "productType": {
+          "enum": [
+            "SOFTWARE",
+            "HARDWARE"
+          ]
+        },
+        "ownership": {
+          "enum": [
+            "SELF_DEVELOPED",
+            "PARTNER"
+          ]
         }
       },
       "additionalProperties": false,
@@ -353,7 +430,10 @@
         "categoryId",
         "templateId",
         "templateVersion",
-        "owner"
+        "owner",
+        "model",
+        "productType",
+        "ownership"
       ]
     },
     "SaveDraft": {
@@ -418,7 +498,11 @@
       "properties": {
         "productId": {
           "type": "string",
-          "pattern": "^ZJ-[0-9]{3,}$"
+          "pattern": "^(?:ZJ-[0-9]{3,}|ZJ-[DYSA]-[SH]-[AB]-[0-9]{3})$"
+        },
+        "publicId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
         },
         "isDemo": {
           "type": "boolean"
@@ -467,11 +551,37 @@
             "null"
           ]
         },
+        "publicMaterialRevocations": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
         "draft": {
           "$ref": "#/$defs/DraftContent"
         },
         "internal": {
           "type": "object"
+        },
+        "deletedAt": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "deletedBy": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "deletionReason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 300
         }
       },
       "additionalProperties": false,
@@ -513,7 +623,8 @@
         },
         "size": {
           "type": "integer",
-          "minimum": 1
+          "minimum": 1,
+          "maximum": 524288000
         }
       },
       "additionalProperties": false,
@@ -608,7 +719,8 @@
         "role": {
           "enum": [
             "CONTENT_MANAGER",
-            "ADMIN"
+            "ADMIN",
+            "SALES"
           ]
         },
         "enabled": {
@@ -674,6 +786,212 @@
         "error",
         "requestId"
       ]
+    },
+    "SiteBannerWrite": {
+      "type": "object",
+      "properties": {
+        "expectedVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "imageData": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 600000
+        },
+        "link": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 2048
+        },
+        "startsAt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 40
+        },
+        "endsAt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 40
+        },
+        "introduction": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 120
+        },
+        "introLink": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 2048
+        }
+      },
+      "required": [
+        "expectedVersion",
+        "imageData",
+        "link"
+      ],
+      "additionalProperties": false
+    },
+    "SiteContactWrite": {
+      "type": "object",
+      "properties": {
+        "expectedVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "officialQr": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 350000
+        },
+        "serviceQr": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 350000
+        },
+        "phone": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 32
+        }
+      },
+      "required": [
+        "expectedVersion",
+        "officialQr",
+        "serviceQr",
+        "phone"
+      ],
+      "additionalProperties": false
+    },
+    "FeedbackSubmit": {
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "contact": {
+          "type": "string",
+          "maxLength": 100
+        }
+      },
+      "required": [
+        "content",
+        "contact"
+      ],
+      "additionalProperties": false
+    },
+    "AnalyticsSettingsWrite": {
+      "type": "object",
+      "properties": {
+        "expectedVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "downloadEnabled": {
+          "type": "boolean"
+        },
+        "viewEnabled": {
+          "type": "boolean"
+        },
+        "dashboardEnabled": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "expectedVersion",
+        "downloadEnabled",
+        "viewEnabled",
+        "dashboardEnabled"
+      ],
+      "additionalProperties": false
+    },
+    "AnalyticsViewSubmit": {
+      "type": "object",
+      "properties": {
+        "productId": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "materialId": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "releaseId": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "versionId": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "viewId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+        },
+        "client": {
+          "enum": [
+            "H5",
+            "WECHAT"
+          ]
+        }
+      },
+      "required": [
+        "productId",
+        "materialId",
+        "releaseId",
+        "versionId",
+        "viewId",
+        "client"
+      ],
+      "additionalProperties": false
+    },
+    "ProductRemoval": {
+      "type": "object",
+      "properties": {
+        "expectedDraftVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "expectedPublicationVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "confirmed": {
+          "const": true
+        }
+      },
+      "required": [
+        "expectedDraftVersion",
+        "expectedPublicationVersion",
+        "reason",
+        "confirmed"
+      ],
+      "additionalProperties": false
     }
   }
 }

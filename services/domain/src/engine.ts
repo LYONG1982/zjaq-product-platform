@@ -27,6 +27,8 @@ import {
 export { identity } from "./identity";
 import { actorContext, identity } from "./identity";
 import { templates } from "@zj/template-registry";
+import { normalizedModel, productCode, productCodePrefix } from "./product-code";
+import { isPublicProductId } from "./public-id";
 export type Release = {
   id: string;
   productId: string;
@@ -58,6 +60,8 @@ export class DomainEngine {
   readonly events: Responses["AuditEvent"][] = [];
   readonly sessionId = randomUUID();
   counter = 1;
+  readonly codeCounters = new Map<string, number>();
+  readonly modelOwners = new Map<string, string>();
   readonly metadata = new Map<string, Meta>();
   readonly materialHistory = new Map<string, Map<string, Material>>();
   readonly materialVersionOwners = new Map<string, string>();
@@ -83,7 +87,16 @@ export class DomainEngine {
     requireValue(p, 404, "RESOURCE_UNAVAILABLE", "产品不存在");
     return p;
   }
+  assertProductWritable(id: string) {
+    requireValue(!this.product(id).deletedAt, 409, "PRODUCT_REMOVED", "产品已移除，请由管理员恢复后操作");
+  }
+  assertProductReadable(id: string) {
+    const product = this.product(id);
+    requireValue(!product.deletedAt || actorContext.getStore()?.role === "ADMIN", 404, "RESOURCE_UNAVAILABLE", "产品不存在或已移除");
+  }
+  assertRemovedProductsAccess() { this.adminOnly(); }
   draft(id: string): AdminDraft {
+    this.assertProductReadable(id);
     const p = this.product(id),
       m = this.metadata.get(id);
     return clone({
@@ -99,6 +112,7 @@ export class DomainEngine {
       content: p.draft,
       updatedAt: m?.updatedAt ?? null,
       updatedBy: m?.updatedBy ?? null,
+      deletedAt: p.deletedAt ?? null, deletedBy: p.deletedBy ?? null, deletionReason: p.deletionReason ?? null,
     });
   }
   row(p: ProductRecord): AdminProductRow {
@@ -116,6 +130,7 @@ export class DomainEngine {
       draftVersion: d.draftVersion,
       hasUnpublishedChanges: d.hasUnpublishedChanges,
       updatedAt: d.updatedAt,
+      deletedAt: p.deletedAt ?? null, deletedBy: p.deletedBy ?? null, deletionReason: p.deletionReason ?? null,
     };
   }
   adminCategories() {
@@ -330,6 +345,7 @@ export class DomainEngine {
     p: ProductRecord,
     requestId: string,
     release?: Release,
+    reason?: string,
   ) {
     this.beforeCommit?.(action);
     const now = new Date().toISOString();
@@ -354,22 +370,22 @@ export class DomainEngine {
       releaseSequence: p.releaseSequence,
       requestId,
       createdAt: now,
+      ...(reason ? { reason } : {}),
     });
   }
   create(body: unknown, key: string | undefined, requestId: string) {
     return this.once("POST /admin/products", key, body, () => {
       const b = validateBody<CreateProduct>("CreateProduct", body);
       invalidFields(validateCreation(b, this.categories));
-      requireValue(
-        this.counter < Number.MAX_SAFE_INTEGER,
-        409,
-        "INVALID_STATE",
-        "编号已超过安全范围",
-      );
-      const id = "ZJ-" + String(this.counter).padStart(3, "0");
+      requireValue(b.model.trim(), 422, "VALIDATION_FAILED", "请填写产品型号");
+      requireValue(!this.modelOwners.has(normalizedModel(b.model)) && ![...this.products.values()].some((p) => p.draft.model && normalizedModel(p.draft.model) === normalizedModel(b.model)), 409, "MODEL_CONFLICT", "产品型号已存在");
+      const prefix = productCodePrefix(b.categoryId, b.productType, b.ownership);
+      const next = this.codeCounters.get(prefix) ?? 1;
+      const id = productCode(b.categoryId, b.productType, b.ownership, next);
       requireValue(!this.products.has(id), 409, "INVALID_STATE", "编号冲突");
       const p: ProductRecord = {
         productId: id,
+        publicId: randomUUID(),
         isDemo: this.allowMockActor,
         pilotOrder: null,
         publicationState: "DRAFT",
@@ -383,6 +399,7 @@ export class DomainEngine {
           ...clone(b),
           name: b.name.trim(),
           owner: b.owner.trim(),
+          model: b.model.trim(),
           aliases: b.aliases ?? [],
           tagline: "",
           summary: "",
@@ -397,7 +414,8 @@ export class DomainEngine {
         },
       };
       this.commit("CREATE", p, requestId);
-      this.counter++;
+      this.codeCounters.set(prefix, next + 1);
+      this.modelOwners.set(normalizedModel(b.model), id);
       return this.draft(id);
     });
   }
@@ -422,6 +440,13 @@ export class DomainEngine {
       errors.push({ path: "/categoryId", message: "分类已停用或不存在" });
     if (!c.name.trim())
       errors.push({ path: "/name", message: "请填写产品名称" });
+    if (publish && !c.model?.trim()) errors.push({ path: "/model", message: "发布前请补齐产品型号" });
+    if (publish && !c.productType) errors.push({ path: "/productType", message: "发布前请选择产品类型" });
+    if (publish && !c.ownership) errors.push({ path: "/ownership", message: "发布前请选择产品属性" });
+    if (c.model?.trim() && [...this.products.values()].some((other) => other.productId !== id && other.draft.model && normalizedModel(other.draft.model) === normalizedModel(c.model!)))
+      errors.push({ path: "/model", message: "产品型号已被其他产品使用" });
+    if (c.model?.trim() && this.modelOwners.has(normalizedModel(c.model)) && this.modelOwners.get(normalizedModel(c.model)) !== id)
+      errors.push({ path: "/model", message: "产品型号已被其他产品使用" });
     for (const key of ["problemValues", "features", "scenarios"] as const) {
       const seen = new Set<string>();
       c[key].forEach((v, i) => {
@@ -438,6 +463,14 @@ export class DomainEngine {
       mediaIds = new Set<string>();
     for (const [index, m] of c.materials.entries()) {
       const path = "/materials/" + index;
+      const allowed = m.category === "promotional"
+        ? ["deck", "onepager", "video"]
+        : m.category === "technical"
+          ? ["whitepaper", "spec", "manual"]
+          : [];
+      if ((publish || m.category || m.subCategory) &&
+          (!m.category || !m.subCategory || !allowed.includes(m.subCategory)))
+        errors.push({ path, message: "请选择相互匹配的资料一级和二级分类" });
       if (
         materialIds.has(m.materialId) ||
         versionIds.has(m.versionId) ||
@@ -479,6 +512,9 @@ export class DomainEngine {
             "VALIDATION_FAILED",
             "PDF 页数或格式与检查结果不符",
           );
+        } else if (m.preview.kind === "video") {
+          const a = this.assets.asset(id, m.preview.assetId, "preview");
+          requireValue(a.mimeType === m.preview.mimeType && a.mimeType?.startsWith("video/"), 422, "VALIDATION_FAILED", "视频格式与检查结果不符");
         } else {
           const assetIds = new Set<string>();
           m.preview.pages.forEach((page, i) => {
@@ -523,8 +559,10 @@ export class DomainEngine {
     invalidFields(errors);
   }
   save(id: string, body: unknown, requestId: string) {
+    this.assertProductWritable(id);
     const b = validateBody<Domain["SaveDraft"]>("SaveDraft", body),
       p = clone(this.product(id));
+    const previousModel = p.draft.model;
     requireValue(
       p.draftVersion === b.expectedDraftVersion,
       409,
@@ -532,9 +570,19 @@ export class DomainEngine {
       "其他窗口已修改此产品，请核对后再保存",
     );
     this.validateContent(id, b.content);
+    const active = p.activeReleaseId ? this.releases.get(p.activeReleaseId) : undefined;
+    const revocations = new Set(p.publicMaterialRevocations ?? []);
+    for (const m of active?.content.materials ?? []) {
+      const revised = b.content.materials.find((item) => item.materialId === m.materialId);
+      if (m.category === "promotional" && revised?.category !== "promotional")
+        revocations.add(m.materialId);
+    }
+    p.publicMaterialRevocations = [...revocations];
     p.draft = clone(b.content);
     p.draftVersion++;
     this.commit("SAVE", p, requestId);
+    if (previousModel?.trim()) this.modelOwners.set(normalizedModel(previousModel), id);
+    if (p.draft.model?.trim()) this.modelOwners.set(normalizedModel(p.draft.model), id);
     for (const m of p.draft.materials) {
       const k = id + "/" + m.materialId,
         history = this.materialHistory.get(k) ?? new Map();
@@ -554,12 +602,23 @@ export class DomainEngine {
     );
     return d;
   }
+  materialVersions(id: string): Material[] {
+    this.assertProductReadable(id);
+    const product = this.product(id);
+    const versions = new Map<string, Material>();
+    for (const [key, history] of this.materialHistory) {
+      if (key.startsWith(id + "/")) for (const material of history.values()) versions.set(material.versionId, clone(material));
+    }
+    for (const material of product.draft.materials) if (!versions.has(material.versionId)) versions.set(material.versionId, clone(material));
+    return [...versions.values()].reverse();
+  }
   publish(
     id: string,
     body: unknown,
     key: string | undefined,
     requestId: string,
   ) {
+    this.assertProductWritable(id);
     return this.once(
       "POST /admin/products/" + id + "/publish",
       key,
@@ -570,6 +629,7 @@ export class DomainEngine {
             body,
           ),
           p = clone(this.product(id));
+        this.assertProductWritable(id);
         requireValue(
           p.draftVersion === b.expectedDraftVersion,
           409,
@@ -583,6 +643,8 @@ export class DomainEngine {
           "线上状态已变化，请确认后重新操作",
         );
         this.validateContent(id, p.draft, true);
+        // Legacy drafts obtain their durable public identity on first publication.
+        p.publicId ??= randomUUID();
         const release: Release = {
           id: randomUUID(),
           productId: id,
@@ -597,6 +659,7 @@ export class DomainEngine {
         p.releaseSequence = release.sequence;
         p.publicationVersion++;
         p.lastPublishedDraftVersion = p.draftVersion;
+        p.publicMaterialRevocations = [];
         this.commit("PUBLISH", p, requestId, release);
         return {
           productId: id,
@@ -616,6 +679,7 @@ export class DomainEngine {
     key: string | undefined,
     requestId: string,
   ) {
+    this.assertProductWritable(id);
     return this.once(
       "POST /admin/products/" + id + "/unpublish",
       key,
@@ -626,6 +690,7 @@ export class DomainEngine {
             body,
           ),
           p = clone(this.product(id));
+        this.assertProductWritable(id);
         requireValue(
           p.publicationVersion === b.expectedPublicationVersion,
           409,
@@ -654,10 +719,42 @@ export class DomainEngine {
       },
     );
   }
+  removeProduct(id: string, body: unknown, key: string | undefined, requestId: string) {
+    this.adminOnly();
+    return this.once("POST /admin/products/" + id + "/remove", key, body, () => {
+      const data = validateBody<Domain["ProductRemoval"]>("ProductRemoval", body), product = clone(this.product(id));
+      requireValue(data.reason.trim(), 422, "VALIDATION_FAILED", "请填写移除原因");
+      this.assertProductWritable(id);
+      requireValue(product.draftVersion === data.expectedDraftVersion, 409, "DRAFT_CONFLICT", "草稿已变化，请刷新后重新确认移除");
+      requireValue(product.publicationVersion === data.expectedPublicationVersion, 409, "PUBLICATION_CONFLICT", "发布状态已变化，请刷新后重新确认移除");
+      const wasPublished = product.publicationState === "PUBLISHED";
+      if (wasPublished) { product.publicationState = "OFFLINE"; product.activeReleaseId = null; product.publicationVersion++; }
+      product.deletedAt = new Date().toISOString(); product.deletedBy = this.actor().userId; product.deletionReason = data.reason.trim(); product.draftVersion++;
+      this.commit("REMOVE_PRODUCT", product, requestId, undefined, product.deletionReason);
+      if (wasPublished) this.metadata.get(id)!.unpublishedAt = product.deletedAt;
+      return this.draft(id);
+    });
+  }
+  restoreProduct(id: string, body: unknown, key: string | undefined, requestId: string) {
+    this.adminOnly();
+    return this.once("POST /admin/products/" + id + "/restore", key, body, () => {
+      const data = validateBody<Domain["ProductRemoval"]>("ProductRemoval", body), product = clone(this.product(id));
+      requireValue(data.reason.trim(), 422, "VALIDATION_FAILED", "请填写恢复原因");
+      requireValue(product.deletedAt, 409, "INVALID_STATE", "产品当前未被移除");
+      requireValue(product.draftVersion === data.expectedDraftVersion, 409, "DRAFT_CONFLICT", "草稿已变化，请刷新后重新确认恢复");
+      requireValue(product.publicationVersion === data.expectedPublicationVersion, 409, "PUBLICATION_CONFLICT", "发布状态已变化，请刷新后重新确认恢复");
+      // Restoration never restores an active publication, including malformed old tombstones.
+      if (product.publicationState === "PUBLISHED") { product.publicationState = "OFFLINE"; product.activeReleaseId = null; product.publicationVersion++; }
+      product.deletedAt = null; product.deletedBy = null; product.deletionReason = null; product.draftVersion++;
+      this.commit("RESTORE_PRODUCT", product, requestId, undefined, data.reason.trim());
+      return this.draft(id);
+    });
+  }
   createUpload(body: unknown, key: string | undefined) {
+    this.assertProductWritable(validateBody<Domain["UploadIntent"]>("UploadIntent", body).productId);
     return this.once("POST /admin/uploads", key, body, () => {
       const b = validateBody<Domain["UploadIntent"]>("UploadIntent", body);
-      this.product(b.productId);
+      this.assertProductWritable(b.productId);
       return this.assets.create(b);
     });
   }
@@ -665,7 +762,7 @@ export class DomainEngine {
     const p = this.products.get(id),
       r = p?.activeReleaseId ? this.releases.get(p.activeReleaseId) : undefined;
     requireValue(
-      p?.publicationState === "PUBLISHED" && r,
+      p?.publicationState === "PUBLISHED" && !p.deletedAt && r,
       404,
       "RESOURCE_UNAVAILABLE",
       "此产品或资料暂不可用",
@@ -673,14 +770,16 @@ export class DomainEngine {
     return r;
   }
   summaries(): Responses["PublicProductSummary"][] {
+    const ids = new Map<string, number>();
+    for (const p of this.products.values()) if (isPublicProductId(p.publicId)) ids.set(p.publicId.toLowerCase(), (ids.get(p.publicId.toLowerCase()) ?? 0) + 1);
     return [...this.products.values()]
-      .filter((p) => p.publicationState === "PUBLISHED")
+      .filter((p) => !p.deletedAt && p.publicationState === "PUBLISHED" && isPublicProductId(p.publicId) && ids.get(p.publicId.toLowerCase()) === 1)
       .map((p) => {
         const r = this.current(p.productId),
           c = this.categories.find((c) => c.id === r.content.categoryId)!,
           cover = r.content.media.find((m) => m.role === "cover");
         return {
-          productId: p.productId,
+          productId: p.publicId!,
           releaseId: r.id,
           releaseSequence: r.sequence,
           publishedAt: r.publishedAt,
@@ -701,7 +800,7 @@ export class DomainEngine {
   publicCategories() {
     const rows = this.summaries();
     return this.categories
-      .filter((c) => c.enabled && rows.some((r) => r.categoryId === c.id))
+      .filter((c) => c.enabled)
       .map((c) => ({
         id: c.id,
         name: c.name,
@@ -711,12 +810,12 @@ export class DomainEngine {
       }));
   }
   matches(id: string, q: string) {
-    const c = this.current(id).content;
-    return [c.name, ...(c.aliases ?? [])].some((s) =>
-      s.toLocaleLowerCase().includes(q.toLocaleLowerCase()),
-    );
+    const c = this.current(this.resolvePublicId(id)).content;
+    return c.name.toLocaleLowerCase().includes(q.toLocaleLowerCase());
   }
   material(r: Release, m: Material): Responses["PublicMaterial"] {
+    const publicId = this.product(r.productId).publicId;
+    requireValue(publicId, 404, "RESOURCE_UNAVAILABLE", "此产品或资料暂不可用");
     return {
       materialId: m.materialId,
       versionId: m.versionId,
@@ -726,16 +825,33 @@ export class DomainEngine {
       applicableVersion: m.applicableVersion ?? null,
       previewKind: m.preview.kind,
       pageCount:
-        m.preview.kind === "pdf" ? m.preview.pageCount : m.preview.pages.length,
+        m.preview.kind === "pdf" ? m.preview.pageCount : m.preview.kind === "video" ? 1 : m.preview.pages.length,
       publishedAt: r.publishedAt,
-      previewPath: `/api/v1/catalog/products/${r.productId}/materials/${encodeURIComponent(m.materialId)}/preview`,
+      previewPath: `/api/v1/catalog/products/${publicId}/materials/${encodeURIComponent(m.materialId)}/preview`,
     };
   }
   mediaPath(r: Release, id: string) {
-    return `/api/v1/catalog/products/${r.productId}/media/${encodeURIComponent(id)}?releaseId=${r.id}`;
+    const publicId = this.product(r.productId).publicId;
+    requireValue(publicId, 404, "RESOURCE_UNAVAILABLE", "此产品或资料暂不可用");
+    return `/api/v1/catalog/products/${publicId}/media/${encodeURIComponent(id)}?releaseId=${r.id}`;
+  }
+  resolvePublicId(id: string) {
+    requireValue(isPublicProductId(id), 404, "RESOURCE_UNAVAILABLE", "此产品或资料暂不可用");
+    const matches = [...this.products.values()].filter((p) => p.publicId?.toLowerCase() === id.toLowerCase());
+    requireValue(matches.length === 1 && !matches[0].deletedAt && matches[0].publicationState === "PUBLISHED", 404, "RESOURCE_UNAVAILABLE", "此产品或资料暂不可用");
+    return matches[0].productId;
+  }
+  private isPublicMaterial(r: Release, material: Material) {
+    const draft = this.products.get(r.productId)?.draft.materials.find(
+      (m) => m.materialId === material.materialId,
+    );
+    // Both the published classification and the latest saved classification must
+    // explicitly allow public access. Missing legacy data fails closed.
+    return material.category === "promotional" && draft?.category === "promotional" &&
+      !this.products.get(r.productId)?.publicMaterialRevocations?.includes(material.materialId);
   }
   publicProduct(id: string): Responses["PublicProduct"] {
-    const r = this.current(id),
+    const r = this.current(this.resolvePublicId(id)),
       c = r.content,
       category = this.categories.find((x) => x.id === c.categoryId)!;
     return clone({
@@ -744,6 +860,7 @@ export class DomainEngine {
       releaseSequence: r.sequence,
       publishedAt: r.publishedAt,
       name: c.name,
+      ...(c.model?.trim() ? { model: c.model.trim() } : {}),
       category: { id: category.id, name: category.name },
       tagline: c.tagline,
       summary: c.summary,
@@ -754,20 +871,19 @@ export class DomainEngine {
       technical: Object.fromEntries(
         Object.entries(c.technical).filter(([, v]) => v.trim()),
       ),
-      boundaries: c.boundaries,
       media: c.media.map((m) => ({
         mediaId: m.mediaId,
         role: m.role,
         alt: m.alt,
         path: this.mediaPath(r, m.mediaId),
       })),
-      materials: c.materials.map((m) => this.material(r, m)),
+      materials: c.materials.filter((m) => this.isPublicMaterial(r, m)).map((m) => this.material(r, m)),
     });
   }
   currentMaterials(): Responses["CatalogMaterialRow"][] {
     return this.summaries().flatMap((s) => {
-      const r = this.current(s.productId);
-      return r.content.materials.map((m) => ({
+      const r = this.current(this.resolvePublicId(s.productId));
+      return r.content.materials.filter((m) => this.isPublicMaterial(r, m)).map((m) => ({
         productId: s.productId,
         productName: s.name,
         categoryId: s.categoryId,
@@ -776,9 +892,9 @@ export class DomainEngine {
     });
   }
   manifest(id: string, materialId: string): Responses["PreviewManifest"] {
-    const r = this.current(id),
+    const r = this.current(this.resolvePublicId(id)),
       m = r.content.materials.find((m) => m.materialId === materialId);
-    requireValue(m, 404, "RESOURCE_UNAVAILABLE", "资料暂不可用");
+    requireValue(m && this.isPublicMaterial(r, m), 404, "RESOURCE_UNAVAILABLE", "资料暂不可用");
     const base = `/api/v1/catalog/products/${id}/materials/${encodeURIComponent(materialId)}/preview/content?releaseId=${r.id}&versionId=${encodeURIComponent(m.versionId)}&part=`;
     return {
       productId: id,
@@ -789,7 +905,7 @@ export class DomainEngine {
       versionLabel: m.versionLabel,
       previewKind: m.preview.kind,
       pageCount:
-        m.preview.kind === "pdf" ? m.preview.pageCount : m.preview.pages.length,
+        m.preview.kind === "pdf" ? m.preview.pageCount : m.preview.kind === "video" ? 1 : m.preview.pages.length,
       parts:
         m.preview.kind === "pdf"
           ? [
@@ -800,7 +916,7 @@ export class DomainEngine {
                 path: base + "pdf",
               },
             ]
-          : m.preview.pages.map((p) => ({
+          : m.preview.kind === "video" ? [{ part: "video", pageIndex: null, mimeType: m.preview.mimeType, path: base + "video" }] : m.preview.pages.map((p) => ({
               part: "page-" + p.pageIndex,
               pageIndex: p.pageIndex,
               mimeType: "image/png",
@@ -815,9 +931,9 @@ export class DomainEngine {
     versionId: string,
     part: string,
   ) {
-    const r = this.current(id),
+    const r = this.current(this.resolvePublicId(id)),
       m = r.content.materials.find((m) => m.materialId === materialId);
-    requireValue(m, 404, "RESOURCE_UNAVAILABLE", "资料暂不可用");
+    requireValue(m && this.isPublicMaterial(r, m), 404, "RESOURCE_UNAVAILABLE", "资料暂不可用");
     requireValue(
       r.id === releaseId && m.versionId === versionId,
       409,
@@ -829,15 +945,66 @@ export class DomainEngine {
         ? part === "pdf"
           ? m.preview.assetId
           : undefined
-        : m.preview.pages.find((p) => "page-" + p.pageIndex === part)?.assetId;
+        : m.preview.kind === "video" ? (part === "video" ? m.preview.assetId : undefined) : m.preview.pages.find((p) => "page-" + p.pageIndex === part)?.assetId;
     requireValue(assetId, 404, "RESOURCE_UNAVAILABLE", "预览页不存在");
     return assetId;
   }
   mediaAsset(id: string, mediaId: string, releaseId: string) {
-    const r = this.current(id);
+    const r = this.current(this.resolvePublicId(id));
     requireValue(r.id === releaseId, 409, "VERSION_CHANGED", "产品资料已更新");
     const m = r.content.media.find((m) => m.mediaId === mediaId);
     requireValue(m, 404, "RESOURCE_UNAVAILABLE", "素材暂不可用");
     return m.assetId;
+  }
+  private salesMaterial(id: string, materialId: string) {
+    const r = this.current(this.resolvePublicId(id));
+    const m = r.content.materials.find((item) => item.materialId === materialId);
+    requireValue(m, 404, "RESOURCE_UNAVAILABLE", "资料暂不可用");
+    return { r, m };
+  }
+  salesMatches(id: string, q: string) {
+    const content = this.current(this.resolvePublicId(id)).content;
+    const term = q.toLocaleLowerCase();
+    return [content.name, ...(content.aliases ?? [])].some((value) => value.toLocaleLowerCase().includes(term));
+  }
+  salesProduct(id: string): Responses["PublicProduct"] {
+    const result = this.publicProduct(id);
+    const r = this.current(this.resolvePublicId(id));
+    result.materials = r.content.materials
+      .map((m) => ({ ...this.material(r, m), previewPath: `/api/v1/sales/catalog/products/${id}/materials/${encodeURIComponent(m.materialId)}/preview` }));
+    return result;
+  }
+  currentSalesMaterials(): Responses["CatalogMaterialRow"][] {
+    return this.summaries().flatMap((summary) => {
+      const release = this.current(this.resolvePublicId(summary.productId));
+      return release.content.materials.map((material) => ({
+        productId: summary.productId, productName: summary.name, categoryId: summary.categoryId,
+        material: { ...this.material(release, material), previewPath: `/api/v1/sales/catalog/products/${summary.productId}/materials/${encodeURIComponent(material.materialId)}/preview` },
+      }));
+    });
+  }
+  salesManifest(id: string, materialId: string): Responses["PreviewManifest"] {
+    const { r, m } = this.salesMaterial(id, materialId);
+    const base = `/api/v1/sales/catalog/products/${id}/materials/${encodeURIComponent(materialId)}/preview/content?releaseId=${encodeURIComponent(r.id)}&versionId=${encodeURIComponent(m.versionId)}&part=`;
+    return { productId: id, materialId, releaseId: r.id, versionId: m.versionId,
+      name: m.name, versionLabel: m.versionLabel, previewKind: m.preview.kind,
+      pageCount: m.preview.kind === "pdf" ? m.preview.pageCount : m.preview.kind === "video" ? 1 : m.preview.pages.length,
+      parts: m.preview.kind === "pdf" ? [{ part: "pdf", pageIndex: null, mimeType: "application/pdf", path: base + "pdf" }]
+        : m.preview.kind === "video" ? [{ part: "video", pageIndex: null, mimeType: m.preview.mimeType, path: base + "video" }] : m.preview.pages.map((p) => ({ part: "page-" + p.pageIndex, pageIndex: p.pageIndex, mimeType: "image/png", path: base + "page-" + p.pageIndex })) };
+  }
+  salesPreviewAsset(id: string, materialId: string, releaseId: string, versionId: string, part: string) {
+    const { r, m } = this.salesMaterial(id, materialId);
+    requireValue(r.id === releaseId && m.versionId === versionId, 409, "VERSION_CHANGED", "资料已更新，请打开当前版本");
+    const assetId = m.preview.kind === "pdf" ? (part === "pdf" ? m.preview.assetId : undefined)
+      : m.preview.kind === "video" ? (part === "video" ? m.preview.assetId : undefined) : m.preview.pages.find((p) => "page-" + p.pageIndex === part)?.assetId;
+    requireValue(assetId, 404, "RESOURCE_UNAVAILABLE", "预览页不存在");
+    return assetId;
+  }
+  salesSourceAsset(id: string, materialId: string, releaseId: string, versionId: string) {
+    const { r, m } = this.salesMaterial(id, materialId);
+    requireValue(r.id === releaseId && m.versionId === versionId, 409, "VERSION_CHANGED", "资料已更新，请打开当前版本");
+    if (m.sourceAssetId) return { assetId: m.sourceAssetId, name: m.name, purpose: "source" as const };
+    if (m.preview.kind === "images") return { assetId: undefined, assetIds: m.preview.pages.map(p => p.assetId), name: m.name, purpose: "preview" as const };
+    return { assetId: m.preview.assetId, name: m.name, purpose: "preview" as const };
   }
 }

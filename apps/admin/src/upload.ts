@@ -8,6 +8,7 @@ export async function uploadFile(
   status: (text: string) => void,
 ) {
   const types: Record<string, string> = {
+    mp4: "video/mp4", mov: "video/quicktime", webm: "video/webm",
     pdf: "application/pdf",
     png: "image/png",
     jpg: "image/jpeg",
@@ -17,7 +18,8 @@ export async function uploadFile(
     pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
   };
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "",
-    contentType = file.type || types[ext] || "application/octet-stream";
+    contentType = types[ext] || file.type || "application/octet-stream";
+  if (file.size > 500 * 1024 * 1024) throw new Error("单个文件不能超过 500 MiB（524,288,000 字节）");
   let map = attempts.get(file);
   if (!map) {
     map = new Map();
@@ -36,7 +38,7 @@ export async function uploadFile(
   if (current.status === "UPLOADING") {
     status("正在上传 " + file.name + "…");
     try {
-      current = (await api.putBytes(intent.uploadId, file)).data;
+      current = (await api.putBytes(intent.uploadId, file, (sent,total) => status("正在上传 " + file.name + " · " + Math.min(100, Math.round(sent / total * 100)) + "%（" + (sent / 1024 / 1024).toFixed(1) + " / " + (total / 1024 / 1024).toFixed(1) + " MiB）"))).data;
     } catch (e) {
       current = (await api.uploadStatus(intent.uploadId)).data;
       if (current.status === "UPLOADING") throw e;

@@ -687,6 +687,9 @@ fieldset {
 .section-toolbar h2 {
   margin: 0;
 }
+.add-item-button {
+  margin-top: 16px;
+}
 .warning {
   color: var(--zj-color-warning);
 }
@@ -1257,3 +1260,4 @@ summary:focus-visible {
 .compare-grid {
   margin-top: 12px;
 }
+.series-selection-icon{display:flex;align-items:center;gap:10px;color:#45596c;margin:10px 0}.series-selection-icon img{width:42px;height:42px;border-radius:8px;background:#eff5fb}

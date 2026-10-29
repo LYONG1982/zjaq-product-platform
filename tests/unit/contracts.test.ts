@@ -24,9 +24,11 @@ const valid = {
   templateId: "software",
   templateVersion: 1,
   owner: "测试负责人",
+  model: "MODEL-TEST", productType: "SOFTWARE", ownership: "SELF_DEVELOPED",
 };
-test("all 28 operation JSON responses and write schemas compile as draft 2020-12", () => {
-  assert.equal(operations.length, 28);
+test("all declared operation JSON responses and write schemas compile as draft 2020-12", () => {
+  assert.ok(operations.length >= 44);
+  assert.ok(operations.some(op => op.operationId === "createAdminMediaSession"));
   for (const op of operations) {
     for (const response of Object.values(op.responses)) {
       const s = response.content?.["application/json"]?.schema;
@@ -35,6 +37,17 @@ test("all 28 operation JSON responses and write schemas compile as draft 2020-12
     const request = op.requestBody?.content["application/json"]?.schema;
     if (request) compileSchema(request);
   }
+});
+test("sales identity has its own response contract without widening admin identity", () => {
+  const sales = {
+    userId: "mock-sales",
+    subjectId: "local-sales-only",
+    displayName: "本地虚构销售身份",
+    role: "SALES",
+    enabled: true,
+  };
+  assert.equal(validator("response", "SalesIdentity")(sales), true);
+  assert.equal(validator("response", "AdminIdentity")(sales), false);
 });
 test("client cannot choose product identifier or smuggle internal fields", () => {
   const fn = validator("domain", "CreateProduct");

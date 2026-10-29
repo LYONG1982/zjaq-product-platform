@@ -13,8 +13,9 @@ export default async function Detail({
 }) {
   const { id } = await params;
   const source = safeReturnTo((await searchParams).from);
+  const client = await api("/products/" + encodeURIComponent(id) + (source !== "/products" ? "?from=" + encodeURIComponent(source) : ""));
   try {
-    const p = (await api().publicProduct(id)).data;
+    const p = (await client.publicProduct(id)).data;
     return (
       <main>
         <ProductDetail product={p} source={source} />

@@ -15,7 +15,7 @@ export type Backend = {
   throttle?(ip: string): Promise<void>;
   authenticate(
     header: string | undefined,
-  ): Awaitable<Responses["AdminIdentity"]>;
+  ): Awaitable<Responses["AdminIdentity"] | Responses["SalesIdentity"]>;
   listProducts(q: Query): Awaitable<Responses["AdminProductRow"][]>;
   listPublicProducts(q: Query): Awaitable<Responses["PublicProductSummary"][]>;
   listMaterials(q: Query): Awaitable<Responses["CatalogMaterialRow"][]>;
@@ -26,22 +26,46 @@ export type Backend = {
   writeUser: Method<"writeUser">;
   draft: Method<"draft">;
   preview: Method<"preview">;
+  materialVersions: Method<"materialVersions">;
   create: Method<"create">;
   save: Method<"save">;
   publish: Method<"publish">;
   unpublish: Method<"unpublish">;
+  removeProduct: Method<"removeProduct">;
+  restoreProduct: Method<"restoreProduct">;
+  assertProductWritable: Method<"assertProductWritable">;
+  assertProductReadable: Method<"assertProductReadable">;
   createUpload: Method<"createUpload">;
   publicCategories: Method<"publicCategories">;
   publicProduct: Method<"publicProduct">;
+  resolvePublicId: Method<"resolvePublicId">;
   manifest: Method<"manifest">;
   previewAsset: Method<"previewAsset">;
   mediaAsset: Method<"mediaAsset">;
+  listSalesProducts(q: Query): Awaitable<Responses["PublicProductSummary"][]>;
+  listSalesMaterials(q: Query): Awaitable<Responses["CatalogMaterialRow"][]>;
+  salesProduct: Method<"salesProduct">;
+  salesManifest: Method<"salesManifest">;
+  salesPreviewAsset: Method<"salesPreviewAsset">;
+  salesSourceAsset: Method<"salesSourceAsset">;
+  siteBanner(): Awaitable<Responses["SiteBanner"]>;
+  writeSiteBanner(body: unknown, requestId: string): Awaitable<Responses["SiteBanner"]>;
+  siteContact(): Awaitable<Responses["SiteContact"]>;
+  writeSiteContact(body: unknown, requestId: string): Awaitable<Responses["SiteContact"]>;
+  submitFeedback(body: unknown, ip: string): Awaitable<void>;
+  listFeedback(): Awaitable<Responses["FeedbackItem"][]>;
+  analyticsSettings(): Awaitable<Responses["AnalyticsSettings"]>;
+  writeAnalyticsSettings(body: unknown, requestId: string): Awaitable<Responses["AnalyticsSettings"]>;
+  captureAnalytics(capture: import("./analytics").AnalyticsCapture): Awaitable<void>;
+  submitAnalyticsView(body: unknown, ip: string): Awaitable<void>;
+  analyticsEvents(): Awaitable<Responses["AnalyticsEvent"][]>;
   uploadResult(id: string): Awaitable<Responses["UploadResult"]>;
   put(id: string, req: IncomingMessage): Promise<Responses["UploadResult"]>;
   complete(id: string): Promise<Responses["UploadResult"]>;
   bytes(
     productId: string,
     assetId: string,
+    original?: boolean,
   ): Promise<
     Awaited<ReturnType<AssetStore["bytes"]>> & { cleanup?: () => Promise<void> }
   >;
@@ -49,15 +73,18 @@ export type Backend = {
 export function filters(engine: DomainEngine) {
   return {
     listProducts(q: Query) {
+      if (q.removed === true) engine.assertRemovedProductsAccess();
       const term = String(q.q ?? "").toLocaleLowerCase();
       return [...engine.products.values()]
         .filter(
           (p) =>
+            (q.removed === true ? !!p.deletedAt : !p.deletedAt) &&
             (!term ||
               [p.draft.name, ...(p.draft.aliases ?? [])].some((v) =>
                 v.toLocaleLowerCase().includes(term),
               )) &&
             (!q.categoryId || q.categoryId === p.draft.categoryId) &&
+            (!q.owner || p.draft.owner.toLocaleLowerCase().includes(String(q.owner).toLocaleLowerCase())) &&
             (!q.publicationState || q.publicationState === p.publicationState),
         )
         .map((p) => engine.row(p))
@@ -78,6 +105,21 @@ export function filters(engine: DomainEngine) {
             (!q.categoryId || q.categoryId === s.categoryId) &&
             (!q.q || engine.matches(s.productId, String(q.q))),
         );
+    },
+    listSalesProducts(q: Query) {
+      return engine.summaries().filter((s) =>
+        (!q.categoryId || q.categoryId === s.categoryId) &&
+        (!q.updatedFrom || Date.parse(s.publishedAt) >= Date.parse(`${q.updatedFrom}T00:00:00+08:00`)) &&
+        (!q.updatedTo || Date.parse(s.publishedAt) < Date.parse(`${q.updatedTo}T00:00:00+08:00`) + 86400000) &&
+        (!q.ownership || engine.current(engine.resolvePublicId(s.productId)).content.ownership === q.ownership) &&
+        (!q.q || engine.salesMatches(s.productId, String(q.q))));
+    },
+    listSalesMaterials(q: Query) {
+      const term = String(q.q ?? "").toLocaleLowerCase();
+      return engine.currentSalesMaterials().filter((row) =>
+        (!q.categoryId || q.categoryId === row.categoryId) &&
+        (!q.productId || q.productId === row.productId) &&
+        (!term || row.material.name.toLocaleLowerCase().includes(term) || engine.salesMatches(row.productId, term)));
     },
     listMaterials(q: Query) {
       const term = String(q.q ?? "").toLocaleLowerCase();

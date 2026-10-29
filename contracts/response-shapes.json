@@ -19,6 +19,7 @@
       "releaseSequence",
       "publishedAt",
       "name",
+      "model",
       "category",
       "tagline",
       "summary",
@@ -27,7 +28,6 @@
       "features",
       "scenarios",
       "technical",
-      "boundaries",
       "media",
       "materials"
     ],
@@ -35,12 +35,16 @@
       "draft",
       "draftVersion",
       "owner",
+      "boundaries",
       "internal",
       "sourceAssetId",
       "sourceObjectId",
       "adminUser",
       "storagePath",
-      "historicalReleases"
+      "historicalReleases",
+      "deletedAt",
+      "deletedBy",
+      "deletionReason"
     ]
   },
   "PublicMaterial": {
@@ -79,6 +83,16 @@
       }
     ]
   },
+  "SalesIdentity": {
+    "fields": [
+      "userId",
+      "subjectId",
+      "displayName",
+      "role: SALES",
+      "enabled"
+    ],
+    "endpoint": "/api/v1/sales/me"
+  },
   "AdminDraft": {
     "fields": [
       "productId",
@@ -90,7 +104,10 @@
       "hasUnpublishedChanges",
       "content",
       "updatedAt",
-      "updatedBy"
+      "updatedBy",
+      "deletedAt",
+      "deletedBy",
+      "deletionReason"
     ]
   },
   "CreateResult": {
@@ -105,7 +122,10 @@
       "hasUnpublishedChanges",
       "content",
       "updatedAt",
-      "updatedBy"
+      "updatedBy",
+      "deletedAt",
+      "deletedBy",
+      "deletionReason"
     ]
   },
   "PublishResult": {
@@ -143,5 +163,38 @@
     "REJECTED"
   ],
   "publicInvariant": "Only current active release references are visible. No returned field may act as public grant to source or draft.",
-  "categoryRename": "分类名称是公共字典；改名立即影响分类展示，产品分类ID变更仍通过产品发布生效。"
+  "categoryRename": "分类名称是公共字典；改名立即影响分类展示，产品分类ID变更仍通过产品发布生效。",
+  "Analytics": {
+    "adminSettings": [
+      "version",
+      "dashboardEnabled",
+      "downloadEnabled",
+      "viewEnabled",
+      "retentionDays:90",
+      "notice"
+    ],
+    "publicNotice": [
+      "downloadEnabled",
+      "viewEnabled",
+      "retentionDays:90",
+      "notice"
+    ],
+    "adminOnlyEvents": [
+      "eventId",
+      "kind",
+      "productId",
+      "productName",
+      "materialId",
+      "materialName",
+      "versionId",
+      "versionLabel",
+      "occurredAt",
+      "client",
+      "sourceIp",
+      "sharer",
+      "actorName"
+    ],
+    "privacy": "No event or IP is returned publicly. Sharer is null unless the server can verify the sharing identity. Current anonymous capture does not infer a sharer.",
+    "downloads": "Complete authorized HTTP 200 responses; previews, Range chunks and interrupted transfers excluded."
+  }
 }

@@ -4,10 +4,12 @@ export function ProductVisual({
   src,
   alt,
   large = false,
+  categoryId,
 }: {
   src?: string | null;
   alt: string;
   large?: boolean;
+  categoryId?: string;
 }) {
   const [failed, setFailed] = useState(false);
   useEffect(() => setFailed(false), [src]);
@@ -24,6 +26,8 @@ export function ProductVisual({
           loading="lazy"
           onError={() => setFailed(true)}
         />
+      ) : categoryId && ["miding", "miyi", "mishu", "ai"].includes(categoryId) ? (
+        <img src={`/series/${categoryId}.svg`} alt="" aria-hidden="true" className="series-icon" />
       ) : (
         <span className="visual-symbol" aria-hidden="true">
           <i />

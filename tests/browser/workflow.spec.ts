@@ -1,4 +1,6 @@
-import { test, expect, urls, json } from "./support";
+import { test, expect, urls, json, publicProductId } from "./support";
+import { loginSales } from "./support";
+test.beforeEach(async ({ page }) => { await loginSales(page); });
 import { randomUUID } from "node:crypto";
 import path from "node:path";
 test("wizard cancellation creates no product", async ({ page, request }) => {
@@ -20,12 +22,18 @@ test("UI creates, edits, uploads, previews, publishes, updates and unpublishes o
   request,
 }) => {
   await page.setViewportSize({ width: 1440, height: 1024 });
-  const name = "【验证数据】浏览器闭环软件";
+  const name = "【验证数据】浏览器闭环软件-" + randomUUID().slice(0, 8);
+  const model = "LOCAL-" + randomUUID();
   await page.goto(urls.admin);
   await page.getByRole("button", { name: "新增产品", exact: true }).click();
   await page.getByRole("button", { name: "下一步" }).click();
   await page.getByLabel("正式名称", { exact: true }).fill(name);
-  await page.getByLabel("负责人", { exact: true }).fill("虚构测试人员");
+  await page
+    .getByLabel("产品资料负责人", { exact: true })
+    .fill("虚构测试人员");
+  await page.getByLabel("产品型号", { exact: true }).fill(model);
+  await page.getByRole("combobox", { name: "产品类型", exact: true }).selectOption("SOFTWARE");
+  await page.getByRole("combobox", { name: "产品属性", exact: true }).selectOption("SELF_DEVELOPED");
   await page.getByRole("button", { name: "创建并开始制作" }).click();
   await expect(
     page.getByRole("heading", { name: new RegExp(name) }),
@@ -33,6 +41,7 @@ test("UI creates, edits, uploads, previews, publishes, updates and unpublishes o
   const id = (
     await json(request, "/admin/products?q=" + encodeURIComponent(name))
   ).body.data[0].productId;
+  expect(id).toMatch(/^ZJ-D-S-A-\d{3}$/);
   await page
     .getByLabel("一句话定位", { exact: false })
     .fill("虚构定位，仅本地检查");
@@ -43,9 +52,6 @@ test("UI creates, edits, uploads, previews, publishes, updates and unpublishes o
     await page.getByLabel(group + "说明 1").fill("仅供本地流程验证");
   }
   await page.getByLabel("部署说明", { exact: false }).fill("虚构本地部署条件");
-  await page
-    .getByLabel("能力边界", { exact: true })
-    .fill("仅验证流程，不代表真实产品能力");
   await page.getByRole("button", { name: "保存草稿", exact: true }).click();
   await expect(page.getByText(/草稿已保存/)).toBeVisible();
   await page.getByRole("button", { name: "添加资料", exact: true }).click();
@@ -54,12 +60,36 @@ test("UI creates, edits, uploads, previews, publishes, updates and unpublishes o
     .getByLabel("资料名称", { exact: true })
     .fill("【验证资料】浏览器 PDF");
   await dialog
-    .getByLabel("PDF 预览件（≤30 MiB）", { exact: true })
+    .getByRole("combobox", { name: "资料一级分类", exact: true })
+    .selectOption("promotional");
+  await dialog
+    .getByRole("combobox", { name: "资料二级分类", exact: true })
+    .selectOption("deck");
+  await dialog
+    .locator('input[type="file"]')
     .setInputFiles(path.resolve("tests/fixtures/validation/sample-v1.pdf"));
   await expect(dialog.getByText("PDF 已就绪 · 2 页")).toBeVisible({
     timeout: 25000,
   });
   await dialog.getByRole("button", { name: "加入本次编辑" }).click();
+  await page.getByRole("button", { name: "保存草稿", exact: true }).click();
+  await expect(page.getByText(/草稿已保存/)).toBeVisible();
+  const draftWithMaterial = (await json(
+    request,
+    "/admin/products/" + id + "/draft",
+  )).body.data;
+  expect(draftWithMaterial.content.materials[0]).toMatchObject({
+    category: "promotional",
+    subCategory: "deck",
+  });
+  await page.getByRole("button", { name: "查看历史版本" }).click();
+  const history = page.getByRole("dialog", { name: "资料历史版本" });
+  await expect(history.getByText(/浏览器 PDF · V1\.0/)).toBeVisible();
+  await history.getByRole("button", { name: "预览", exact: true }).click();
+  const historicalPreview = page.getByRole("dialog", { name: /历史预览/ });
+  await expect(historicalPreview.locator("canvas")).toBeVisible();
+  await historicalPreview.getByRole("button", { name: "关闭预览" }).click();
+  await history.getByRole("button", { name: "关闭", exact: true }).click();
   await page.getByRole("button", { name: "预览", exact: true }).click();
   await expect(page.getByText(/草稿预览，未对外发布/)).toBeVisible();
   await page.getByRole("button", { name: "移动宽度" }).click();
@@ -92,14 +122,19 @@ test("UI creates, edits, uploads, previews, publishes, updates and unpublishes o
   await expect(page.getByText(/发布成功 · 本地目录已生效/)).toBeVisible();
   const portal = await page.context().newPage();
   await portal.goto(urls.portal + "/products?q=" + encodeURIComponent(name));
-  await expect(portal.getByText(name, { exact: true })).toBeVisible();
+  await expect(
+    portal.getByRole("heading", { name: /浏览器闭环软件/ }),
+  ).toBeVisible();
   await portal.screenshot({
     path: "work/round04/portal-published.png",
     fullPage: true,
   });
   await portal.close();
-  const first = (await json(request, "/catalog/products/" + id)).body.data;
+  const publicId = await publicProductId(request, name);
+  const first = (await json(request, "/catalog/products/" + publicId)).body.data;
   expect(first.summary).toBe("第一版虚构介绍");
+  expect(first.model).toBe(model);
+  expect(JSON.stringify(first)).not.toContain(id);
   const previewPath = first.materials[0].previewPath;
   const manifest = (await request.get(urls.api + previewPath)).json();
   const oldContent = (await manifest).data.parts[0].path;
@@ -109,7 +144,7 @@ test("UI creates, edits, uploads, previews, publishes, updates and unpublishes o
   await page.getByRole("button", { name: "保存草稿", exact: true }).click();
   await expect(page.getByText(/草稿已保存/)).toBeVisible();
   expect(
-    (await json(request, "/catalog/products/" + id)).body.data.summary,
+    (await json(request, "/catalog/products/" + publicId)).body.data.summary,
   ).toBe("第一版虚构介绍");
   await expect(page.getByText(/有未发布修改/)).toBeVisible();
   await page.screenshot({
@@ -127,20 +162,23 @@ test("UI creates, edits, uploads, previews, publishes, updates and unpublishes o
     .click();
   await expect(page.getByText(/第 2 次发布/)).toBeVisible();
   expect(
-    (await json(request, "/catalog/products/" + id)).body.data.summary,
+    (await json(request, "/catalog/products/" + publicId)).body.data.summary,
   ).toBe("第二版尚未发布介绍");
   expect((await request.get(urls.api + oldContent)).status()).toBe(409);
   const h5 = await page.context().newPage();
-  await h5.route("http://127.0.0.1:3403/api/**", async (r) => {
+  await h5.route("**/api/**", async (r) => {
+    const requested = new URL(r.request().url());
     await r.fulfill({
       response: await r.fetch({
-        url: r.request().url().replace(":3403", ":3303"),
+        url: urls.api + requested.pathname + requested.search,
       }),
     });
   });
   await h5.setViewportSize({ width: 320, height: 844 });
   await h5.goto(urls.h5 + "/#/pages/products/index");
-  await expect(h5.getByText(name, { exact: true })).toBeVisible();
+  await h5.locator("uni-input input").fill(name);
+  await h5.locator("uni-input input").press("Enter");
+  await expect(h5.getByText(name.slice(0, 15) + "…", { exact: true })).toBeVisible();
   expect(
     await h5.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
   ).toBe(true);
@@ -153,9 +191,11 @@ test("UI creates, edits, uploads, previews, publishes, updates and unpublishes o
   await page.getByRole("button", { name: "确认下架", exact: true }).click();
   await expect(page.getByText(/已下架，本地公共目录停止/)).toBeVisible();
   await expect(page.getByText("有未保存修改", { exact: true })).toBeVisible();
-  expect((await json(request, "/catalog/products/" + id)).status).toBe(404);
+  expect((await json(request, "/catalog/products/" + publicId)).status).toBe(404);
   await h5.reload();
-  await expect(h5.getByText(name, { exact: true })).toHaveCount(0);
+  await h5.locator("uni-input input").fill(name);
+  await h5.locator("uni-input input").press("Enter");
+  await expect(h5.getByText("没有找到相关内容", { exact: true })).toBeVisible();
   await h5.close();
   await page.getByRole("button", { name: "← 返回产品管理" }).click();
   await expect(
@@ -178,6 +218,7 @@ test("save conflict preserves local input and offers explicit comparison", async
       categoryId: "miding",
       templateId: "software",
       templateVersion: 1,
+      model: "LOCAL-BROWSER-" + randomUUID(), productType: "SOFTWARE", ownership: "SELF_DEVELOPED",
     },
     randomUUID(),
   );
@@ -223,6 +264,7 @@ test("image ordering and missing-field publish errors work through the editor", 
       categoryId: "miyi",
       templateId: "device",
       templateVersion: 1,
+      model: "LOCAL-BROWSER-" + randomUUID(), productType: "SOFTWARE", ownership: "SELF_DEVELOPED",
     },
     randomUUID(),
   );
@@ -241,10 +283,13 @@ test("image ordering and missing-field publish errors work through the editor", 
     .getByLabel("资料名称", { exact: true })
     .fill("【验证资料】图片顺序");
   await dialog
-    .getByRole("combobox", { name: "预览类型", exact: true })
-    .selectOption("images");
+    .getByRole("combobox", { name: "资料一级分类", exact: true })
+    .selectOption("promotional");
   await dialog
-    .getByLabel("图片预览件（每张≤8 MiB）", { exact: true })
+    .getByRole("combobox", { name: "资料二级分类", exact: true })
+    .selectOption("onepager");
+  await dialog
+    .locator('input[type="file"]')
     .setInputFiles(
       [1, 2, 3].map((i) =>
         path.resolve(`tests/fixtures/validation/page-${i}.png`),
@@ -254,8 +299,7 @@ test("image ordering and missing-field publish errors work through the editor", 
     timeout: 20000,
   });
   await dialog
-    .getByRole("button", { name: "后移", exact: true })
-    .first()
+    .getByRole("button", { name: "将第 1 页下移", exact: true })
     .click();
   await expect(dialog.getByLabel("第 1 页替代文字")).toHaveValue("资料第 2 页");
   await dialog.getByRole("button", { name: "检查预览件" }).click();

@@ -36,6 +36,12 @@
       "style": {
         "navigationBarTitleText": "内容暂不可用"
       }
+    },
+    {
+      "path": "pages/banner-web/index",
+      "style": {
+        "navigationBarTitleText": "了解更多"
+      }
     }
   ],
   "globalStyle": {

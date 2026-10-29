@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { onMounted, ref, nextTick } from "vue";
+import { computed, onMounted, onUnmounted, ref, nextTick } from "vue";
 import { api } from "../api";
 import { catalogState, openCatalog, type CatalogKind } from "../navigation";
 import ProductVisual from "./ProductVisual.vue";
+import ContactBlock from "./ContactBlock.vue";
+import FeedbackForm from "./FeedbackForm.vue";
 import type { Responses } from "@zj/contracts";
+import { siteImagePath } from "../site-images";
 const props = defineProps<{ kind: CatalogKind }>();
 type Row = Responses["PublicProductSummary"] | Responses["CatalogMaterialRow"];
 const state = catalogState[props.kind];
@@ -14,6 +17,34 @@ const q = ref(state.q),
 const rows = ref<Row[]>([]),
   next = ref<string | null>(null),
   categories = ref<Responses["PublicCategory"][]>([]);
+const banner = ref<Responses["SiteBanner"] | null>(null);
+const bannerPath = ref<string | null>(null);
+const contactBlock = ref<InstanceType<typeof ContactBlock> | null>(null);
+let bannerSequence = 0, bannerActive = true;
+let bannerTimer: ReturnType<typeof setTimeout> | undefined;
+function clearBannerTimer() { if (bannerTimer) clearTimeout(bannerTimer); bannerTimer = undefined; }
+function pauseBanner() { bannerActive = false; bannerSequence++; clearBannerTimer(); }
+function scheduleBanner(seconds: number) {
+  clearBannerTimer();
+  if (props.kind !== "home" || !mounted || !bannerActive) return;
+  const delay = Number.isInteger(seconds) ? Math.max(1, Math.min(30, seconds)) : 30;
+  bannerTimer = setTimeout(() => { bannerTimer = undefined; void reloadBanner(); }, delay * 1000);
+}
+async function reloadBanner() {
+  if (props.kind !== "home" || !bannerActive) return;
+  clearBannerTimer(); const current = ++bannerSequence; let refresh = 30;
+  try {
+    const result = await api.publicSiteBanner(); if (current !== bannerSequence || !bannerActive) return;
+    refresh = result.data.refreshAfterSeconds ?? 30;
+    const path = await siteImagePath(result.data.imageData, "banner", result.data.version);
+    if (current === bannerSequence && bannerActive) { banner.value = result.data; bannerPath.value = path; }
+  } catch { if (current === bannerSequence) { banner.value = null; bannerPath.value = null; } }
+  finally { if (current === bannerSequence && bannerActive) scheduleBanner(refresh); }
+}
+const homeSeriesIds = new Set(["miding", "miyi", "mishu", "ai"]);
+const homeSeries = computed(() =>
+  categories.value.filter((category) => homeSeriesIds.has(category.id)),
+);
 let sequence = 0,
   lastQuery = "",
   mounted = false,
@@ -109,8 +140,9 @@ async function reload(append = false, restore = false) {
     if (seq === sequence) loading.value = false;
   }
 }
-function openMaterials() {
-  uni.switchTab({ url: "/pages/materials/index" });
+function displayName(name: string) {
+  const chars = Array.from(name);
+  return chars.length > 15 ? chars.slice(0, 15).join("") + "…" : name;
 }
 function search() {
   if (props.kind === "home") openCatalog(q.value.trim());
@@ -122,6 +154,25 @@ function choose(id: string) {
     category.value = id;
     void reload();
   }
+}
+function openSiteLink(link?: string | null) {
+  if (!link) return;
+  if (link.startsWith("/pages/")) { uni.switchTab({ url: link }); return; }
+  // #ifdef H5
+  window.open(link, "_blank", "noopener,noreferrer");
+  // #endif
+  // #ifdef MP-WEIXIN
+  uni.navigateTo({ url: "/pages/banner-web/index?url=" + encodeURIComponent(link) });
+  // #endif
+}
+function openBanner() { openSiteLink(banner.value?.link); }
+function onKeyboard(event: KeyboardEvent, action: () => void) {
+  // #ifdef H5
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    action();
+  }
+  // #endif
 }
 function clear() {
   q.value = "";
@@ -162,13 +213,16 @@ function preview(item: Responses["CatalogMaterialRow"]) {
 onMounted(() => {
   mounted = true;
   void reload(false, true);
+  void reloadBanner();
 });
+onUnmounted(() => { mounted = false; sequence++; pauseBanner(); });
 defineExpose({
   reload: () => {
-    if (mounted) void reload(false, true);
+    if (mounted) { bannerActive = true; void reload(false, true); void reloadBanner(); void contactBlock.value?.reload(); }
   },
   rememberScroll,
   pauseScroll,
+  pauseBanner,
 });
 </script>
 <template>
@@ -189,13 +243,16 @@ defineExpose({
       <text v-if="kind === 'home'" class="intro"
         >产品介绍、应用场景与当前资料</text
       >
+      <view v-if="kind === 'home' && banner && bannerPath" class="home-banner" :role="banner.link ? 'button' : 'img'" :tabindex="banner.link ? 0 : -1" @click="openBanner" @keydown="onKeyboard($event, openBanner)" :aria-label="banner.link ? '打开首页 Banner 链接' : '首页 Banner'">
+        <image :src="bannerPath" mode="aspectFill" alt="首页 Banner" @error="bannerPath = null" />
+      </view>
       <view class="search"
         ><input
           v-model="q"
           :maxlength="100"
           confirm-type="search"
           :placeholder="
-            kind === 'materials' ? '搜索资料或产品名称' : '搜索产品名称或别名'
+            kind === 'materials' ? '搜索资料或产品名称' : '搜索产品名称'
           "
           :aria-label="kind === 'materials' ? '搜索资料' : '搜索产品'"
           @confirm="search"
@@ -212,14 +269,19 @@ defineExpose({
         ><button @click="search">搜索</button></view
       >
     </view>
-    <view class="category-wrap"
+    <view v-if="kind !== 'home'" class="category-wrap"
       ><scroll-view class="category-scroll" :scroll-x="true"
         ><view class="category-row"
-          ><button :class="{ selected: !category }" @click="choose('')">
+          ><button
+            role="button" tabindex="0" @keydown="onKeyboard($event, () => choose(''))"
+            :class="{ selected: !category }"
+            @click="choose('')"
+          >
             全部</button
           ><button
             v-for="c in categories"
             :key="c.id"
+            role="button" tabindex="0" @keydown="onKeyboard($event, () => choose(c.id))"
             :class="{ selected: category === c.id }"
             @click="choose(c.id)"
           >
@@ -228,6 +290,25 @@ defineExpose({
         ></scroll-view
       ><text class="scroll-hint" aria-hidden="true">›</text></view
     >
+    <view v-if="kind === 'home'" class="series-section">
+      <view class="series-heading">产品系列</view>
+      <view class="series-grid">
+        <button
+          v-for="c in homeSeries"
+          :key="c.id"
+          class="series-card"
+          role="button" tabindex="0" @keydown="onKeyboard($event, () => choose(c.id))"
+          :aria-label="`${c.name}，${c.productCount} 款产品，查看系列`"
+          @click="choose(c.id)"
+        >
+          <text class="series-name">{{ c.name }}</text>
+          <view class="series-meta">
+            <text class="series-count">{{ c.productCount }} 款产品</text>
+            <text class="series-action">查看系列 →</text>
+          </view>
+        </button>
+      </view>
+    </view>
     <view v-if="kind === 'home'" class="section-head"
       ><text>首批产品</text
       ><button @click="openCatalog()">浏览全部 →</button></view
@@ -266,12 +347,15 @@ defineExpose({
           <button
             v-if="'name' in item"
             class="product-card"
+            :aria-label="item.name"
             @click="openProduct(item.productId)"
           >
             <view class="card-top"
-              ><ProductVisual :path="item.coverPath" :alt="item.name" /><view
+              ><ProductVisual :path="item.coverPath" :alt="item.name" :category-id="item.categoryId" /><view
                 class="product-copy"
-                ><text class="published-title">{{ item.name }}</text
+                ><text class="published-title">{{
+                  displayName(item.name)
+                }}</text
                 ><text class="category-label">{{
                   item.categoryName
                 }}</text></view
@@ -280,13 +364,13 @@ defineExpose({
               item.tagline || "产品介绍待完善"
             }}</text
             ><view class="card-foot"
-              ><text>了解产品</text><text aria-hidden="true">→</text></view
+              ><text>了解产品</text></view
             >
           </button>
           <view v-else class="material-card"
             ><text class="category-label"
-              >{{ item.material.previewKind === "pdf" ? "PDF" : "图集" }} ·
-              {{ item.material.pageCount }} 页</text
+              >{{ item.material.previewKind === "pdf" ? "PDF" : item.material.previewKind === "video" ? "视频" : "图集" }} ·
+              {{ item.material.previewKind === "video" ? "" : item.material.pageCount + " 页" }}</text
             ><text class="published-title">{{ item.material.name }}</text
             ><button class="product-link" @click="openProduct(item.productId)">
               所属产品：{{ item.productName }} →</button
@@ -310,19 +394,15 @@ defineExpose({
         </button>
       </view>
     </template>
-    <button
-      v-if="kind === 'home'"
-      class="materials-entry"
-      @click="openMaterials"
-    >
-      <view
-        ><text class="entry-title">产品资料</text
-        ><text class="intro">查阅当前版本，在线预览</text></view
-      ><text aria-hidden="true">→</text>
-    </button>
+    <view v-if="kind === 'home' && banner?.introduction" class="home-introduction" :role="banner.introLink ? 'link' : undefined" :tabindex="banner.introLink ? 0 : -1" @click="openSiteLink(banner?.introLink)" @keydown="onKeyboard($event, () => openSiteLink(banner?.introLink))"><text>{{ banner.introduction }}</text><text v-if="banner.introLink" aria-hidden="true"> ↗</text></view>
+    <ContactBlock v-if="kind === 'home'" ref="contactBlock" />
+    <FeedbackForm v-if="kind === 'home'" />
   </view>
 </template>
 <style scoped>
+.home-banner { width: 100%; height: 112px; overflow: hidden; border-radius: 10px; margin: 12px 0; }
+.home-banner image { width: 100%; height: 100%; }
+.home-introduction { padding: 18px; margin: 18px 0; border-radius: 12px; background: #eef5ff; color: #13569e; line-height: 1.6; overflow-wrap: anywhere; }
 .mobile-body {
   padding: 16px 16px calc(24px + env(safe-area-inset-bottom));
 }
@@ -355,6 +435,9 @@ defineExpose({
 .mobile-hero {
   padding: 20px 0 16px;
 }
+.mobile-hero.home {
+  padding: 12px 0 10px;
+}
 .title {
   display: block;
   font-size: 24px;
@@ -376,6 +459,9 @@ defineExpose({
   border: 1px solid var(--zj-color-control-border);
   border-radius: 10px;
   background: white;
+}
+.mobile-hero.home .search {
+  margin-top: 10px;
 }
 .search input {
   min-width: 0;
@@ -404,6 +490,66 @@ defineExpose({
   position: relative;
   margin: 0 -16px 16px;
   padding: 0 0 0 16px;
+}
+.series-section {
+  margin: 0 0 16px;
+}
+.series-heading {
+  margin-bottom: 8px;
+  font-size: 16px;
+  line-height: 1.4;
+  font-weight: 600;
+}
+.series-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.series-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: calc(50% - 6px);
+  min-height: 78px;
+  margin: 0;
+  padding: 9px 10px;
+  box-sizing: border-box;
+  border: 1px solid var(--zj-color-border);
+  border-radius: 12px;
+  background: white;
+  text-align: left;
+  line-height: 1.5;
+}
+.series-name {
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--zj-color-text);
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+.series-count {
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--zj-color-text-secondary);
+}
+.series-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  width: 100%;
+  margin-top: 3px;
+}
+.series-action {
+  flex: none;
+  font-size: 12px;
+  color: var(--zj-color-brand-hover);
+}
+.series-card:focus-visible,
+.category-row button:focus-visible {
+  outline: 2px solid var(--zj-color-brand-hover);
+  outline-offset: 2px;
 }
 .category-scroll {
   width: 100%;
@@ -487,7 +633,9 @@ defineExpose({
   font-size: var(--zj-font-size-card-title, 18px);
   font-weight: 650;
   line-height: 1.5;
-  overflow-wrap: anywhere;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .category-label {
   display: block;
@@ -505,7 +653,7 @@ defineExpose({
 }
 .card-foot {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   font-size: 14px;
   color: var(--zj-color-brand-hover);
   margin-top: 12px;
@@ -572,24 +720,5 @@ defineExpose({
   background: var(--zj-color-brand-soft);
   color: var(--zj-color-brand-hover);
   border-radius: 8px;
-}
-.materials-entry {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 20px;
-  padding: 16px;
-  text-align: left;
-  background: var(--zj-color-navy);
-  color: white;
-  border-radius: 12px;
-  line-height: 1.6;
-}
-.materials-entry .intro {
-  color: #d3e1eb;
-}
-.entry-title {
-  font-size: 18px;
-  font-weight: 600;
 }
 </style>

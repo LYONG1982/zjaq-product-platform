@@ -32,9 +32,12 @@ export function ProductDetail({
         <div>
           <span className="category-label">{p.category.name}</span>
           <h1>{p.name}</h1>
-          <h2>{p.tagline}</h2>
-          <p>{p.summary}</p>
-          {p.audiences && <p className="audiences">适用对象：{p.audiences}</p>}
+          {p.model && <p>产品型号：{p.model}</p>}
+          {p.tagline.trim() && <h2>{p.tagline}</h2>}
+          {p.summary.trim() && <div className="product-summary">{p.summary.replace(/\r\n?/g, "\n").split(/\n+/).filter((paragraph) => paragraph.trim()).map((paragraph, index) => <p key={index}>{paragraph}</p>)}</div>}
+          {p.audiences?.trim() && (
+            <p className="audiences">适用对象：{p.audiences}</p>
+          )}
           <a href="#materials" className="primary-button">
             查看资料 ↓
           </a>
@@ -95,12 +98,6 @@ export function ProductDetail({
               </div>
             ))}
           </dl>
-        </section>
-      )}
-      {p.boundaries && (
-        <section className="boundary">
-          <h2>适用边界</h2>
-          <p>{p.boundaries}</p>
         </section>
       )}
       <section className="detail-section" id="materials">

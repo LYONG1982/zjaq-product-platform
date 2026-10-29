@@ -2,6 +2,7 @@
 import { ref, nextTick } from "vue";
 import { onLoad, onShow, onUnload } from "@dcloudio/uni-app";
 import type { Responses } from "@zj/contracts";
+import AnalyticsNotice from "../../components/AnalyticsNotice.vue";
 import { ApiError } from "@zj/api-client";
 import { api, resourceUrl, apiBase } from "../../api";
 import { safeSource, backToSource } from "../../navigation";
@@ -17,7 +18,9 @@ const manifest = ref<Responses["PreviewManifest"]>(),
   error = ref(""),
   loading = ref(true),
   imagePath = ref(""),
-  native = ref(false);
+  native = ref(false),
+  videoPath = ref("");
+const analyticsNotice = ref<InstanceType<typeof AnalyticsNotice> | null>(null);
 const source = ref("/pages/materials/index");
 let productId = "",
   materialId = "",
@@ -25,6 +28,7 @@ let productId = "",
   disposed = false,
   sequence = 0;
 const fail = (e: unknown) => {
+  videoPath.value = "";
   error.value = e instanceof Error ? e.message : "预览失败，请重试";
   imagePath.value = "";
   loading.value = false;
@@ -53,6 +57,8 @@ async function open() {
     if (disposed || seq !== sequence) return;
     manifest.value = m;
     page.value = 1;
+    videoPath.value = m.previewKind === "video" ? resourceUrl(m.parts[0].path) : "";
+    if (m.previewKind === "video") { loading.value = false; return; }
     // #ifdef H5
     session?.close();
     session = new PreviewSession(apiBase, m, import.meta.env.BASE_URL + "pdf/");
@@ -79,6 +85,7 @@ async function render() {
   try {
     await check();
     if (disposed) return;
+    if (manifest.value.previewKind === "video") { loading.value = false; return; }
     // #ifdef H5
     if (session && canvas && image)
       await session.render(
@@ -88,6 +95,7 @@ async function render() {
         zoom.value,
         Math.max(240, window.innerWidth - 32),
       );
+    void analyticsNotice.value?.record(manifest.value);
     // #endif
     // #ifdef MP-WEIXIN
     native.value = true;
@@ -102,6 +110,13 @@ async function render() {
     fail(e);
   }
 }
+let videoCheck: ReturnType<typeof setInterval> | undefined;
+async function videoStarted() {
+  try { await check(); if (manifest.value) void analyticsNotice.value?.record(manifest.value); }
+  catch (e) { fail(e); return; }
+  if (!videoCheck) videoCheck = setInterval(() => { void check().catch(fail); }, 15000);
+}
+function videoPaused() { if (videoCheck) clearInterval(videoCheck); videoCheck = undefined; }
 async function turn(n: number) {
   if (!Number.isFinite(n) || !Number.isInteger(n) || loading.value) return;
   page.value = Math.max(1, Math.min(manifest.value?.pageCount ?? 1, n));
@@ -149,6 +164,7 @@ async function nativePdf() {
       }),
     );
     loading.value = false;
+    void analyticsNotice.value?.record(manifest.value);
   } catch (e) {
     clearTemp();
     fail(e);
@@ -168,6 +184,7 @@ onShow(() => {
     });
 });
 onUnload(() => {
+  videoPaused();
   disposed = true;
   sequence++;
   clearTemp();
@@ -186,12 +203,12 @@ onUnload(() => {
     ><view class="viewer-title"
       ><text>{{ manifest?.name ?? "资料预览" }}</text
       ><text class="version">{{ manifest?.versionLabel }}</text></view
-    ><view v-if="error" class="error" role="alert"
+    ><AnalyticsNotice ref="analyticsNotice" /><view v-if="error" class="error" role="alert"
       ><text>{{ error }}</text
       ><button @click="open">重新打开</button></view
     ><view v-show="!error"
       ><view
-        v-if="!native || manifest?.previewKind === 'images'"
+        v-if="manifest?.previewKind !== 'video' && (!native || manifest?.previewKind === 'images')"
         class="controls"
         ><button :disabled="loading || page <= 1" @click="turn(page - 1)">
           上一页</button
@@ -208,7 +225,7 @@ onUnload(() => {
         >
           下一页
         </button></view
-      ><view v-if="!native" class="controls"
+      ><view v-if="!native && manifest?.previewKind !== 'video'" class="controls"
         ><button
           :disabled="loading || zoom <= 0.5"
           @click="
@@ -227,7 +244,7 @@ onUnload(() => {
         >
           放大
         </button></view
-      ><text v-if="loading" class="loading" role="status">正在读取…</text
+      ><video v-if="manifest?.previewKind === 'video' && videoPath" :src="videoPath" controls :autoplay="false" :show-center-play-btn="true" class="material-video" @play="videoStarted" @pause="videoPaused" @ended="videoPaused" @error="fail(new Error('此终端无法播放该视频或资料已更新；请重试，或联系管理员提供兼容的 MP4。'))" /><text v-if="manifest?.previewKind === 'video'" class="video-help">视频不转码。MOV/WebM 的支持取决于当前微信或浏览器，建议使用 MP4。</text><text v-if="loading" class="loading" role="status">正在读取…</text
       ><!-- #ifdef H5 --><view
         id="preview-surface"
         class="surface"
@@ -236,6 +253,7 @@ onUnload(() => {
         class="image-page"
         :src="imagePath"
         mode="widthFix"
+        @load="analyticsNotice?.record(manifest)"
         @error="fail(new Error('图片载入失败，请重试'))"
       /><view v-if="manifest?.previewKind === 'pdf'" class="native-pdf"
         ><text>使用微信预览 PDF</text
@@ -319,6 +337,8 @@ onUnload(() => {
 .native-pdf button {
   margin-top: 24px;
 }
+.material-video { width: 100%; height: 56vw; margin-top: 20px; }
+.video-help { display: block; padding: 12px 0; font-size: 13px; color: #b9cbd7; }
 .image-page {
   width: 100%;
 }

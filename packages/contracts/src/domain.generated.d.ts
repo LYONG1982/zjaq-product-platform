@@ -21,6 +21,11 @@ export type PreviewRef =
         pageIndex: number;
         alt: string;
       }[];
+    }
+  | {
+      kind: 'video';
+      assetId: string;
+      mimeType: 'video/mp4' | 'video/quicktime' | 'video/webm';
     };
 
 export interface Domain {
@@ -39,6 +44,12 @@ export interface Domain {
   CategoryWrite: CategoryWrite;
   AdminUserWrite: AdminUserWrite;
   Error: Error;
+  SiteBannerWrite: SiteBannerWrite;
+  SiteContactWrite: SiteContactWrite;
+  FeedbackSubmit: FeedbackSubmit;
+  AnalyticsSettingsWrite: AnalyticsSettingsWrite;
+  AnalyticsViewSubmit: AnalyticsViewSubmit;
+  ProductRemoval: ProductRemoval;
 }
 /**
  * This interface was referenced by `Domain`'s JSON-Schema
@@ -68,6 +79,8 @@ export interface MaterialRef {
   versionId: string;
   name: string;
   kind: 'brochure' | 'presentation' | 'technical' | 'other';
+  category?: 'promotional' | 'technical';
+  subCategory?: 'deck' | 'onepager' | 'video' | 'whitepaper' | 'spec' | 'manual';
   versionLabel: string;
   applicableVersion?: string;
   sourceAssetId?: string | null;
@@ -102,6 +115,9 @@ export interface DraftContent {
    * @maxItems 20
    */
   materials: MaterialRef[];
+  model?: string;
+  productType?: 'SOFTWARE' | 'HARDWARE';
+  ownership?: 'SELF_DEVELOPED' | 'PARTNER';
 }
 /**
  * This interface was referenced by `Domain`'s JSON-Schema
@@ -117,6 +133,9 @@ export interface CreateProduct {
    * @maxItems 10
    */
   aliases?: string[];
+  model: string;
+  productType: 'SOFTWARE' | 'HARDWARE';
+  ownership: 'SELF_DEVELOPED' | 'PARTNER';
 }
 /**
  * This interface was referenced by `Domain`'s JSON-Schema
@@ -149,6 +168,7 @@ export interface UnpublishProduct {
  */
 export interface ProductRecord {
   productId: string;
+  publicId?: string;
   isDemo: boolean;
   pilotOrder?: number | null;
   publicationState: 'DRAFT' | 'PUBLISHED' | 'OFFLINE';
@@ -158,8 +178,12 @@ export interface ProductRecord {
   releaseSequence: number;
   draftVersion: number;
   lastPublishedDraftVersion?: number | null;
+  publicMaterialRevocations?: string[];
   draft: DraftContent;
   internal?: {};
+  deletedAt?: string | null;
+  deletedBy?: string | null;
+  deletionReason?: string | null;
 }
 /**
  * This interface was referenced by `Domain`'s JSON-Schema
@@ -202,7 +226,7 @@ export interface CategoryWrite {
 export interface AdminUserWrite {
   subjectId: string;
   displayName: string;
-  role: 'CONTENT_MANAGER' | 'ADMIN';
+  role: 'CONTENT_MANAGER' | 'ADMIN' | 'SALES';
   enabled: boolean;
   expectedVersion?: number;
 }
@@ -220,4 +244,67 @@ export interface Error {
     }[];
   };
   requestId: string;
+}
+/**
+ * This interface was referenced by `Domain`'s JSON-Schema
+ * via the `definition` "SiteBannerWrite".
+ */
+export interface SiteBannerWrite {
+  expectedVersion: number;
+  imageData: string | null;
+  link: string | null;
+  startsAt?: string | null;
+  endsAt?: string | null;
+  introduction?: string | null;
+  introLink?: string | null;
+}
+/**
+ * This interface was referenced by `Domain`'s JSON-Schema
+ * via the `definition` "SiteContactWrite".
+ */
+export interface SiteContactWrite {
+  expectedVersion: number;
+  officialQr: string | null;
+  serviceQr: string | null;
+  phone: string | null;
+}
+/**
+ * This interface was referenced by `Domain`'s JSON-Schema
+ * via the `definition` "FeedbackSubmit".
+ */
+export interface FeedbackSubmit {
+  content: string;
+  contact: string;
+}
+/**
+ * This interface was referenced by `Domain`'s JSON-Schema
+ * via the `definition` "AnalyticsSettingsWrite".
+ */
+export interface AnalyticsSettingsWrite {
+  expectedVersion: number;
+  downloadEnabled: boolean;
+  viewEnabled: boolean;
+  dashboardEnabled: boolean;
+}
+/**
+ * This interface was referenced by `Domain`'s JSON-Schema
+ * via the `definition` "AnalyticsViewSubmit".
+ */
+export interface AnalyticsViewSubmit {
+  productId: string;
+  materialId: string;
+  releaseId: string;
+  versionId: string;
+  viewId: string;
+  client: 'H5' | 'WECHAT';
+}
+/**
+ * This interface was referenced by `Domain`'s JSON-Schema
+ * via the `definition` "ProductRemoval".
+ */
+export interface ProductRemoval {
+  expectedDraftVersion: number;
+  expectedPublicationVersion: number;
+  reason: string;
+  confirmed: true;
 }

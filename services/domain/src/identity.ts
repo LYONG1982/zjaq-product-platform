@@ -7,5 +7,15 @@ export const identity: Responses["AdminIdentity"] = {
   role: "CONTENT_MANAGER",
   enabled: true,
 };
-export const actorContext = new AsyncLocalStorage<Responses["AdminIdentity"]>();
+export const salesIdentity: Responses["SalesIdentity"] = {
+  userId: "mock-sales",
+  subjectId: "local-sales-only",
+  displayName: "本地虚构销售身份",
+  role: "SALES",
+  enabled: true,
+};
+export type AuthenticatedIdentity =
+  | Responses["AdminIdentity"]
+  | Responses["SalesIdentity"];
+export const actorContext = new AsyncLocalStorage<AuthenticatedIdentity>();
 export const actor = () => actorContext.getStore() ?? identity;

@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SalesAccount } from "../components/sales-account";
 import "@zj/design-tokens/tokens.css";
 import "./globals.css";
 export const metadata: Metadata = {
   title: "中技安全产品平台",
-  description: "了解产品能力、应用场景与当前资料",
+  description: "销售内部产品资料工作台",
 };
 export default function RootLayout({
   children,
@@ -25,8 +26,9 @@ export default function RootLayout({
             <Link href="/">首页</Link>
             <Link href="/products">产品中心</Link>
             <Link href="/materials">资料中心</Link>
+            <Link href="/sales">销售工作台</Link>
           </nav>
-          <span className="demo-badge">本地演示</span>
+          <SalesAccount />
         </header>
         {children}
         <footer>

@@ -167,6 +167,9 @@ for (const item of definitions) {
           categoryId: item.category,
           templateId: item.kind,
           templateVersion: template.version,
+          model: "LOCAL-VALIDATION-" + item.kind,
+          productType: item.kind === "device" ? "HARDWARE" : "SOFTWARE",
+          ownership: "SELF_DEVELOPED",
           owner: "本地虚构验证人员",
           aliases: ["validation-round02-" + item.kind],
         },
@@ -253,6 +256,8 @@ for (const item of definitions) {
           name:
             "【验证资料】" + (item.kind === "device" ? "有序图片" : "两页 PDF"),
           kind: "brochure",
+          category: "promotional",
+          subCategory: "deck",
           versionLabel: "v1",
           preview,
         },

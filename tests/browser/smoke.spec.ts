@@ -1,4 +1,6 @@
 import { test, expect, urls, json } from "./support";
+import { loginSales } from "./support";
+test.beforeEach(async ({ page }) => { await loginSales(page); });
 test("portal catalogue hides drafts and handles no search results", async ({
   page,
 }) => {

@@ -13,7 +13,7 @@ export function planSeed(
   const seen = new Set<string>();
   for (const p of [...existing, ...incoming]) {
     assertSchema("domain", "ProductRecord", p);
-    if (!/^ZJ-\d{3,}$/.test(p.productId))
+    if (!/^(?:ZJ-\d{3,}|ZJ-[DYSA]-[SH]-[AB]-\d{3})$/.test(p.productId))
       throw new Error("Invalid product identifier");
   }
   for (const p of existing) {
@@ -32,7 +32,7 @@ export function planSeed(
     throw new Error("Invalid counter");
   const max = Math.max(
     0,
-    ...[...existing, ...incoming].map((p) => Number(p.productId.slice(3))),
+    ...[...existing, ...incoming].filter((p) => /^ZJ-\d{3,}$/.test(p.productId)).map((p) => Number(p.productId.slice(3))),
   );
   if (!Number.isSafeInteger(max + 1))
     throw new Error("Identifier exceeds safe integer range");

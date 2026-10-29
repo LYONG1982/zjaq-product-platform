@@ -1,0 +1,718 @@
+{
+  "date": "2026-10-29",
+  "environment": "isolated local Mock, fictional fixtures",
+  "runtime": {
+    "node": "22.22.1",
+    "pnpm": "11.13.1"
+  },
+  "checks": {
+    "generatedAndTypes": "passed",
+    "unit": {
+      "passed": 77,
+      "failed": 0
+    },
+    "migrationPreflight": {
+      "passed": 3,
+      "failed": 0
+    },
+    "browser": {
+      "passed": 56,
+      "failed": 0,
+      "skipped": 0
+    },
+    "builds": [
+      "PC",
+      "admin",
+      "H5",
+      "mp-weixin"
+    ]
+  },
+  "browserTests": [
+    {
+      "file": "analytics.spec.ts",
+      "title": "admin analytics controls, successful H5 view, page dedup, browse records and disabled dashboard work together",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 2207
+        }
+      ]
+    },
+    {
+      "file": "feedback.spec.ts",
+      "title": "H5 feedback reaches the admin-only list as plain text",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 662
+        }
+      ]
+    },
+    {
+      "file": "product-removal.spec.ts",
+      "title": "administrator safely removes with conflict protection, views retained history, restores and explicitly republishes",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 1901
+        }
+      ]
+    },
+    {
+      "file": "reading.spec.ts",
+      "title": "portal V3 home, search filters, product detail and native back keep navigation state",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 2950
+        }
+      ]
+    },
+    {
+      "file": "reading.spec.ts",
+      "title": "PDF reader renders embedded Chinese text, page input, zoom, keyboard and fullscreen",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 3006
+        }
+      ]
+    },
+    {
+      "file": "reading.spec.ts",
+      "title": "ordered image preview reaches final page without exposing source files",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 771
+        }
+      ]
+    },
+    {
+      "file": "reading.spec.ts",
+      "title": "an open reader rejects later publication changes and offline content",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 1766
+        }
+      ]
+    },
+    {
+      "file": "reading.spec.ts",
+      "title": "H5 detail and PDF preview at 390px",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 1189
+        }
+      ]
+    },
+    {
+      "file": "reading.spec.ts",
+      "title": "H5 detail and PDF preview at 320px",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 1194
+        }
+      ]
+    },
+    {
+      "file": "reading.spec.ts",
+      "title": "H5 transport failure shows retry instead of an empty catalog",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 229
+        }
+      ]
+    },
+    {
+      "file": "reading.spec.ts",
+      "title": "admin light sidebar exposes category and account management with clear forms",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 832
+        }
+      ]
+    },
+    {
+      "file": "reading.spec.ts",
+      "title": "portal remains readable at a 720px effective desktop viewport and supports keyboard focus",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 452
+        }
+      ]
+    },
+    {
+      "file": "requirements-more.spec.ts",
+      "title": "mobile home shows the four public series, including zero-count series, and opens each category",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 692
+        }
+      ]
+    },
+    {
+      "file": "requirements-more.spec.ts",
+      "title": "admin filters seeded fictional products by owner and resets without changing data",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 520
+        }
+      ]
+    },
+    {
+      "file": "requirements-ux.spec.ts",
+      "title": "PC and mobile home omit the materials guide while keeping materials navigation",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 485
+        }
+      ]
+    },
+    {
+      "file": "requirements-ux.spec.ts",
+      "title": "PC short and long product cards keep titles accessible and align actions within 2px",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 459
+        }
+      ]
+    },
+    {
+      "file": "requirements-ux.spec.ts",
+      "title": "mobile short and long product cards cap visible titles at 15 characters and retain full names",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 263
+        }
+      ]
+    },
+    {
+      "file": "requirements-ux.spec.ts",
+      "title": "material classification is required, linked, and legacy unclassified records request human review",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 787
+        }
+      ]
+    },
+    {
+      "file": "requirements-ux.spec.ts",
+      "title": "admin shows product materials owner wording and places each add-item button after its list",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 483
+        }
+      ]
+    },
+    {
+      "file": "sales-api.spec.ts",
+      "title": "sales API restricts current preview and download to authenticated sales",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 25
+        }
+      ]
+    },
+    {
+      "file": "sales-workbench.spec.ts",
+      "title": "PC home, catalog, detail and viewer reject anonymous access, including former public proxies",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 1277
+        }
+      ]
+    },
+    {
+      "file": "sales-workbench.spec.ts",
+      "title": "sales login keeps an HttpOnly session, searches aliases, previews and downloads streamed resources",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 2338
+        }
+      ]
+    },
+    {
+      "file": "sales-workbench.spec.ts",
+      "title": "PC session rejects cross-origin calls and real login failures do not enter the local session",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 464
+        }
+      ]
+    },
+    {
+      "file": "sales-workbench.spec.ts",
+      "title": "administrator can explicitly bind a sales role without changing other accounts",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 519
+        }
+      ]
+    },
+    {
+      "file": "series-icons.spec.ts",
+      "title": "series selection supplies a series icon while product covers remain optional",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 653
+        }
+      ]
+    },
+    {
+      "file": "site-banner.spec.ts",
+      "title": "admin replaces home banner and H5 displays it above search with a working internal link",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 773
+        }
+      ]
+    },
+    {
+      "file": "site-banner.spec.ts",
+      "title": "home refreshes a scheduled Banner while staying in the foreground and hides it at expiration",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 8438
+        }
+      ]
+    },
+    {
+      "file": "site-contact.spec.ts",
+      "title": "contact settings update H5 with QR placeholders and editable phone",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 757
+        }
+      ]
+    },
+    {
+      "file": "smoke.spec.ts",
+      "title": "portal catalogue hides drafts and handles no search results",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 981
+        }
+      ]
+    },
+    {
+      "file": "smoke.spec.ts",
+      "title": "admin pages through seeded products, filters, opens an original draft and templates",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 892
+        }
+      ]
+    },
+    {
+      "file": "smoke.spec.ts",
+      "title": "H5 390 empty-state and tab navigation without overflow",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 393
+        }
+      ]
+    },
+    {
+      "file": "smoke.spec.ts",
+      "title": "H5 320 empty-state and tab navigation without overflow",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 414
+        }
+      ]
+    },
+    {
+      "file": "smoke.spec.ts",
+      "title": "H5 shows service failure rather than an empty catalogue",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 248
+        }
+      ]
+    },
+    {
+      "file": "smoke.spec.ts",
+      "title": "built H5 preview cannot expose workspace files or accept foreign origins",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 208
+        }
+      ]
+    },
+    {
+      "file": "typography-themes.spec.ts",
+      "title": "H5 detail uses the four specified series colors and indents each summary paragraph",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 700
+        }
+      ]
+    },
+    {
+      "file": "upload-video.spec.ts",
+      "title": "one upload entry recognises video, admin preview streams with HttpOnly media cookie, H5 and sales play latest video",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 2005
+        }
+      ]
+    },
+    {
+      "file": "upload-video.spec.ts",
+      "title": "browser streams a 500 MiB PDF and refuses 501 MiB locally before upload reservation",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 3087
+        }
+      ]
+    },
+    {
+      "file": "ux.spec.ts",
+      "title": "homepage branding and featured products never fall back to demo records",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 614
+        }
+      ]
+    },
+    {
+      "file": "ux.spec.ts",
+      "title": "sales PC explicit back keeps official-name filter through detail and PDF",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 1042
+        }
+      ]
+    },
+    {
+      "file": "ux.spec.ts",
+      "title": "H5 home search, filter, preview and explicit return preserve input",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 769
+        }
+      ]
+    },
+    {
+      "file": "ux.spec.ts",
+      "title": "material links distinguish preview from owning product and retain source",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 1197
+        }
+      ]
+    },
+    {
+      "file": "ux.spec.ts",
+      "title": "mobile reading layout and touch controls at 360px",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 632
+        }
+      ]
+    },
+    {
+      "file": "ux.spec.ts",
+      "title": "mobile reading layout and touch controls at 375px",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 633
+        }
+      ]
+    },
+    {
+      "file": "ux.spec.ts",
+      "title": "mobile reading layout and touch controls at 390px",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 637
+        }
+      ]
+    },
+    {
+      "file": "ux.spec.ts",
+      "title": "mobile reading layout and touch controls at 430px",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 635
+        }
+      ]
+    },
+    {
+      "file": "ux.spec.ts",
+      "title": "PC product and material layout at 1280px",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 733
+        }
+      ]
+    },
+    {
+      "file": "ux.spec.ts",
+      "title": "PC product and material layout at 1440px",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 739
+        }
+      ]
+    },
+    {
+      "file": "ux.spec.ts",
+      "title": "first published pilot is found beyond initial page at 375px",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 293
+        }
+      ]
+    },
+    {
+      "file": "ux.spec.ts",
+      "title": "first published pilot is found beyond initial page at 390px",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 317
+        }
+      ]
+    },
+    {
+      "file": "ux.spec.ts",
+      "title": "H5 failed product image degrades and absent sections have no dead anchors",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 319
+        }
+      ]
+    },
+    {
+      "file": "ux.spec.ts",
+      "title": "direct reader rejects external return destination and missing product recovers",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 473
+        }
+      ]
+    },
+    {
+      "file": "ux.spec.ts",
+      "title": "explicit catalog return restores the scrolled reading position",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 909
+        }
+      ]
+    },
+    {
+      "file": "workflow.spec.ts",
+      "title": "wizard cancellation creates no product",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 461
+        }
+      ]
+    },
+    {
+      "file": "workflow.spec.ts",
+      "title": "UI creates, edits, uploads, previews, publishes, updates and unpublishes one product",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 3842
+        }
+      ]
+    },
+    {
+      "file": "workflow.spec.ts",
+      "title": "save conflict preserves local input and offers explicit comparison",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 768
+        }
+      ]
+    },
+    {
+      "file": "workflow.spec.ts",
+      "title": "image ordering and missing-field publish errors work through the editor",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "durationMs": 1888
+        }
+      ]
+    }
+  ],
+  "externalNotExecuted": [
+    "real identity and CloudBase/COS",
+    "real-data migration and recovery",
+    "WeChat devtools, device and submission",
+    "production deployment"
+  ],
+  "dependencyAudit": {
+    "critical": 0,
+    "high": 7,
+    "moderate": 20,
+    "low": 8,
+    "status": "baseline advisories remain; reachability and development guard documented separately"
+  },
+  "videoPlaybackAssertions": "admin/H5/sales HTMLVideoElement.play() resolves and currentTime advances beyond 0.1s"
+}

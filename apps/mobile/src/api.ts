@@ -1,9 +1,12 @@
 import { createClient, type Transport } from "@zj/api-client";
-const transport: Transport = (url, headers) =>
+const transport: Transport = (url, headers, request) =>
   new Promise((resolve, reject) => {
+    const method = request?.method ?? "GET";
+    if (method !== "GET" && method !== "POST") { reject(new Error("当前客户端不支持此请求")); return; }
     uni.request({
       url,
-      method: "GET",
+      method,
+      data: request?.body,
       header: headers,
       timeout: 10000,
       success: (result) =>

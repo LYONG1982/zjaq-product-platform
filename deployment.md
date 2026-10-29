@@ -1,4 +1,16 @@
-# 当前第四轮本地预览（2026-10-21）
+# 本轮源码运行说明（2026-10-29）
+
+销售 PC 现要求登录，H5/小程序仅展示当前已发布宣传资料。默认开发端口及配置见 README.md；隔离验收使用 API 3303、PC 3300、后台 3301、H5 3302，不应重启或重置其他用户会话。根 `.env` 不自动传给各应用，启动命令需显式注入所需配置，前端 `VITE_*` / `NEXT_PUBLIC_*` 不得包含秘密。
+
+正式 API 启动前会只读核验编码计数器、型号保留与公开 UUID 索引。缺失时拒绝启动，不回退 Mock；先审核可恢复备份和维护计划，工具见 `docs/product-index-reconciliation.md`、`docs/public-uuid-migration.md`。500 MiB 与视频运行依赖、私有 HTTPS 流和缓存见 `docs/large-upload-and-video.md`。
+
+正式 PC 需 `PORTAL_SESSION_SECRET`、反代时的精确 `PORTAL_PUBLIC_ORIGIN`；后台媒体需独立 `ADMIN_MEDIA_SESSION_SECRET`。真实身份、私有对象、代理 IP、日志 TTL、网关超时/上传体积、微信业务域名及真机均需目标环境独立核实。本轮没有执行这些云部署或微信提审步骤。
+
+以下为历史运行快照，端口、会话和“仍在运行”的描述只对应当时记录，不代表当前运行状态：
+
+---
+
+# 第四轮本地预览历史（2026-10-21）
 
 最新地址：PC 3200、后台3201、H5 3202，共用保留的API 3403。原3400—3402未停止。后台为本地模拟管理员，不需要账号/密码；正式登录未配置。当前构建路径和验证见 `implementation-reports/round-04-report.md`。
 
@@ -88,7 +100,7 @@ PDF.js worker、cmaps、字体与 wasm 由 `preview:assets` 从固定依赖复�
 - https://docs.cloudbase.net/http-api/auth/auth-token-introspect
 - https://docs.cloudbase.net/http-api/auth/auth-sign-in
 
-## 当前运行限制与后续验收
+## 第三轮历史运行限制（已由上方 2026-10-29 说明替代）与后续验收
 
 - 轻量首期的列表适配器按主档加载聚合再筛选；每集合读取上限 10,000，单文档限制 750KB。未做生产压测；扩容前应实现数据库查询索引和真正分页，不直接放大上限。
 - 跨实例限流计数使用数据库事务：每 IP 每分钟 600 次。实际网关代理 IP、事务成本和配额需在指定环境测量；不能据本地结果承诺免费运行。

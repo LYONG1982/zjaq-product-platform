@@ -5,6 +5,7 @@ const props = defineProps<{
   path?: string | null;
   alt: string;
   large?: boolean;
+  categoryId?: string;
 }>();
 const failed = ref(false);
 watch(
@@ -24,6 +25,7 @@ watch(
       :lazy-load="true"
       @error="failed = true"
     />
+    <image v-else-if="categoryId && ['miding', 'miyi', 'mishu', 'ai'].includes(categoryId)" :src="'/static/series/' + categoryId + '.png'" mode="aspectFit" class="series-icon" aria-hidden="true" />
     <view v-else class="visual-symbol" aria-hidden="true"
       ><view /><view /><view
     /></view>

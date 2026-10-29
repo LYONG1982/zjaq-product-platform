@@ -1,6 +1,7 @@
+import { loopbackDevGuard } from "../../scripts/dev-server-guard";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [loopbackDevGuard(), vue()],
   server: { host: "127.0.0.1", port: 3201, strictPort: true },
 });

@@ -27,8 +27,12 @@ export function Viewer({
   const host = useRef<HTMLDivElement>(null),
     canvas = useRef<HTMLCanvasElement>(null),
     image = useRef<HTMLImageElement>(null),
-    session = useRef<PreviewSession>(undefined);
+    session = useRef<PreviewSession>(undefined),
+    video = useRef<HTMLVideoElement>(null),
+    videoCheckAt = useRef(0);
   const fail = (e: unknown) => {
+    video.current?.pause();
+    if (e instanceof ApiError && (e.status === 401 || e.status === 403)) { window.location.replace("/sales?expired=1&returnTo=" + encodeURIComponent(location.pathname + location.search)); return; }
     setError(e instanceof Error ? e.message : "预览失败，请重试");
     setChanged(e instanceof ApiError && (e.status === 409 || e.status === 404));
     setLoading(false);
@@ -47,6 +51,7 @@ export function Viewer({
         if (!active) return;
         session.current = new PreviewSession(base, data);
         setManifest(data);
+        if (data.previewKind === "video") setLoading(false);
       })
       .catch((e) => {
         if (active) fail(e);
@@ -58,7 +63,7 @@ export function Viewer({
     };
   }, [productId, materialId, generation]);
   useEffect(() => {
-    if (!manifest || !session.current || !canvas.current || !image.current)
+    if (!manifest || manifest.previewKind === "video" || !session.current || !canvas.current || !image.current)
       return;
     let active = true;
     setLoading(true);
@@ -130,7 +135,7 @@ export function Viewer({
           {manifest && (
             <span>
               {manifest.versionLabel} ·{" "}
-              {manifest.previewKind === "pdf" ? "PDF" : "图片"}
+              {manifest.previewKind === "pdf" ? "PDF" : manifest.previewKind === "video" ? "视频" : "图片"}
             </span>
           )}
         </div>
@@ -146,7 +151,8 @@ export function Viewer({
           全屏 / 退出
         </button>
       </div>
-      <div className="viewer-controls">
+      {manifest && !changed && <div className="download-notice"><a className="outline-button" download href={`/api/sales/catalog/products/${encodeURIComponent(manifest.productId)}/materials/${encodeURIComponent(manifest.materialId)}/source?releaseId=${encodeURIComponent(manifest.releaseId)}&versionId=${encodeURIComponent(manifest.versionId)}`}>下载资料</a><p>管理员开启统计时，将记录下载资料、时间及服务观测到的来源 IP；保留 90 天，仅授权管理员可查看。请在授权范围内使用资料。</p></div>}
+      {manifest?.previewKind !== "video" && <div className="viewer-controls">
         <button
           disabled={loading || changed || page <= 1}
           onClick={() => turn(page - 1)}
@@ -190,7 +196,7 @@ export function Viewer({
         >
           ＋
         </button>
-      </div>
+      </div>}
       {error ? (
         <div className="viewer-message" role="alert">
           <h2>{error}</h2>
@@ -201,6 +207,7 @@ export function Viewer({
       ) : (
         <div className="viewer-stage" aria-busy={loading}>
           {loading && <p role="status">正在载入第 {page} 页…</p>}
+          {manifest?.previewKind === "video" && <video ref={video} controls playsInline preload="metadata" aria-label="视频资料预览" src={"/api" + manifest.parts[0].path.replace(/^\/api\/v1/, "")} onPlay={() => { void session.current?.check().catch(fail); }} onTimeUpdate={() => { if (Date.now() - videoCheckAt.current > 30000) { videoCheckAt.current = Date.now(); void session.current?.check().catch(fail); } }} onError={() => fail(new Error("此视频在当前浏览器无法播放，或资料已更新。可重试或下载后使用兼容播放器。"))} />}
           <canvas ref={canvas} aria-label={"资料第 " + page + " 页"} hidden />
           <img ref={image} alt={"资料第 " + page + " 页"} hidden />
         </div>

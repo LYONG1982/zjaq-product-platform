@@ -1,12 +1,15 @@
 import { DomainEngine } from "../../domain/src/engine";
-import { identity } from "../../domain/src/identity";
+import { identity, salesIdentity } from "../../domain/src/identity";
 import { AssetStore } from "./assets";
 import { applyDevelopmentSeed } from "./seed";
 import categories from "../../../data/categories.seed.json";
 export { identity };
 export class MockStore extends DomainEngine {
   declare readonly assets: AssetStore;
-  constructor(beforeCommit?: (action: string) => void) {
+  constructor(
+    beforeCommit?: (action: string) => void,
+    includeMockRoles = false,
+  ) {
     super(new AssetStore(), beforeCommit, true);
     const seed = applyDevelopmentSeed([]);
     this.counter = seed.counterNext;
@@ -23,5 +26,7 @@ export class MockStore extends DomainEngine {
       enabled: true,
       version: 1,
     });
+    if (includeMockRoles)
+      this.users.set(salesIdentity.userId, { ...salesIdentity, version: 1 });
   }
 }
