@@ -714,5 +714,12 @@
     "low": 8,
     "status": "baseline advisories remain; reachability and development guard documented separately"
   },
-  "videoPlaybackAssertions": "admin/H5/sales HTMLVideoElement.play() resolves and currentTime advances beyond 0.1s"
+  "videoPlaybackAssertions": "admin/H5/sales HTMLVideoElement.play() resolves and currentTime advances beyond 0.1s",
+  "sourcePublication": {
+    "repository": "https://github.com/LYONG1982/zjaq-product-platform",
+    "branch": "main",
+    "sourceCommit": "d0621b9f44b0e2f5a9391adffcfe2502ff4e24a1",
+    "pushed": true,
+    "deployed": false
+  }
 }

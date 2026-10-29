@@ -1,6 +1,6 @@
 # 产品安全移除与恢复
 
-方案经用户于 2026-10-29 明确确认，见 `plans/active/2026-10-29-safe-product-removal-addendum.md`。
+方案经用户于 2026-10-29 明确确认，见 `plans/archive/2026-10-29-safe-product-removal-addendum.md`。
 
 管理员可从产品列表执行“移除产品”。弹窗必须给出原因并明确确认。服务端同时核验 `expectedDraftVersion`、`expectedPublicationVersion` 及 Idempotency-Key；重复请求返回原操作结果，重用同一 key 提交不同内容拒绝。内容制作人、销售和匿名身份均不能移除或恢复。
 
