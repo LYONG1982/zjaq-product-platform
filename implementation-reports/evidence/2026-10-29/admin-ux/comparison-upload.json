@@ -1,0 +1,128 @@
+{
+  "capturedAt": "2026-10-29T06:53:45.385Z",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "fixtureSource": "GET-only snapshot from isolated http://127.0.0.1:3323/api/v1",
+  "fixtureProductId": "ZJ-002",
+  "displayNameSubstitution": "【视觉验证】上传资料流程样例",
+  "productRowFieldsEqualExceptName": true,
+  "draftFieldsEqualExceptContentName": true,
+  "visibleProductCount": 1,
+  "pages": [
+    {
+      "label": "before",
+      "pageUrl": "http://127.0.0.1:3301/",
+      "screenshot": "before-upload-1440.png",
+      "uploadButton": "添加资料",
+      "dialogTitle": "添加资料",
+      "emptyDialogVisible": true,
+      "selectedFiles": false,
+      "apiRequests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/me",
+          "query": "",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/categories",
+          "query": "",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/templates",
+          "query": "?includeDisabled=true",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/products",
+          "query": "",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/products/ZJ-002/draft",
+          "query": "",
+          "status": 200
+        }
+      ],
+      "writeRequests": [],
+      "fixtureMisses": [],
+      "pageErrors": []
+    },
+    {
+      "label": "after",
+      "pageUrl": "http://127.0.0.1:3201/",
+      "screenshot": "after-upload-empty-1440.png",
+      "uploadButton": "上传资料",
+      "dialogTitle": "上传资料",
+      "emptyDialogVisible": true,
+      "selectedFiles": false,
+      "apiRequests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/me",
+          "query": "",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/categories",
+          "query": "",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/templates",
+          "query": "?includeDisabled=true",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/products",
+          "query": "",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/products/ZJ-002/draft",
+          "query": "",
+          "status": 200
+        }
+      ],
+      "writeRequests": [],
+      "fixtureMisses": [],
+      "pageErrors": []
+    }
+  ],
+  "dialogScreenshots": [
+    {
+      "label": "before",
+      "screenshot": "before-upload-dialog-1440.png",
+      "uploadButton": "添加资料",
+      "dialogTitle": "添加资料",
+      "emptyFileSelection": true,
+      "apiGetCount": 5,
+      "writeRequests": [],
+      "fixtureMisses": [],
+      "pageErrors": []
+    },
+    {
+      "label": "after",
+      "screenshot": "after-upload-dialog-1440.png",
+      "uploadButton": "上传资料",
+      "dialogTitle": "上传资料",
+      "emptyFileSelection": true,
+      "apiGetCount": 5,
+      "writeRequests": [],
+      "fixtureMisses": [],
+      "pageErrors": []
+    }
+  ],
+  "publicationNote": "Historical local verification record. Local UAT state, session/process identifiers and absolute paths omitted from public copy. See 2026-10-30 source delivery for current publication status."
+}

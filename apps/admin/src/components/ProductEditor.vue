@@ -327,7 +327,7 @@ function putMaterial(m: Domain["MaterialRef"]) {
   if (materialIndex.value === null) content.value.materials.push(m);
   else content.value.materials[materialIndex.value] = m;
   materialOpen.value = false;
-  notice.value = "资料已加入本次编辑；请保存草稿。";
+  notice.value = "资料已加入本次编辑，请保存草稿。";
 }
 const mediaStatus = ref(""),
   mediaAlt = ref(""),
@@ -598,7 +598,7 @@ function mediaSelected(e: Event) {
               :disabled="content.materials.length >= 20"
               @click="editMaterial(null)"
             >
-              添加资料
+              上传资料
             </button>
             <button v-if="!current.deletedAt" @click="historyOpen = true">查看历史版本</button>
           </div>

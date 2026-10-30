@@ -1,0 +1,640 @@
+{
+  "recordedAt": "2026-10-29T05:31:20.919Z",
+  "branch": "codex/mobile-detail-visual-20261029",
+  "baseCommit": "838e8949d34584d4633309db60c30664120a49a0",
+  "committed": false,
+  "pushed": false,
+  "realCloudConnected": false,
+  "newH5Url": "http://127.0.0.1:3402/#/",
+  "originalH5Url": "http://127.0.0.1:3302/#/",
+  "originalMockApi": "http://127.0.0.1:3303",
+  "automated": {
+    "passed": 72,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0,
+    "groups": [
+      {
+        "group": "existing-selected",
+        "source": "work/detail-visual/regression-browser-results.json",
+        "stats": {
+          "startTime": "2026-10-29T05:16:59.103Z",
+          "duration": 75374.078,
+          "expected": 53,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        },
+        "errors": [],
+        "cases": [
+          {
+            "title": "admin analytics controls, successful H5 view, page dedup, browse records and disabled dashboard work together",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "H5 feedback reaches the admin-only list as plain text",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "administrator safely removes with conflict protection, views retained history, restores and explicitly republishes",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "portal V3 home, search filters, product detail and native back keep navigation state",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "PDF reader renders embedded Chinese text, page input, zoom, keyboard and fullscreen",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "ordered image preview reaches final page without exposing source files",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "an open reader rejects later publication changes and offline content",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "H5 detail and PDF preview at 390px",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "H5 detail and PDF preview at 320px",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "H5 transport failure shows retry instead of an empty catalog",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "admin light sidebar exposes category and account management with clear forms",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "portal remains readable at a 720px effective desktop viewport and supports keyboard focus",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "mobile home shows the four public series, including zero-count series, and opens each category",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "admin filters seeded fictional products by owner and resets without changing data",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "PC and mobile home omit the materials guide while keeping materials navigation",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "PC short and long product cards keep titles accessible and align actions within 2px",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "mobile short and long product cards cap visible titles at 15 characters and retain full names",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "material classification is required, linked, and legacy unclassified records request human review",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "admin shows product materials owner wording and places each add-item button after its list",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "sales API restricts current preview and download to authenticated sales",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "PC home, catalog, detail and viewer reject anonymous access, including former public proxies",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "sales login keeps an HttpOnly session, searches aliases, previews and downloads streamed resources",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "PC session rejects cross-origin calls and real login failures do not enter the local session",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "administrator can explicitly bind a sales role without changing other accounts",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "series selection supplies a series icon while product covers remain optional",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "admin replaces home banner and H5 displays it above search with a working internal link",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "home refreshes a scheduled Banner while staying in the foreground and hides it at expiration",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "contact settings update H5 with QR placeholders and editable phone",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "portal catalogue hides drafts and handles no search results",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "H5 390 empty-state and tab navigation without overflow",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "H5 320 empty-state and tab navigation without overflow",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "H5 detail uses the four specified series colors and indents each summary paragraph",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "one upload entry recognises video, admin preview streams with HttpOnly media cookie, H5 and sales play latest video",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "browser streams a 500 MiB PDF and refuses 501 MiB locally before upload reservation",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "homepage branding and featured products never fall back to demo records",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "sales PC explicit back keeps official-name filter through detail and PDF",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "H5 home search, filter, preview and explicit return preserve input",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "material links distinguish preview from owning product and retain source",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "mobile reading layout and touch controls at 360px",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "mobile reading layout and touch controls at 375px",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "mobile reading layout and touch controls at 390px",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "mobile reading layout and touch controls at 430px",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "PC product and material layout at 1280px",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "PC product and material layout at 1440px",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "first published pilot is found beyond initial page at 375px",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "first published pilot is found beyond initial page at 390px",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "H5 failed product image degrades and absent sections have no dead anchors",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "direct reader rejects external return destination and missing product recovers",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "explicit catalog return restores the scrolled reading position",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "wizard cancellation creates no product",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "UI creates, edits, uploads, previews, publishes, updates and unpublishes one product",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "save conflict preserves local input and offers explicit comparison",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "image ordering and missing-field publish errors work through the editor",
+            "status": [
+              "expected"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "detail",
+        "source": "work/detail-visual/visual-browser-results.json",
+        "stats": {
+          "startTime": "2026-10-29T05:16:59.086Z",
+          "duration": 9877.171,
+          "expected": 7,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        },
+        "errors": [],
+        "cases": [
+          {
+            "title": "detail visual layout preserves full long content and touch targets at 375px",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "detail visual layout preserves full long content and touch targets at 390px",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "detail visual layout preserves full long content and touch targets at 414px",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "detail visual layout preserves full long content and touch targets at 430px",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "detail keeps anchors, capability modal, image preview, phone binding and both back controls",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "detail loading, retry, absent sections, empty materials and failed images retain their original behavior",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "detail-only contact styling does not alter the shared home contact block",
+            "status": [
+              "expected"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "series-icons",
+        "source": "work/detail-visual/icon-browser-results.json",
+        "stats": {
+          "startTime": "2026-10-29T05:22:58.874Z",
+          "duration": 8636.006000000001,
+          "expected": 8,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        },
+        "errors": [],
+        "cases": [
+          {
+            "title": "all twelve series PNG assets preserve approved source hashes, dimensions and RGBA",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "H5 series home icons decode and category navigation remains usable at 375px",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "H5 series home icons decode and category navigation remains usable at 390px",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "H5 series home icons decode and category navigation remains usable at 414px",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "H5 series home icons decode and category navigation remains usable at 430px",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "H5 product cards retain four series fallbacks, custom cover priority, failure fallback and generic placeholder",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "sales PC decodes four home series PNGs and the existing Demo product fallback",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "admin wizard switches all four PNGs and cancellation creates no product",
+            "status": [
+              "expected"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "h5-branding",
+        "source": "work/detail-visual/branding-browser-results.json",
+        "stats": {
+          "startTime": "2026-10-29T05:17:25.290Z",
+          "duration": 3809.576,
+          "expected": 4,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        },
+        "errors": [],
+        "cases": [
+          {
+            "title": "H5 company logo keeps three catalog headers, search and navigation usable at 375px",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "H5 company logo keeps three catalog headers, search and navigation usable at 390px",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "H5 company logo keeps three catalog headers, search and navigation usable at 414px",
+            "status": [
+              "expected"
+            ]
+          },
+          {
+            "title": "H5 company logo keeps three catalog headers, search and navigation usable at 430px",
+            "status": [
+              "expected"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "portableEquivalentAssertions": {
+    "count": 3,
+    "passed": 3,
+    "failed": 0,
+    "source": "Equivalent original assertions on new isolated ports; no original test edited and no old UAT requests",
+    "results": [
+      {
+        "case": "legacy admin pagination/filter/draft/template smoke at isolated3401",
+        "passed": true
+      },
+      {
+        "case": "legacy H5 failure smoke at isolated3400",
+        "passed": true
+      },
+      {
+        "case": "legacy static exposure/origin smoke at isolated3400",
+        "passed": true
+      }
+    ]
+  },
+  "checks": {
+    "pnpmCheck": {
+      "passed": true,
+      "includes": [
+        "check:generated",
+        "root tsc",
+        "portal tsc",
+        "admin vue-tsc",
+        "mobile vue-tsc"
+      ]
+    },
+    "builds": {
+      "h5Tests": true,
+      "h5Uat": true,
+      "mpWeixin": true,
+      "adminTests": true,
+      "adminUat": true,
+      "portalProductionInIsolatedSnapshot": true
+    },
+    "gitDiffCheck": true
+  },
+  "independentReview": {
+    "recordedAt": "2026-10-29T05:20:39.913365+00:00",
+    "scope": "Independent read-only source review and local evidence inspection; no application/test/config writes",
+    "sourceFileSha256": {
+      "apps/mobile/src/pages/detail/index.vue": "1cb9020a1b9ec32b1078a6d35fe6a3978edd3308faf693eaa82a16e9e77c7515",
+      "apps/mobile/src/components/CatalogView.vue": "076cdcbea99facacfda487151ca304c6b1958ad63779a497e5a307f1cd4bf611",
+      "apps/mobile/src/components/ProductVisual.vue": "b741a02e1dcbb6c6a9b43b4844375d23ab4eb2ff62cbb471cc155bfd58e225e1",
+      "apps/admin/src/components/ProductWizard.vue": "e7a359842d3e577b6c06d7986f32bb6594d33b249b41db2496e0bee6bd5d4346",
+      "apps/admin/src/style.css": "9c6dc3a21a1c3dad7129ac05605237d683003bce52ba641c6dedbbe72ed0ec7c",
+      "apps/portal/app/globals.css": "49e6d23ea18334426e054ff14f43c82aec072c041f7ebc4d89e1b71566d2312e",
+      "apps/portal/app/page.tsx": "e17485a11d9ed23dfd22899bd4d9c04ad97ecdc091a4c93f069f88ea76ccaef3",
+      "apps/portal/components/product-visual.tsx": "f8df62ce7c293d80f7ca8fa15842e91e303a48808c560293a8f765469e6fed04",
+      "tests/browser/product-detail-visual.spec.ts": "837a908148faa24ad2be749b7f8e2288fc7bed2ab7829e13d9a642fff545345b",
+      "tests/browser/series-icon-assets.spec.ts": "4cf8b3228b411ce727bebdad85ef034e507bcfaa124f6a646b772b23c71d7455",
+      "tests/browser/h5-branding.spec.ts": "f4e4f023e0fb772b1dab60ebe08d6ad4ad41b1159cfc0589e2c8b63eb108c79a",
+      "tests/browser/series-icons.spec.ts": "9b6b7245b242747f5b9ba3bc2e7368e74def95fde9c691f7d92df5eddafc6823"
+    },
+    "vueScriptByteEquivalentToHEAD": {
+      "apps/mobile/src/pages/detail/index.vue": true,
+      "apps/mobile/src/components/CatalogView.vue": true,
+      "apps/mobile/src/components/ProductVisual.vue": true,
+      "apps/admin/src/components/ProductWizard.vue": true
+    },
+    "closedFindings": [
+      {
+        "file": "apps/mobile/src/pages/detail/index.vue",
+        "issue": "Broad media-list text selector overrode product-display chapter heading",
+        "resolution": "Selector limited to .media-list > view > text; browser test checks section-title 20px and theme RGB"
+      },
+      {
+        "file": "tests/browser/series-icon-assets.spec.ts",
+        "issue": "Temporary test ports and current-UAT 3303 guard hardcoded as permanent test constraints",
+        "resolution": "Configurable TEST_* URLs; exact loopback host validation and mock-provider health check"
+      }
+    ],
+    "unresolvedBlockingFindings": [],
+    "assetChecks": {
+      "seriesSourceBytesAcrossFourImages": 1630192,
+      "allTwelveSeriesPNGsMatchUserSources": true,
+      "logoSourceAndTargetBytes": 787903,
+      "logoTargetSha256": "805c27ec4ebba01b37351f7071d7a00eb32fabda75c31e844ba88fbda7463c3c",
+      "logoMatchesUserSource": true
+    },
+    "mpCompileEvidence": {
+      "fileCount": 60,
+      "rawBytes": 1766508,
+      "logoFiles": [],
+      "oldBrandPreserved": true,
+      "h5LogoTemplateAbsent": true
+    },
+    "evidenceLimits": [
+      "Compilation and source review do not constitute WeChat device or submission acceptance"
+    ],
+    "uatPreservationEvidence": "work/detail-visual/uat-preservation-summary.json",
+    "uatPreservationResult": "Original Mock session, 330X process identities, 3 site settings and old H5 build manifest unchanged. Product data shows 2 CREATE and 1 REMOVE_PRODUCT audit events during active UAT; all original drafts remain present; no data reset or restoration performed."
+  },
+  "comparison": {
+    "passed": true,
+    "source": "implementation-reports/evidence/2026-10-29/detail-visual/comparison.json",
+    "widths": [
+      375,
+      390,
+      414,
+      430
+    ]
+  },
+  "limitations": [
+    "Manual UAT pending",
+    "WeChat device and submission not tested",
+    "Existing dependency advisories outside visual scope",
+    "No production deployment or GitHub push",
+    "Observed 2 creates and 1 removal in original UAT retained; not all data hashes unchanged"
+  ],
+  "sourceHashes": {
+    "apps/mobile/src/pages/detail/index.vue": "1cb9020a1b9ec32b1078a6d35fe6a3978edd3308faf693eaa82a16e9e77c7515",
+    "apps/mobile/src/components/CatalogView.vue": "076cdcbea99facacfda487151ca304c6b1958ad63779a497e5a307f1cd4bf611",
+    "apps/mobile/src/components/ProductVisual.vue": "b741a02e1dcbb6c6a9b43b4844375d23ab4eb2ff62cbb471cc155bfd58e225e1",
+    "apps/admin/src/components/ProductWizard.vue": "e7a359842d3e577b6c06d7986f32bb6594d33b249b41db2496e0bee6bd5d4346",
+    "apps/admin/src/style.css": "9c6dc3a21a1c3dad7129ac05605237d683003bce52ba641c6dedbbe72ed0ec7c",
+    "apps/portal/app/globals.css": "49e6d23ea18334426e054ff14f43c82aec072c041f7ebc4d89e1b71566d2312e",
+    "apps/portal/app/page.tsx": "e17485a11d9ed23dfd22899bd4d9c04ad97ecdc091a4c93f069f88ea76ccaef3",
+    "apps/portal/components/product-visual.tsx": "f8df62ce7c293d80f7ca8fa15842e91e303a48808c560293a8f765469e6fed04",
+    "tests/browser/product-detail-visual.spec.ts": "837a908148faa24ad2be749b7f8e2288fc7bed2ab7829e13d9a642fff545345b",
+    "tests/browser/series-icon-assets.spec.ts": "4cf8b3228b411ce727bebdad85ef034e507bcfaa124f6a646b772b23c71d7455",
+    "tests/browser/h5-branding.spec.ts": "f4e4f023e0fb772b1dab60ebe08d6ad4ad41b1159cfc0589e2c8b63eb108c79a",
+    "tests/browser/series-icons.spec.ts": "9b6b7245b242747f5b9ba3bc2e7368e74def95fde9c691f7d92df5eddafc6823"
+  },
+  "publicationNote": "Historical local verification record. Local UAT state, session/process identifiers and absolute paths omitted from public copy. See 2026-10-30 source delivery for current publication status."
+}

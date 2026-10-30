@@ -102,7 +102,7 @@ async function create() {
           </select></label
         >
         <p class="helper">{{ hint }}</p>
-        <div v-if="['miding', 'miyi', 'mishu', 'ai'].includes(categoryId)" class="series-selection-icon"><img :src="'/series/' + categoryId + '.svg'" alt="" aria-hidden="true" /><span>已自动匹配{{ category?.shortName }}系列图标</span></div>
+        <div v-if="['miding', 'miyi', 'mishu', 'ai'].includes(categoryId)" class="series-selection-icon"><img :src="'/series/' + categoryId + '.png'" alt="" aria-hidden="true" /><span>已自动匹配{{ category?.shortName }}系列图标</span></div>
         <div class="wizard-templates">
           <button
             v-for="t in choices"

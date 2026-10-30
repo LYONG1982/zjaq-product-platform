@@ -52,6 +52,11 @@ watch(
   width: 100%;
   height: 100%;
 }
+.product-visual .series-icon {
+  box-sizing: border-box;
+  padding: 4px;
+  background: linear-gradient(145deg, #f5faff, #eaf2ff);
+}
 .visual-symbol {
   width: 26px;
   height: 32px;

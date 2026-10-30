@@ -54,24 +54,20 @@ test("UI creates, edits, uploads, previews, publishes, updates and unpublishes o
   await page.getByLabel("部署说明", { exact: false }).fill("虚构本地部署条件");
   await page.getByRole("button", { name: "保存草稿", exact: true }).click();
   await expect(page.getByText(/草稿已保存/)).toBeVisible();
-  await page.getByRole("button", { name: "添加资料", exact: true }).click();
-  const dialog = page.getByRole("dialog", { name: "添加资料", exact: true });
-  await dialog
-    .getByLabel("资料名称", { exact: true })
-    .fill("【验证资料】浏览器 PDF");
-  await dialog
-    .getByRole("combobox", { name: "资料一级分类", exact: true })
-    .selectOption("promotional");
-  await dialog
-    .getByRole("combobox", { name: "资料二级分类", exact: true })
-    .selectOption("deck");
+  await page.getByRole("button", { name: "上传资料", exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: "上传资料", exact: true });
   await dialog
     .locator('input[type="file"]')
     .setInputFiles(path.resolve("tests/fixtures/validation/sample-v1.pdf"));
+  await dialog.getByRole("button", { name: "上传", exact: true }).click();
   await expect(dialog.getByText("PDF 已就绪 · 2 页")).toBeVisible({
     timeout: 25000,
   });
-  await dialog.getByRole("button", { name: "加入本次编辑" }).click();
+  await dialog.getByLabel("资料名称", { exact: true }).fill("【验证资料】浏览器 PDF");
+  await dialog.getByLabel("版本标签", { exact: true }).fill("V1.0");
+  await dialog.getByRole("combobox", { name: "资料一级分类", exact: true }).selectOption("promotional");
+  await dialog.getByRole("combobox", { name: "资料二级分类", exact: true }).selectOption("deck");
+  await dialog.getByRole("button", { name: "完成", exact: true }).click();
   await page.getByRole("button", { name: "保存草稿", exact: true }).click();
   await expect(page.getByText(/草稿已保存/)).toBeVisible();
   const draftWithMaterial = (await json(
@@ -277,17 +273,8 @@ test("image ordering and missing-field publish errors work through the editor", 
     .filter({ hasText: id })
     .getByRole("button", { name: "编辑", exact: true })
     .click();
-  await page.getByRole("button", { name: "添加资料", exact: true }).click();
-  const dialog = page.getByRole("dialog", { name: "添加资料", exact: true });
-  await dialog
-    .getByLabel("资料名称", { exact: true })
-    .fill("【验证资料】图片顺序");
-  await dialog
-    .getByRole("combobox", { name: "资料一级分类", exact: true })
-    .selectOption("promotional");
-  await dialog
-    .getByRole("combobox", { name: "资料二级分类", exact: true })
-    .selectOption("onepager");
+  await page.getByRole("button", { name: "上传资料", exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: "上传资料", exact: true });
   await dialog
     .locator('input[type="file"]')
     .setInputFiles(
@@ -295,6 +282,7 @@ test("image ordering and missing-field publish errors work through the editor", 
         path.resolve(`tests/fixtures/validation/page-${i}.png`),
       ),
     );
+  await dialog.getByRole("button", { name: "上传", exact: true }).click();
   await expect(dialog.getByLabel("第 3 页替代文字")).toBeVisible({
     timeout: 20000,
   });
@@ -308,7 +296,10 @@ test("image ordering and missing-field publish errors work through the editor", 
   await viewer.getByRole("button", { name: "下一页", exact: true }).click();
   await expect(viewer.getByText("第 2 / 3 页")).toBeVisible();
   await viewer.getByRole("button", { name: "关闭资料文件预览" }).click();
-  await dialog.getByRole("button", { name: "加入本次编辑" }).click();
+  await dialog.getByLabel("资料名称", { exact: true }).fill("【验证资料】图片顺序");
+  await dialog.getByRole("combobox", { name: "资料一级分类", exact: true }).selectOption("promotional");
+  await dialog.getByRole("combobox", { name: "资料二级分类", exact: true }).selectOption("onepager");
+  await dialog.getByRole("button", { name: "完成", exact: true }).click();
   await page.getByRole("button", { name: "保存草稿", exact: true }).click();
   await expect(page.getByText(/草稿已保存/)).toBeVisible();
   const data = (await json(request, "/admin/products/" + id + "/draft")).body

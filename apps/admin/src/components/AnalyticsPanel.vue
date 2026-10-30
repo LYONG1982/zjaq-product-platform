@@ -33,7 +33,7 @@ function reset() { q.value = ""; kind.value = ""; client.value = ""; from.value 
 onMounted(() => load());
 </script>
 <template>
-  <section class="table-card spaced analytics-panel">
+  <section class="table-card spaced analytics-panel" :class="{ 'audit-analytics-panel': mode === 'records' }">
     <div class="table-heading"><strong>{{ mode === 'settings' ? '统计设置' : mode === 'dashboard' ? '最近 90 天资料数据' : '浏览与下载记录' }}</strong><button :disabled="loading || saving" @click="load()">{{ loading ? '正在读取…' : '刷新' }}</button></div>
     <div v-if="error" class="error-panel" role="alert"><p>{{ error }}</p><button :disabled="loading || saving" @click="load()">重新读取</button></div>
     <p v-if="message" class="analytics-notice" role="status">{{ message }}</p>

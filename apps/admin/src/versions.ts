@@ -4,10 +4,11 @@ export function nextMaterialVersion(label: string, used: readonly string[] = [])
   if (!match) return null;
   const occupied = new Set(used.map((item) => item.trim().toUpperCase()));
   let minor = BigInt(match[2] ?? "0") + 1n;
-  let next = `V${BigInt(match[1])}.${minor}`;
+  const major = BigInt(match[1]).toString().padStart(match[1].length, "0");
+  let next = `V${major}.${minor}`;
   while (occupied.has(next)) {
     minor++;
-    next = `V${BigInt(match[1])}.${minor}`;
+    next = `V${major}.${minor}`;
   }
   return next.length <= 40 ? next : null;
 }

@@ -1,5 +1,6 @@
 import { test, expect, urls, json } from "./support";
 import { loginSales } from "./support";
+import path from "node:path";
 test.beforeEach(async ({ page }) => { await loginSales(page); });
 
 const shortName = "【Demo】资料问答助手";
@@ -179,12 +180,29 @@ test("material classification is required, linked, and legacy unclassified recor
   const discard = page.getByRole("dialog", { name: "放弃资料编辑", exact: true });
   await discard.getByRole("button", { name: "放弃本次资料", exact: true }).click();
 
-  await page.getByRole("button", { name: "添加资料", exact: true }).click();
-  const created = page.getByRole("dialog", { name: "添加资料", exact: true });
-  await expect(created.getByLabel("版本标签")).toHaveValue("V1.0");
-  await created.getByRole("button", { name: "加入本次编辑", exact: true }).click();
-  await expect(created.getByRole("alert")).toContainText("请选择有效的资料一级分类和二级分类");
+  await page.getByRole("button", { name: "上传资料", exact: true }).click();
+  const created = page.getByRole("dialog", { name: "上传资料", exact: true });
+  await expect(created.getByLabel("版本标签")).toHaveValue("V01.0");
+  const complete = created.getByRole("button", { name: "完成", exact: true });
+  await expect(complete).toBeDisabled();
+  await expect(created.getByLabel("资料名称")).toBeDisabled();
+  await expect(created.getByLabel("资料一级分类")).toBeDisabled();
+  await expect(created.getByLabel("资料二级分类")).toBeDisabled();
+  await expect(created.getByLabel("版本标签")).toBeDisabled();
+  await created
+    .locator('input[type="file"]')
+    .setInputFiles(path.resolve("tests/fixtures/validation/sample-v1.pdf"));
+  await created.getByRole("button", { name: "上传", exact: true }).click();
+  await expect(created.getByText("PDF 已就绪 · 2 页")).toBeVisible({
+    timeout: 25000,
+  });
+  await expect(created.getByLabel("资料名称")).toBeEnabled();
+  await expect(created.getByLabel("资料一级分类")).toBeEnabled();
+  await expect(created.getByLabel("资料二级分类")).toBeDisabled();
+  await expect(created.getByLabel("版本标签")).toBeEnabled();
+  await expect(created.getByLabel("资料名称")).toHaveValue("sample-v1");
   await created.getByLabel("资料一级分类").selectOption("promotional");
+  await expect(created.getByLabel("资料二级分类")).toBeEnabled();
   await expect(created.getByLabel("资料二级分类")).toHaveValue("");
   await expect(created.getByLabel("资料二级分类").locator("option")).toHaveText([
     "请选择二级分类",
@@ -194,6 +212,7 @@ test("material classification is required, linked, and legacy unclassified recor
   ]);
   await created.getByLabel("资料二级分类").selectOption("deck");
   await expect(created.getByLabel("资料二级分类")).toHaveValue("deck");
+  await expect(complete).toBeEnabled();
   await created.getByRole("button", { name: "取消", exact: true }).click();
   await page
     .getByRole("dialog", { name: "放弃资料编辑", exact: true })

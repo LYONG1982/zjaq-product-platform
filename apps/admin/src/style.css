@@ -1260,4 +1260,179 @@ summary:focus-visible {
 .compare-grid {
   margin-top: 12px;
 }
-.series-selection-icon{display:flex;align-items:center;gap:10px;color:#45596c;margin:10px 0}.series-selection-icon img{width:42px;height:42px;border-radius:8px;background:#eff5fb}
+.series-selection-icon{display:flex;align-items:center;gap:12px;color:#45596c;margin:10px 0}.series-selection-icon img{display:block;flex:none;width:56px;height:56px;padding:4px;box-sizing:border-box;object-fit:contain;border-radius:12px;background:#f1f5fb}.series-selection-icon span{min-width:0;overflow-wrap:anywhere}
+
+/* Audit workspace only: keep shared controls and other pages untouched. */
+.audit-page .page-title h1 {
+  margin: 4px 0 18px;
+  font-size: 24px;
+  font-weight: 600;
+}
+.audit-workspace {
+  min-width: 0;
+}
+.audit-tabs {
+  display: flex;
+  gap: 24px;
+  margin: 0 0 18px;
+  border-bottom: 1px solid var(--zj-color-border);
+}
+.audit-tabs [role="tab"] {
+  position: relative;
+  min-height: 42px;
+  padding: 8px 2px 10px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--zj-color-text-secondary);
+}
+.audit-tabs [role="tab"][aria-selected="true"] {
+  color: var(--zj-color-brand);
+  font-weight: 600;
+}
+.audit-tabs [role="tab"][aria-selected="true"]::after {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  background: var(--zj-color-brand);
+  content: "";
+}
+.audit-tabs [role="tab"]:focus-visible {
+  outline-offset: 2px;
+}
+.audit-operations > .toolbar,
+.audit-analytics-panel > .toolbar {
+  align-items: flex-end;
+  gap: 12px;
+  padding: 16px 20px;
+}
+.audit-operations > .toolbar .field {
+  flex: 0 1 220px;
+  margin: 0;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--zj-color-text-secondary);
+}
+.audit-operations > .toolbar .field input,
+.audit-operations > .toolbar .field select,
+.audit-operations > .toolbar > button,
+.audit-analytics-panel > .toolbar input,
+.audit-analytics-panel > .toolbar select,
+.audit-analytics-panel > .toolbar button {
+  height: 40px;
+  min-height: 40px;
+}
+.audit-operations > .toolbar .field input,
+.audit-operations > .toolbar .field select {
+  padding: 0 11px;
+  font-size: 13px;
+}
+.audit-operations > .toolbar > button,
+.audit-analytics-panel > .toolbar button {
+  flex: 0 0 auto;
+  align-self: flex-end;
+  white-space: nowrap;
+}
+.audit-analytics-panel > .toolbar > input {
+  flex: 1 1 190px;
+  min-width: 150px;
+  padding: 0 11px;
+  border: 1px solid var(--zj-color-control-border);
+  border-radius: 5px;
+  background: white;
+  font-size: 13px;
+}
+.audit-analytics-panel > .toolbar > select {
+  flex: 1 1 140px;
+  min-width: 125px;
+  padding: 0 10px;
+  font-size: 13px;
+}
+.audit-analytics-panel > .toolbar > label {
+  display: flex;
+  flex: 0 1 155px;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 130px;
+  color: var(--zj-color-text-secondary);
+  font-size: 12px;
+}
+.audit-analytics-panel > .toolbar > label input {
+  width: 100%;
+  padding: 0 8px;
+  border: 1px solid var(--zj-color-control-border);
+  border-radius: 5px;
+  background: white;
+  font-size: 13px;
+}
+.audit-operations .table-scroll,
+.audit-analytics-panel .table-scroll {
+  max-width: 100%;
+  overscroll-behavior-x: contain;
+}
+.audit-operations > .success-banner {
+  margin: 14px 20px 0;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--zj-color-brand-soft);
+  color: var(--zj-color-brand-hover);
+  font-size: 12px;
+}
+.audit-operations table,
+.audit-analytics-panel table {
+  min-width: 960px;
+  table-layout: auto;
+}
+.audit-operations th,
+.audit-analytics-panel th {
+  height: 44px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.audit-operations td,
+.audit-analytics-panel td {
+  height: 50px;
+  padding: 12px 14px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  vertical-align: top;
+}
+.audit-operations td:first-child,
+.audit-analytics-panel td:first-child {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.audit-operations tbody tr:hover,
+.audit-analytics-panel tbody tr:hover {
+  background: var(--zj-color-canvas);
+}
+.audit-analytics-panel .analytics-notice {
+  margin: 14px 20px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--zj-color-brand-soft);
+  font-size: 12px;
+}
+.audit-analytics-panel .table-empty {
+  padding: 20px;
+}
+@media (max-width: 760px) {
+  .audit-operations > .toolbar,
+  .audit-analytics-panel > .toolbar {
+    align-items: flex-end;
+    padding: 14px;
+  }
+  .audit-operations > .toolbar .field {
+    flex: 1 1 180px;
+  }
+  .audit-analytics-panel > .toolbar > input,
+  .audit-analytics-panel > .toolbar > select,
+  .audit-analytics-panel > .toolbar > label {
+    flex: 1 1 180px;
+  }
+}

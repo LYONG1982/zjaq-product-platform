@@ -253,7 +253,7 @@ onMounted(bootstrap);
           ><span class="avatar">制</span>
         </div>
       </header>
-      <main>
+      <main :class="{ 'audit-page': !editing && section === 'audit' }">
         <ProductEditor
           v-if="editing"
           :key="editing.productId"
@@ -448,7 +448,13 @@ onMounted(bootstrap);
           </template>
           <AnalyticsPanel v-else-if="section === 'analytics' && isAdmin" mode="dashboard" />
           <FeedbackList v-else-if="section === 'feedback' && isAdmin" />
-          <template v-else><div v-if="isAdmin" class="toolbar" role="tablist" aria-label="记录类型"><button role="tab" :aria-selected="auditTab === 'operations'" @click="auditTab = 'operations'">操作记录</button><button role="tab" :aria-selected="auditTab === 'browsing'" @click="auditTab = 'browsing'">浏览记录</button></div><AnalyticsPanel v-if="auditTab === 'browsing' && isAdmin" mode="records" /><section v-else class="table-card spaced">
+          <div v-else class="audit-workspace">
+            <div v-if="isAdmin" class="audit-tabs" role="tablist" aria-label="记录类型">
+              <button type="button" role="tab" :aria-selected="auditTab === 'operations'" @click="auditTab = 'operations'">操作记录</button>
+              <button type="button" role="tab" :aria-selected="auditTab === 'browsing'" @click="auditTab = 'browsing'">浏览记录</button>
+            </div>
+            <AnalyticsPanel v-if="auditTab === 'browsing' && isAdmin" mode="records" />
+            <section v-else class="table-card spaced audit-operations">
             <p v-if="removalNotice" class="success-banner" role="status">{{ removalNotice }}</p>
             <form class="toolbar" @submit.prevent="loadAudit()">
               <label class="field"
@@ -509,7 +515,8 @@ onMounted(bootstrap);
                 加载更多记录
               </button>
             </div>
-          </section></template></template
+            </section>
+          </div></template
         >
       </main>
     </div>

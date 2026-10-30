@@ -79,7 +79,9 @@ export default async function Home() {
                 key={c.id}
               >
                 <span className="family-symbol" aria-hidden>
-                  ▦
+                  {["miding", "miyi", "mishu", "ai"].includes(c.id) ? (
+                    <img src={`/series/${c.id}.png`} className="family-icon" alt="" />
+                  ) : "▦"}
                 </span>
                 <h2>{c.name}</h2>
                 <p>{c.productCount} 款产品</p>

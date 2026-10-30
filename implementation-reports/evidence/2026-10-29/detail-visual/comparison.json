@@ -1,0 +1,447 @@
+{
+  "capturedAt": "2026-10-29T05:25:42.962Z",
+  "fixture": {
+    "name": "【验证数据】设备资料示例",
+    "productId": "3339e006-26a7-40b1-a6d9-2ce8023211cf",
+    "sha256": "e11a8cec72beffd85c8dfa7130f8d64325afe0f8db8a9fb144ee109042d74685"
+  },
+  "settings": {
+    "height": 844,
+    "deviceScaleFactor": 1,
+    "reducedMotion": "reduce"
+  },
+  "detail": [
+    {
+      "width": 375,
+      "before": {
+        "base": "http://127.0.0.1:3302",
+        "text": [
+          "密翼·移动终端安全产品",
+          "【验证数据】设备资料示例",
+          "产品型号：LOCAL-VALIDATION-device",
+          "虚构内容，仅用于本地流程验证",
+          "产品介绍",
+          "本产品是独立验证数据，用于检查内容制作、资料版本与发布状态。所有描述均为虚构，不代表中技安全任何真实产品能力。",
+          "适用对象：本地开发与验收人员",
+          "问题与价值",
+          "验证内容流转",
+          "检查从草稿到当前发布快照的行为。",
+          "应用场景",
+          "本地模拟演示",
+          "运行在回环地址与隔离 Mock 会话。",
+          "核心能力",
+          "技术与使用说明",
+          "型号或设备组成",
+          "虚构验证说明：型号或设备组成仅作为表单与校验测试，不代表真实参数。",
+          "适用条件",
+          "虚构验证说明：适用条件仅作为表单与校验测试，不代表真实参数。",
+          "产品资料",
+          "【验证资料】有序图片",
+          "v1 · 图片 · 3 页 · 2026-10-29",
+          "预览 →",
+          "联系方式",
+          "官方公众号",
+          "客服微信",
+          "官方电话",
+          "400-685-0800"
+        ],
+        "textSha256": "da091ec2ed9891af37d7496a812aedd188eb2a50eeba4dac8cc0477f6d534cff",
+        "overflow": {
+          "scrollWidth": 375,
+          "innerWidth": 375,
+          "overflow": false
+        },
+        "pageErrors": [],
+        "blockedRequests": [],
+        "requestMethods": [
+          "GET"
+        ],
+        "screenshot": "implementation-reports/evidence/2026-10-29/detail-visual/before-375.png",
+        "screenshotSha256": "5c1f0bb69756bd9274965d2ba8ee2ecf216d488ebb47a040bd97582738e3d7ba"
+      },
+      "after": {
+        "base": "http://127.0.0.1:3402",
+        "text": [
+          "密翼·移动终端安全产品",
+          "【验证数据】设备资料示例",
+          "产品型号：LOCAL-VALIDATION-device",
+          "虚构内容，仅用于本地流程验证",
+          "产品介绍",
+          "本产品是独立验证数据，用于检查内容制作、资料版本与发布状态。所有描述均为虚构，不代表中技安全任何真实产品能力。",
+          "适用对象：本地开发与验收人员",
+          "问题与价值",
+          "验证内容流转",
+          "检查从草稿到当前发布快照的行为。",
+          "应用场景",
+          "本地模拟演示",
+          "运行在回环地址与隔离 Mock 会话。",
+          "核心能力",
+          "技术与使用说明",
+          "型号或设备组成",
+          "虚构验证说明：型号或设备组成仅作为表单与校验测试，不代表真实参数。",
+          "适用条件",
+          "虚构验证说明：适用条件仅作为表单与校验测试，不代表真实参数。",
+          "产品资料",
+          "【验证资料】有序图片",
+          "v1 · 图片 · 3 页 · 2026-10-29",
+          "预览 →",
+          "联系方式",
+          "官方公众号",
+          "客服微信",
+          "官方电话",
+          "400-685-0800"
+        ],
+        "textSha256": "da091ec2ed9891af37d7496a812aedd188eb2a50eeba4dac8cc0477f6d534cff",
+        "overflow": {
+          "scrollWidth": 375,
+          "innerWidth": 375,
+          "overflow": false
+        },
+        "pageErrors": [],
+        "blockedRequests": [],
+        "requestMethods": [
+          "GET"
+        ],
+        "screenshot": "implementation-reports/evidence/2026-10-29/detail-visual/after-375.png",
+        "screenshotSha256": "e3645ac4835dcd85cf114281134c7d42956bd1bf04c93c5c174b680f06055d64"
+      },
+      "textIdentical": true
+    },
+    {
+      "width": 390,
+      "before": {
+        "base": "http://127.0.0.1:3302",
+        "text": [
+          "密翼·移动终端安全产品",
+          "【验证数据】设备资料示例",
+          "产品型号：LOCAL-VALIDATION-device",
+          "虚构内容，仅用于本地流程验证",
+          "产品介绍",
+          "本产品是独立验证数据，用于检查内容制作、资料版本与发布状态。所有描述均为虚构，不代表中技安全任何真实产品能力。",
+          "适用对象：本地开发与验收人员",
+          "问题与价值",
+          "验证内容流转",
+          "检查从草稿到当前发布快照的行为。",
+          "应用场景",
+          "本地模拟演示",
+          "运行在回环地址与隔离 Mock 会话。",
+          "核心能力",
+          "技术与使用说明",
+          "型号或设备组成",
+          "虚构验证说明：型号或设备组成仅作为表单与校验测试，不代表真实参数。",
+          "适用条件",
+          "虚构验证说明：适用条件仅作为表单与校验测试，不代表真实参数。",
+          "产品资料",
+          "【验证资料】有序图片",
+          "v1 · 图片 · 3 页 · 2026-10-29",
+          "预览 →",
+          "联系方式",
+          "官方公众号",
+          "客服微信",
+          "官方电话",
+          "400-685-0800"
+        ],
+        "textSha256": "da091ec2ed9891af37d7496a812aedd188eb2a50eeba4dac8cc0477f6d534cff",
+        "overflow": {
+          "scrollWidth": 390,
+          "innerWidth": 390,
+          "overflow": false
+        },
+        "pageErrors": [],
+        "blockedRequests": [],
+        "requestMethods": [
+          "GET"
+        ],
+        "screenshot": "implementation-reports/evidence/2026-10-29/detail-visual/before-390.png",
+        "screenshotSha256": "d7f614adb31d76b65cf95eaccb3240b3424e38a9f0c0c6f3156062a1a060faa7",
+        "viewportScreenshot": "implementation-reports/evidence/2026-10-29/detail-visual/before-390-viewport.png"
+      },
+      "after": {
+        "base": "http://127.0.0.1:3402",
+        "text": [
+          "密翼·移动终端安全产品",
+          "【验证数据】设备资料示例",
+          "产品型号：LOCAL-VALIDATION-device",
+          "虚构内容，仅用于本地流程验证",
+          "产品介绍",
+          "本产品是独立验证数据，用于检查内容制作、资料版本与发布状态。所有描述均为虚构，不代表中技安全任何真实产品能力。",
+          "适用对象：本地开发与验收人员",
+          "问题与价值",
+          "验证内容流转",
+          "检查从草稿到当前发布快照的行为。",
+          "应用场景",
+          "本地模拟演示",
+          "运行在回环地址与隔离 Mock 会话。",
+          "核心能力",
+          "技术与使用说明",
+          "型号或设备组成",
+          "虚构验证说明：型号或设备组成仅作为表单与校验测试，不代表真实参数。",
+          "适用条件",
+          "虚构验证说明：适用条件仅作为表单与校验测试，不代表真实参数。",
+          "产品资料",
+          "【验证资料】有序图片",
+          "v1 · 图片 · 3 页 · 2026-10-29",
+          "预览 →",
+          "联系方式",
+          "官方公众号",
+          "客服微信",
+          "官方电话",
+          "400-685-0800"
+        ],
+        "textSha256": "da091ec2ed9891af37d7496a812aedd188eb2a50eeba4dac8cc0477f6d534cff",
+        "overflow": {
+          "scrollWidth": 390,
+          "innerWidth": 390,
+          "overflow": false
+        },
+        "pageErrors": [],
+        "blockedRequests": [],
+        "requestMethods": [
+          "GET"
+        ],
+        "screenshot": "implementation-reports/evidence/2026-10-29/detail-visual/after-390.png",
+        "screenshotSha256": "8e332b3d37768df64dfa6509ad2f43239a8383293ea96bbe03827927123cb8b9",
+        "viewportScreenshot": "implementation-reports/evidence/2026-10-29/detail-visual/after-390-viewport.png"
+      },
+      "textIdentical": true
+    },
+    {
+      "width": 414,
+      "before": {
+        "base": "http://127.0.0.1:3302",
+        "text": [
+          "密翼·移动终端安全产品",
+          "【验证数据】设备资料示例",
+          "产品型号：LOCAL-VALIDATION-device",
+          "虚构内容，仅用于本地流程验证",
+          "产品介绍",
+          "本产品是独立验证数据，用于检查内容制作、资料版本与发布状态。所有描述均为虚构，不代表中技安全任何真实产品能力。",
+          "适用对象：本地开发与验收人员",
+          "问题与价值",
+          "验证内容流转",
+          "检查从草稿到当前发布快照的行为。",
+          "应用场景",
+          "本地模拟演示",
+          "运行在回环地址与隔离 Mock 会话。",
+          "核心能力",
+          "技术与使用说明",
+          "型号或设备组成",
+          "虚构验证说明：型号或设备组成仅作为表单与校验测试，不代表真实参数。",
+          "适用条件",
+          "虚构验证说明：适用条件仅作为表单与校验测试，不代表真实参数。",
+          "产品资料",
+          "【验证资料】有序图片",
+          "v1 · 图片 · 3 页 · 2026-10-29",
+          "预览 →",
+          "联系方式",
+          "官方公众号",
+          "客服微信",
+          "官方电话",
+          "400-685-0800"
+        ],
+        "textSha256": "da091ec2ed9891af37d7496a812aedd188eb2a50eeba4dac8cc0477f6d534cff",
+        "overflow": {
+          "scrollWidth": 414,
+          "innerWidth": 414,
+          "overflow": false
+        },
+        "pageErrors": [],
+        "blockedRequests": [],
+        "requestMethods": [
+          "GET"
+        ],
+        "screenshot": "implementation-reports/evidence/2026-10-29/detail-visual/before-414.png",
+        "screenshotSha256": "1069a962ff1a711a4867be170407bd4f61eab3adbd255060e7c028c87310e399"
+      },
+      "after": {
+        "base": "http://127.0.0.1:3402",
+        "text": [
+          "密翼·移动终端安全产品",
+          "【验证数据】设备资料示例",
+          "产品型号：LOCAL-VALIDATION-device",
+          "虚构内容，仅用于本地流程验证",
+          "产品介绍",
+          "本产品是独立验证数据，用于检查内容制作、资料版本与发布状态。所有描述均为虚构，不代表中技安全任何真实产品能力。",
+          "适用对象：本地开发与验收人员",
+          "问题与价值",
+          "验证内容流转",
+          "检查从草稿到当前发布快照的行为。",
+          "应用场景",
+          "本地模拟演示",
+          "运行在回环地址与隔离 Mock 会话。",
+          "核心能力",
+          "技术与使用说明",
+          "型号或设备组成",
+          "虚构验证说明：型号或设备组成仅作为表单与校验测试，不代表真实参数。",
+          "适用条件",
+          "虚构验证说明：适用条件仅作为表单与校验测试，不代表真实参数。",
+          "产品资料",
+          "【验证资料】有序图片",
+          "v1 · 图片 · 3 页 · 2026-10-29",
+          "预览 →",
+          "联系方式",
+          "官方公众号",
+          "客服微信",
+          "官方电话",
+          "400-685-0800"
+        ],
+        "textSha256": "da091ec2ed9891af37d7496a812aedd188eb2a50eeba4dac8cc0477f6d534cff",
+        "overflow": {
+          "scrollWidth": 414,
+          "innerWidth": 414,
+          "overflow": false
+        },
+        "pageErrors": [],
+        "blockedRequests": [],
+        "requestMethods": [
+          "GET"
+        ],
+        "screenshot": "implementation-reports/evidence/2026-10-29/detail-visual/after-414.png",
+        "screenshotSha256": "98ae4fef2ff626b04e6ba3620aeb9d075ecacd3daef5b08afe37b888b6a27de3"
+      },
+      "textIdentical": true
+    },
+    {
+      "width": 430,
+      "before": {
+        "base": "http://127.0.0.1:3302",
+        "text": [
+          "密翼·移动终端安全产品",
+          "【验证数据】设备资料示例",
+          "产品型号：LOCAL-VALIDATION-device",
+          "虚构内容，仅用于本地流程验证",
+          "产品介绍",
+          "本产品是独立验证数据，用于检查内容制作、资料版本与发布状态。所有描述均为虚构，不代表中技安全任何真实产品能力。",
+          "适用对象：本地开发与验收人员",
+          "问题与价值",
+          "验证内容流转",
+          "检查从草稿到当前发布快照的行为。",
+          "应用场景",
+          "本地模拟演示",
+          "运行在回环地址与隔离 Mock 会话。",
+          "核心能力",
+          "技术与使用说明",
+          "型号或设备组成",
+          "虚构验证说明：型号或设备组成仅作为表单与校验测试，不代表真实参数。",
+          "适用条件",
+          "虚构验证说明：适用条件仅作为表单与校验测试，不代表真实参数。",
+          "产品资料",
+          "【验证资料】有序图片",
+          "v1 · 图片 · 3 页 · 2026-10-29",
+          "预览 →",
+          "联系方式",
+          "官方公众号",
+          "客服微信",
+          "官方电话",
+          "400-685-0800"
+        ],
+        "textSha256": "da091ec2ed9891af37d7496a812aedd188eb2a50eeba4dac8cc0477f6d534cff",
+        "overflow": {
+          "scrollWidth": 430,
+          "innerWidth": 430,
+          "overflow": false
+        },
+        "pageErrors": [],
+        "blockedRequests": [],
+        "requestMethods": [
+          "GET"
+        ],
+        "screenshot": "implementation-reports/evidence/2026-10-29/detail-visual/before-430.png",
+        "screenshotSha256": "11e4718b9aba575a5164e1ba1b8349153b18e4e5f304af0c5a2e49da09e4fd3e"
+      },
+      "after": {
+        "base": "http://127.0.0.1:3402",
+        "text": [
+          "密翼·移动终端安全产品",
+          "【验证数据】设备资料示例",
+          "产品型号：LOCAL-VALIDATION-device",
+          "虚构内容，仅用于本地流程验证",
+          "产品介绍",
+          "本产品是独立验证数据，用于检查内容制作、资料版本与发布状态。所有描述均为虚构，不代表中技安全任何真实产品能力。",
+          "适用对象：本地开发与验收人员",
+          "问题与价值",
+          "验证内容流转",
+          "检查从草稿到当前发布快照的行为。",
+          "应用场景",
+          "本地模拟演示",
+          "运行在回环地址与隔离 Mock 会话。",
+          "核心能力",
+          "技术与使用说明",
+          "型号或设备组成",
+          "虚构验证说明：型号或设备组成仅作为表单与校验测试，不代表真实参数。",
+          "适用条件",
+          "虚构验证说明：适用条件仅作为表单与校验测试，不代表真实参数。",
+          "产品资料",
+          "【验证资料】有序图片",
+          "v1 · 图片 · 3 页 · 2026-10-29",
+          "预览 →",
+          "联系方式",
+          "官方公众号",
+          "客服微信",
+          "官方电话",
+          "400-685-0800"
+        ],
+        "textSha256": "da091ec2ed9891af37d7496a812aedd188eb2a50eeba4dac8cc0477f6d534cff",
+        "overflow": {
+          "scrollWidth": 430,
+          "innerWidth": 430,
+          "overflow": false
+        },
+        "pageErrors": [],
+        "blockedRequests": [],
+        "requestMethods": [
+          "GET"
+        ],
+        "screenshot": "implementation-reports/evidence/2026-10-29/detail-visual/after-430.png",
+        "screenshotSha256": "80f0b189024a562a99aa1c5bb7d439689a32cc2321c9499f81eea22547fb2ef5"
+      },
+      "textIdentical": true
+    }
+  ],
+  "catalog": [
+    {
+      "variant": "before",
+      "route": "home",
+      "base": "http://127.0.0.1:3302",
+      "screenshot": "implementation-reports/evidence/2026-10-29/detail-visual/before-home-390.png",
+      "screenshotSha256": "bec4a11d6db8fd8aba0e8f142910b218734eed93ae8b068a3a9df5c4e4051937",
+      "usesActualReadOnlyApi": true,
+      "overflow": false,
+      "pageErrors": [],
+      "blockedRequests": [],
+      "requestMethods": [
+        "GET"
+      ]
+    },
+    {
+      "variant": "after",
+      "route": "home",
+      "base": "http://127.0.0.1:3402",
+      "screenshot": "implementation-reports/evidence/2026-10-29/detail-visual/after-home-390.png",
+      "screenshotSha256": "17b79fdb1d1b14b18be42a5cfe8b853f9485e05aeb985d6fea768d91c5de6126",
+      "usesActualReadOnlyApi": true,
+      "overflow": false,
+      "pageErrors": [],
+      "blockedRequests": [],
+      "requestMethods": [
+        "GET"
+      ]
+    },
+    {
+      "variant": "after",
+      "route": "products",
+      "base": "http://127.0.0.1:3402",
+      "screenshot": "implementation-reports/evidence/2026-10-29/detail-visual/after-products-390.png",
+      "screenshotSha256": "4237495bf61d240b1c345a9bc163c1c39b909c169d510cb2daa9bdabc0fe5db8",
+      "usesActualReadOnlyApi": true,
+      "overflow": false,
+      "pageErrors": [],
+      "blockedRequests": [],
+      "requestMethods": [
+        "GET"
+      ]
+    }
+  ],
+  "passed": true,
+  "publicationNote": "Historical local verification record. Local UAT state, session/process identifiers and absolute paths omitted from public copy. See 2026-10-30 source delivery for current publication status."
+}

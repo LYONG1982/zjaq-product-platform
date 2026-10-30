@@ -227,11 +227,13 @@ defineExpose({
 </script>
 <template>
   <view class="mobile-body">
-    <view class="brand-row"
-      ><view class="brand-badge">中技</view
-      ><text class="brand-title">中技安全产品平台</text
-      ><text class="demo-badge">本地演示</text></view
-    >
+    <view class="brand-row">
+      <!-- #ifndef H5 -->
+      <view class="brand-badge">中技</view>
+      <text class="brand-title">中技安全产品平台</text>
+      <!-- #endif -->
+      <text class="demo-badge">本地演示</text>
+    </view>
     <view :class="['mobile-hero', { home: kind === 'home' }]">
       <text v-if="kind === 'home'" class="title">{{
         kind === "home"
@@ -301,7 +303,15 @@ defineExpose({
           :aria-label="`${c.name}，${c.productCount} 款产品，查看系列`"
           @click="choose(c.id)"
         >
-          <text class="series-name">{{ c.name }}</text>
+          <view class="series-title-row">
+            <image
+              :src="'/static/series/' + c.id + '.png'"
+              mode="aspectFit"
+              class="series-entry-icon"
+              aria-hidden="true"
+            />
+            <text class="series-name">{{ c.name }}</text>
+          </view>
           <view class="series-meta">
             <text class="series-count">{{ c.productCount }} 款产品</text>
             <text class="series-action">查看系列 →</text>
@@ -432,6 +442,16 @@ defineExpose({
   color: var(--zj-color-brand-hover);
   font-size: 14px;
 }
+/* #ifdef H5 */
+.brand-row {
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+}
+.brand-row .demo-badge {
+  flex: none;
+  white-space: nowrap;
+}
+/* #endif */
 .mobile-hero {
   padding: 20px 0 16px;
 }
@@ -503,17 +523,17 @@ defineExpose({
 .series-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
 }
 .series-card {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: space-between;
-  width: calc(50% - 6px);
-  min-height: 78px;
+  width: calc(50% - 5px);
+  min-height: 112px;
   margin: 0;
-  padding: 9px 10px;
+  padding: 12px 10px;
   box-sizing: border-box;
   border: 1px solid var(--zj-color-border);
   border-radius: 12px;
@@ -521,7 +541,24 @@ defineExpose({
   text-align: left;
   line-height: 1.5;
 }
+.series-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+.series-entry-icon {
+  width: 48px;
+  height: 48px;
+  flex: none;
+  box-sizing: border-box;
+  padding: 2px;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #f5faff, #eaf2ff);
+}
 .series-name {
+  min-width: 0;
   font-size: 14px;
   font-weight: 650;
   color: var(--zj-color-text);
@@ -529,9 +566,11 @@ defineExpose({
   overflow-wrap: anywhere;
 }
 .series-count {
+  min-width: 0;
   font-size: 12px;
   line-height: 1.35;
   color: var(--zj-color-text-secondary);
+  overflow-wrap: anywhere;
 }
 .series-meta {
   display: flex;
@@ -539,7 +578,7 @@ defineExpose({
   justify-content: space-between;
   gap: 6px;
   width: 100%;
-  margin-top: 3px;
+  margin-top: 10px;
 }
 .series-action {
   flex: none;

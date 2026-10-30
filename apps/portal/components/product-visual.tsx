@@ -13,10 +13,11 @@ export function ProductVisual({
 }) {
   const [failed, setFailed] = useState(false);
   useEffect(() => setFailed(false), [src]);
+  const seriesId = categoryId && ["miding", "miyi", "mishu", "ai"].includes(categoryId) ? categoryId : null;
   return (
     <div
       className={
-        "product-visual" + (large ? " large" : "") + (failed ? " failed" : "")
+        "product-visual" + (large ? " large" : "") + (failed ? " failed" : "") + ((!src || failed) && seriesId ? " series-placeholder" : "")
       }
     >
       {src && !failed ? (
@@ -26,8 +27,8 @@ export function ProductVisual({
           loading="lazy"
           onError={() => setFailed(true)}
         />
-      ) : categoryId && ["miding", "miyi", "mishu", "ai"].includes(categoryId) ? (
-        <img src={`/series/${categoryId}.svg`} alt="" aria-hidden="true" className="series-icon" />
+      ) : seriesId ? (
+        <img src={`/series/${seriesId}.png`} alt="" aria-hidden="true" className="series-icon" />
       ) : (
         <span className="visual-symbol" aria-hidden="true">
           <i />
