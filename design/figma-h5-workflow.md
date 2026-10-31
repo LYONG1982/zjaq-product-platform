@@ -57,4 +57,12 @@ V2是Figma独立设计稿，尚未建立新CSS主题或改造应用。V2变量/�
 
 实现映射：新增styles/h5-v2.css、series-display.ts、SeriesHero.vue、H5BottomNav.vue；CatalogView.vue及detail/viewer页面使用H5条件编译，原小程序视觉保留；小程序共享Banner列表及缓存作最小兼容。详情锚点/能力弹窗、日期、实际图片与配置内容按业务保留。设计字体与系统字体的渲染差异、真实数据导致的长度/空态差异如实保留。
 
-验证：22项主浏览器回归＋1项反馈提交、15项专项单元＋11项合同/API通过，类型检查及H5/后台/小程序构建通过。详见implementation-reports/2026-10-31-h5-v2-implementation.md。本地源码与浏览器验收已完成；源码发布记录另见交付说明，未部署或真机验收。
+验证：22项主浏览器回归＋1项反馈提交、15项专项单元＋11项合同/API通过，类型检查及H5/后台/小程序构建通过。详见implementation-reports/2026-10-31-h5-v2-implementation.md。当前只为本地源码与浏览器验收，未推送、部署或真机验收。
+
+## H5 产品列表删除系列 Banner（2026-10-31追加）
+
+按已确认计划，先修改当前V3页面48:2，再同步H5。四个手机系列画板52:297/52:340/52:383/52:424及宽屏画板52:467的搜索栏上方系列Banner已删除；手机搜索栏由y=310上移至76，下方系列标题与卡片随之上移234px，底栏保持。宽屏内容容器依照原Auto Layout收拢。
+
+代码映射：CatalogView.vue的H5分支移除SeriesHero调用及引用，说明文案仅用于全部产品和资料中心；h5-v2.css为选中系列搜索栏保留30px标题间距。共享SeriesHero.vue、产品卡插画、首页品牌Banner、详情页及PC保持。历史V2及V3组件矩阵用于保留设计沿革，不作为当前列表Banner展示依据。
+
+最新布局参数见design/series-visual-v3-baseline.md追加说明；验证与实际UAT入口见implementation-reports/2026-10-31-h5-product-list-remove-series-banner.md。

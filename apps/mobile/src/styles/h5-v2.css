@@ -70,8 +70,8 @@ uni-page-body { background: #f4f7fc; }
 .h5-v2 .v2-hero-name { display:block;position:relative;max-width:calc(100% - 84px);font-size:28px;line-height:39.2px;font-weight:700; }
 .h5-v2 .v2-hero-description { display:block;position:relative;font-size:14px;line-height:21px;margin-top:7px;max-width:calc(100% - 60px); }
 .h5-v2 .v2-hero-narrative { display:block;position:relative;font-size:12px;line-height:20.4px;margin-top:27px; }
-.v2-filtered .v2-series-hero { margin-top:30px;margin-bottom:20px; }
-.v2-filtered .v2-section-head { margin-top:28px;margin-bottom:22px; }
+.h5-v2.v2-catalog.v2-filtered .v2-search { margin-top:30px; }
+.h5-v2.v2-catalog.v2-filtered .v2-section-head { margin-top:28px;margin-bottom:22px; }
 .h5-v2 .v2-bottom-nav { position:fixed;left:0;right:0;bottom:0;display:flex;z-index:50;background:white;border-top:1px solid var(--v2-line);height:calc(72px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);box-sizing:border-box; }
 .h5-v2 .v2-bottom-nav button { display:flex;flex:1;min-width:0;flex-direction:column;gap:6px;align-items:center;justify-content:flex-start;padding:12px 0 0;margin:0;height:72px;border-radius:0;background:none;color:var(--v2-muted);font-size:11px;line-height:16.5px;font-weight:400; }
 .h5-v2 .v2-bottom-nav button.active { color:var(--v2-primary);font-weight:700; }

@@ -1,0 +1,41 @@
+/* Figma 48:2 / V3; native-app presentation and business flows remain separate. */
+.h5-v2 .v3-series-artwork { position:absolute;right:-1px;bottom:-1px;width:calc(100% + 2px);aspect-ratio:2;pointer-events:none; }
+.h5-v2 .v3-series-artwork image { display:block;width:100%;height:100%; }
+.h5-v2.v2-catalog .v2-series-card,.h5-v2.v2-catalog .v2-product-card,.h5-v2 .v2-series-hero { position:relative;isolation:isolate;overflow:hidden;box-sizing:border-box;border:1px solid #e2eaf4;background:linear-gradient(90deg,var(--series-bg-start,#f4f7fc),var(--series-bg-end,#e2eaf4));box-shadow:0 4px 16px rgba(18,43,74,.04); }
+.h5-v2.v2-catalog .v2-series-grid { margin-top:16px; }
+.h5-v2.v2-catalog .v2-series-card { display:block;aspect-ratio:auto;min-height:190px;border-radius:20px;padding:0; }
+.h5-v2 .v2-series-labels { position:relative;inset:auto;box-sizing:border-box;display:flex;flex-direction:column;gap:4px;width:100%;padding:16px 16px calc(50% + 12px); }
+.h5-v2 .v2-series-name { display:block;font-size:17.6px;line-height:26.4px;font-weight:700;color:#122b49;overflow-wrap:anywhere; }
+.h5-v2 .v2-series-description { display:block;font-size:12px;line-height:18px;font-weight:400;color:#60748b;overflow-wrap:anywhere; }
+.h5-v2 .v2-series-count { display:block;font-size:11px;line-height:16px;font-weight:500;color:var(--series-accent,#60748b);white-space:normal; }
+.h5-v2.v2-catalog .v2-product-card { display:block;min-height:200px;border-radius:20px;padding:0; }
+.h5-v2 .v3-product-copy,.h5-v2 .v3-hero-copy { position:relative;box-sizing:border-box;width:55%;padding:20px 0 20px 20px; }
+.h5-v2.v2-catalog .v2-product-card .v2-product-title { display:block;width:100%;margin:0;font-size:18px;line-height:26px;font-weight:700;color:#122b49;overflow-wrap:anywhere; }
+.h5-v2.v2-catalog .v2-product-card .v2-product-title { white-space:normal;overflow:visible;text-overflow:clip; }
+.h5-v2.v2-catalog .v2-product-card .v2-product-description { display:block;width:100%;margin:8px 0 0;font-size:13px;line-height:21px;font-weight:400;color:#60748b;overflow-wrap:anywhere; }
+.h5-v2.v2-catalog .v2-product-card .v2-product-action { display:block;margin:20px 0 0;padding:0;font-size:12px;line-height:18px;font-weight:500;color:var(--series-accent,#60748b); }
+.h5-v2.v2-catalog .v2-product-card .v3-product-copy .product-visual { position:relative;inset:auto;width:52px;height:52px;margin-top:8px;background:white;border-radius:8px; }
+.h5-v2 .v2-series-hero { height:auto;min-height:214px;padding:0;border-radius:24px;color:#122b49; }
+.h5-v2 .v3-hero-copy { padding:22px 0 22px 22px; }
+.h5-v2 .v2-hero-name { display:block;max-width:none;font-size:28px;line-height:39.2px;font-weight:700;overflow-wrap:anywhere; }
+.h5-v2 .v2-hero-description { display:block;max-width:none;margin:8px 0 0;font-size:14px;line-height:21px;font-weight:400;color:#60748b;overflow-wrap:anywhere; }
+.h5-v2 .v2-hero-narrative { display:block;margin:20px 0 0;font-size:12px;line-height:20px;font-weight:500;color:var(--series-accent,#60748b);overflow-wrap:anywhere; }
+@media(min-width:768px) {
+  .h5-v2.v2-catalog .v2-content,.h5-v2 .v2-page-header { max-width:1184px;margin-left:auto;margin-right:auto;box-sizing:border-box; }
+  .h5-v2.h5-v2.v2-detail { max-width:1184px;margin:auto; }
+  .h5-v2.v2-catalog .v2-series-grid { grid-template-columns:repeat(4,minmax(0,1fr)); }
+  .h5-v2.v2-catalog .v2-series-card { min-height:210px; }
+  .h5-v2 .v2-series-labels { width:55%;padding:20px 0 20px 20px; }
+  .h5-v2 .v2-series-name { font-size:19.8px;line-height:29.7px; }
+  .h5-v2 .v2-series-description { font-size:13px;line-height:19px; }
+  .h5-v2.v2-catalog:not(.v2-kind-materials) .v2-published-list { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px; }
+  .h5-v2.v2-catalog .v2-product-card { min-height:220px;align-self:stretch; }
+  .h5-v2 .v2-series-hero { min-height:260px;background:linear-gradient(90deg,var(--series-bg-start,#f4f7fc) 55%,var(--series-bg-end,#e2eaf4)); }
+  .h5-v2 .v2-series-hero .v3-series-artwork { width:520px;max-width:calc(100% + 2px); }
+  .h5-v2 .v3-hero-copy { padding:32px 0 32px 32px; }
+  .h5-v2 .v2-hero-name { font-size:32px;line-height:45px; }
+  .h5-v2 .v2-hero-description { font-size:18px;line-height:27px; }
+  .h5-v2 .v2-hero-narrative { font-size:14px;line-height:22px; }
+  .h5-v2 .v2-load-more { grid-column:1/-1; }
+}
+@media(min-width:1100px) { .h5-v2.v2-catalog:not(.v2-kind-materials) .v2-published-list { grid-template-columns:repeat(3,minmax(0,1fr)); } }

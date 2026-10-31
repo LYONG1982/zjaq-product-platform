@@ -1,0 +1,33 @@
+{
+  "baseCommit": "031d4df833e3e475bf7e0b51e448b1c496dc8059",
+  "h5Typecheck": "passed",
+  "h5Build": "passed",
+  "browserChecks": 19,
+  "browserFailures": 0,
+  "fontWidths": [
+    320,
+    390,
+    430,
+    1440
+  ],
+  "nameChecks": 16,
+  "seriesNavigations": 16,
+  "fontWriteAttempts": 0,
+  "unchangedRemoteFiles": 117,
+  "preservedOriginalUat": true,
+  "runtimeFiles": {
+    "apps/mobile/src/App.vue": "20315b429df0cf25ad73680082b04d80477f6a75b60c57490e3a7adfadadfea4",
+    "apps/mobile/src/components/CatalogView.vue": "7d06a801b1cc953c6ef3d4024c1431678351f5db3b099b88856512f42ec42eb6",
+    "apps/mobile/src/components/SeriesArtwork.vue": "1578bb09c22b7e0d08c3517243e7af2685e3d5cda71e27d025281fc2c30c0e7d",
+    "apps/mobile/src/components/SeriesHero.vue": "b4f40cbff2ae1f473520eaab9693871effb200002623d51c1dcbcc784fda514e",
+    "apps/mobile/src/series-display.ts": "7722f8f000f145f499046b9d15e3e795062fffa6111b8f65a3efcd9d183d90af",
+    "apps/mobile/src/styles/h5-v2.css": "c78c97360dfba9e9e5d2b152f3089957942aacf43132ef9edfacb3bc8e5bd080",
+    "apps/mobile/src/styles/h5-v3.css": "cc5b41f8ce76bd67672a7dfecc4c194c0d5537d33628cbb47cc892b0b41abc6e",
+    "packages/design-tokens/package.json": "ca95bb45cbd525e1ea332eeb376457e456ec3167b0b95c5e80f9f5133bd1784f",
+    "packages/design-tokens/series-visuals.ts": "92da70be9a07f66392bd9e759db719b64139968af2f7a864d6f2c88cb2e8bbb9",
+    "apps/mobile/src/static/h5/series-v3/ai.webp": "ab17760e7c1da95f3f660b246ba716656b2acc103d00e6e1e7381f260095e2f2",
+    "apps/mobile/src/static/h5/series-v3/miding.webp": "a3ef42046a950768831335302274362bdb651e2bc796d1a00983c713b4e76624",
+    "apps/mobile/src/static/h5/series-v3/mishu.webp": "ae7efefd0de418e3ee698dd6473f1517df1876d0e7eec5298155dea5fe920f74",
+    "apps/mobile/src/static/h5/series-v3/miyi.webp": "8bc516b782a8b7909c83b4eee1d39a36d39952e0445bc253403bb53ef97dd183"
+  }
+}

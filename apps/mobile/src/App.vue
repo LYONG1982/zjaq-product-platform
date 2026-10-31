@@ -17,6 +17,7 @@ onLaunch(() => {
 @import "@zj/design-tokens/mobile.css";
 /* #ifdef H5 */
 @import "./styles/h5-v2.css";
+@import "./styles/h5-v3.css";
 /* #endif */
 page {
   background: var(--zj-color-canvas);

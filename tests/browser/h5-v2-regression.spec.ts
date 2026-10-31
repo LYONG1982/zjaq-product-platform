@@ -3,7 +3,7 @@ import { readFile, rm } from 'node:fs/promises';
 import { prepareVideoFixtures } from '../helpers/upload-fixtures';
 import path from 'node:path';
 
-const evidence = 'implementation-reports/evidence/2026-10-31/h5-v2-implementation';
+const evidence = 'implementation-reports/evidence/2026-10-31/series-visual-v3/regression';
 test.beforeAll(async ({request}) => {
   expect(new URL(urls.api).hostname).toBe('127.0.0.1');
   expect((await (await request.get(urls.api + '/health')).json()).provider).toBe('mock');
@@ -39,11 +39,11 @@ for (const width of [320,390]) {
     await page.getByRole('button',{name:'搜索',exact:true}).click();
     await expect(page.locator('.v2-product-card')).toHaveCount(1);
     const productCard = await page.locator('.v2-product-card').boundingBox();
-    const visual = await page.locator('.v2-product-card .product-visual').boundingBox();
-    expect(productCard!.height).toBe(180);
-    expect(visual!.width).toBe(54);
-    expect(visual!.x).toBeGreaterThan(width / 2);
-    await expect(page.locator('.v2-product-title')).toHaveCSS('font-size','17px');
+    const visual = await page.locator('.v2-product-card .v3-series-artwork').boundingBox();
+    expect(productCard!.height).toBeGreaterThanOrEqual(200);
+    expect(Math.abs(visual!.width / visual!.height - 2)).toBeLessThan(.01);
+    await expect(page.locator('.v2-series-badge,.v2-product-card .series-icon')).toHaveCount(0);
+    await expect(page.locator('.v2-product-title')).toHaveCSS('font-size','18px');
     await page.screenshot({path:`${evidence}/products-${width}.png`});
     await page.locator('.v2-product-card').click();
     await expect(page.locator('.detail-title')).toHaveText('【Demo】资料问答助手');

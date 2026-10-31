@@ -107,15 +107,16 @@ for (const width of [375, 390, 414, 430]) {
       const card = page.locator(".series-card").filter({ hasText: item.shortName });
       await expect(card).toHaveAttribute("aria-label", `${item.shortName}，${series.indexOf(item) + 1} 款产品，查看系列`);
       const image = card.locator("img");
-      await expect(image).toHaveAttribute("src", `/static/h5/series/${item.id}.svg`);
-      await decodedImage(image, 384);
+      await expect(image).toHaveAttribute("src", `/static/h5/series-v3/${item.id}.webp`);
+      await decodedImage(image, 1774);
     }
     await homeFits(page);
     await page.screenshot({ path: testInfo.outputPath(`series-home-${width}.png`), fullPage: true });
     for (const item of series) {
       await page.locator(".series-card").filter({ hasText: item.shortName }).click();
       await expect(page).toHaveURL(/pages\/products\/index/);
-      await expect(page.locator(".v2-hero-name")).toHaveText(item.shortName);
+      await expect(page.locator(".v2-series-hero")).toHaveCount(0);
+      await expect(page.locator(".v2-section-head")).toContainText(item.shortName);
       await expect(page.locator(".product-card").filter({ hasText: "【图标】" + item.shortName })).toBeVisible();
       await page.goto(urls.h5 + "/#/pages/home/index");
       await expect(page.locator(".series-card")).toHaveCount(4);
@@ -123,30 +124,32 @@ for (const width of [375, 390, 414, 430]) {
   });
 }
 
-test("H5 product cards retain four series fallbacks, custom cover priority, failure fallback and generic placeholder", async ({ page }, testInfo) => {
+test("H5 V3 uses product series backgrounds, keeps business covers and neutral unknown series", async ({ page }, testInfo) => {
   await mobileFixture(page);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(urls.h5 + "/#/pages/products/index");
   await expect(page.locator(".product-card")).toHaveCount(7);
   for (const item of series) {
     const card = page.locator(".product-card").filter({ hasText: "【图标】" + item.shortName });
-    const image = card.locator(".series-icon img");
-    await expect(image).toHaveAttribute("src", `/static/series/${item.id}.png`);
-    await decodedImage(image);
+    const image = card.locator(".v3-series-artwork img");
+    await expect(image).toHaveAttribute("src", `/static/h5/series-v3/${item.id}.webp`);
+    await decodedImage(image, 1774);
+    await expect(card.locator(".series-icon,.v2-series-badge")).toHaveCount(0);
   }
   const cover = page.locator(".product-card").filter({ hasText: "【图标】专属封面优先" });
   await cover.scrollIntoViewIfNeeded();
   await expect(cover.locator(".series-icon")).toHaveCount(0);
-  await expect(cover.locator("img")).toHaveAttribute("src", /\/api\/v1\/catalog\/icon-fixture\/cover\.png$/);
-  await expect.poll(() => cover.locator("img").evaluate(node => (node as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
-  await cover.locator("img").evaluate(node => (node as HTMLImageElement).decode());
+  await expect(cover.locator(".product-visual img")).toHaveAttribute("src", /\/api\/v1\/catalog\/icon-fixture\/cover\.png$/);
+  await expect.poll(() => cover.locator(".product-visual img").evaluate(node => (node as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+  await cover.locator(".product-visual img").evaluate(node => (node as HTMLImageElement).decode());
   const broken = page.locator(".product-card").filter({ hasText: "【图标】封面失败回退" });
   await broken.scrollIntoViewIfNeeded();
   await expect(broken.locator(".product-visual")).toHaveClass(/failed/);
-  await expect(broken.locator(".series-icon img")).toHaveAttribute("src", "/static/series/miyi.png");
-  await decodedImage(broken.locator(".series-icon img"));
+  await expect(broken.locator(".visual-symbol")).toBeVisible();
+  await expect(broken.locator(".v3-series-artwork img")).toHaveAttribute("src", "/static/h5/series-v3/miyi.webp");
+  await decodedImage(broken.locator(".v3-series-artwork img"), 1774);
   const unknown = page.locator(".product-card").filter({ hasText: "【图标】未知分类" });
-  await expect(unknown.locator(".visual-symbol")).toBeVisible();
+  await expect(unknown.locator(".v2-product-title")).toBeVisible();
   await expect(unknown.locator("img")).toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
   await page.screenshot({ path: testInfo.outputPath("series-product-fallbacks.png"), fullPage: true });

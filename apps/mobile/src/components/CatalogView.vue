@@ -4,7 +4,7 @@ import { api, resourceUrl } from "../api";
 import { seriesIds, seriesName, seriesThemes, seriesStyle } from "../series-display";
 // #ifdef H5
 import H5BottomNav from "./H5BottomNav.vue";
-import SeriesHero from "./SeriesHero.vue";
+import SeriesArtwork from "./SeriesArtwork.vue";
 // #endif
 import { catalogState, openCatalog, type CatalogKind } from "../navigation";
 import ProductVisual from "./ProductVisual.vue";
@@ -75,7 +75,7 @@ async function reloadBanner() {
 }
 const selectedCategory = computed(() => categories.value.find(c => c.id === category.value));
 const homeSeries = computed(() =>
-  seriesIds.map(id => categories.value.find(category => category.id === id)).filter((category): category is Responses["PublicCategory"] => !!category),
+  [...seriesIds.map(id => categories.value.find(category => category.id === id)).filter((category): category is Responses["PublicCategory"] => !!category), ...categories.value.filter(category => !seriesIds.some(id => id === category.id))],
 );
 let sequence = 0,
   lastQuery = "",
@@ -282,8 +282,7 @@ defineExpose({
         </view>
       </view>
       <view v-else-if="kind === 'home'" class="v2-banner-error" role="status">Banner 暂时无法读取<button role="button" tabindex="0" @click="reloadBanner">重新加载</button></view>
-      <SeriesHero v-if="kind === 'products' && selectedCategory" :category-id="category" :name="selectedCategory.name" />
-      <text v-else-if="kind !== 'home'" class="v2-page-subtitle">{{ kind === 'products' ? '看清产品能力，找到适用场景。' : '以当前版本，支持每一次产品沟通。' }}</text>
+      <text v-if="kind === 'materials' || (kind === 'products' && !category)" class="v2-page-subtitle">{{ kind === 'products' ? '看清产品能力，找到适用场景。' : '以当前版本，支持每一次产品沟通。' }}</text>
       <view class="search v2-search">
         <image src="/static/h5/figma/c1c00.svg" mode="aspectFit" aria-hidden="true" />
         <input v-model="q" :maxlength="100" confirm-type="search" :placeholder="kind === 'materials' ? '搜索资料或产品名称' : '搜索产品名称'" :aria-label="kind === 'materials' ? '搜索资料' : '搜索产品'" @confirm="search" />
@@ -295,9 +294,9 @@ defineExpose({
         <button role="button" tabindex="0" v-for="c in categories" :key="c.id" :class="{ selected: category === c.id }" @click="choose(c.id)">{{ seriesName(c.id, c.name) }}</button>
       </view>
       <view v-if="kind === 'home'" class="v2-series-grid">
-        <button role="button" tabindex="0" v-for="c in homeSeries" :key="c.id" class="series-card v2-series-card" :aria-label="`${seriesName(c.id, c.name)}，${c.productCount} 款产品，查看系列`" @click="choose(c.id)">
-          <image :src="'/static/h5/series/' + c.id + '.svg'" mode="aspectFit" class="v2-series-art" aria-hidden="true" />
-          <view class="v2-series-labels"><view class="v2-series-line"><text class="v2-series-name">{{ seriesName(c.id, c.name) }}</text><text class="v2-series-count">{{ c.productCount }} 款</text></view><text class="v2-series-description">{{ seriesThemes[c.id]?.description }}</text></view>
+        <button role="button" tabindex="0" v-for="c in homeSeries" :key="c.id" class="series-card v2-series-card" :style="seriesStyle(c.id)" :aria-label="`${seriesName(c.id, c.name)}，${c.productCount} 款产品，查看系列`" @click="choose(c.id)">
+          <SeriesArtwork :category-id="c.id" />
+          <view class="v2-series-labels"><text class="v2-series-name">{{ seriesName(c.id, c.name) }}</text><text class="v2-series-description">{{ seriesThemes[c.id]?.description || c.name }}</text><text class="v2-series-count">{{ c.productCount }} 款产品</text></view>
         </button>
       </view>
       <view v-if="kind === 'home'" class="v2-section-head"><text>产品一览</text><button role="button" tabindex="0" @click="openCatalog()">浏览全部 ↗</button></view>
@@ -311,9 +310,8 @@ defineExpose({
         <view v-else class="v2-published-list" :aria-busy="loading">
           <template v-for="item in rows" :key="'name' in item ? item.productId : item.productId + item.material.materialId">
             <button role="button" tabindex="0" v-if="'name' in item" class="product-card v2-product-card" :style="seriesStyle(item.categoryId)" :aria-label="item.name" @click="openProduct(item.productId)">
-              <text class="v2-series-badge">{{ seriesName(item.categoryId, item.categoryName) }}</text>
-              <ProductVisual :path="item.coverPath" :alt="item.name" :category-id="item.categoryId" />
-              <text class="published-title v2-product-title">{{ item.name }}</text><text class="published-description v2-product-description">{{ item.tagline || '产品介绍待完善' }}</text><text class="v2-product-action">查看详情 ↗</text>
+              <SeriesArtwork :category-id="item.categoryId" />
+              <view class="v3-product-copy"><text class="published-title v2-product-title">{{ item.name }}</text><text class="published-description v2-product-description">{{ item.tagline || '产品介绍待完善' }}</text><ProductVisual v-if="item.coverPath" :path="item.coverPath" :alt="item.name" /><text class="v2-product-action">查看详情 ↗</text></view>
             </button>
             <view v-else class="material-card v2-material-card" :style="seriesStyle(item.categoryId)">
               <view class="v2-material-top"><text class="v2-format">{{ item.material.previewKind === 'pdf' ? 'PDF' : item.material.previewKind === 'video' ? '视频' : '图集' }}</text><text>{{ item.material.versionLabel }}{{ item.material.previewKind === 'video' ? '' : ' · ' + item.material.pageCount + ' 页' }}</text></view>

@@ -4,6 +4,7 @@
   "type": "module",
   "name": "@zj/design-tokens",
   "exports": {
+    "./series-visuals": "./series-visuals.ts",
     "./tokens.css": "./tokens.css",
     "./tokens.scss": "./tokens.scss",
     "./mobile.css": "./mobile.css"
