@@ -1,9 +1,11 @@
+import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import type { Page } from "@playwright/test";
 import type { Responses } from "@zj/contracts";
 import { test, expect, urls } from "./support";
 
 const logoPath = "/static/h5/brand/zhongji-security-logo.png";
+const logoHash = "805c27ec4ebba01b37351f7071d7a00eb32fabda75c31e844ba88fbda7463c3c";
 const productId = "3bbec595-ef31-4d60-aaca-7c1ed66a6074";
 const product: Responses["PublicProductSummary"] = {
   productId, releaseId: "branding-release", releaseSequence: 1,
@@ -37,7 +39,8 @@ async function brandingFixture(page: Page) {
     requested.push(url);
     const reply = (data: unknown) => route.fulfill({ json: { data, requestId: "branding-readonly-fixture" } });
     if (url.pathname === "/api/v1/catalog/categories") return reply(categories);
-    if (url.pathname === "/api/v1/catalog/site-banner") return reply({ version: 1, imageData: null, link: null, introduction: "", introLink: null, refreshAfterSeconds: 30 });
+    if (url.pathname === "/api/v1/catalog/site-banner/default-image") return route.fulfill({ contentType: "image/png", path: "services/domain/assets/default-banner.png" });
+    if (url.pathname === "/api/v1/catalog/site-banner") return reply({ version: 1, imageData: null, link: null, items: [{ id: "default", isDefault: true, imagePath: "/api/v1/catalog/site-banner/default-image", imageData: null, link: null, startsAt: null, endsAt: null }], introduction: "", introLink: null, refreshAfterSeconds: 30 });
     if (url.pathname === "/api/v1/catalog/site-contact") return reply({ version: 1, officialQr: null, serviceQr: null, phone: "400-685-0800" });
     if (url.pathname === "/api/v1/catalog/analytics") return reply({ viewEnabled: false, notice: "" });
     if (url.pathname === "/api/v1/catalog/products" || url.pathname === "/api/v1/catalog/materials") {
@@ -56,55 +59,71 @@ async function brandingFixture(page: Page) {
 }
 
 async function checkBrand(page: Page, viewportWidth: number) {
-  const header = page.locator(".brand-row");
-  await expect(header.locator(".brand-logo, image, img")).toHaveCount(0);
+  if (await page.locator('.v2-kind-home').count() === 0) {
+    await expect(page.locator('.v2-page-title')).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
+    return;
+  }
+  const header = page.locator(".v2-brand-row"), logo = header.locator(".brand-logo"), image = logo.locator("img");
+  await expect(logo).toBeVisible();
+  await expect(logo).toHaveAccessibleName("中技安全");
+  await expect(logo).toHaveAttribute("role", "img");
+  await expect(logo.locator("div").first()).toHaveCSS("background-size", "contain");
+  await expect(image).toHaveAttribute("src", new RegExp(logoPath + "$"));
+  await expect.poll(() => image.evaluate(node => (node as HTMLImageElement).naturalWidth)).toBe(2172);
+  const dimensions = await image.evaluate(async node => {
+    const image = node as HTMLImageElement;
+    await image.decode();
+    return { width: image.naturalWidth, height: image.naturalHeight, complete: image.complete };
+  });
+  expect(dimensions).toEqual({ width: 2172, height: 724, complete: true });
   await expect(header.locator(".brand-title, .brand-badge")).toHaveCount(0);
   await expect(header).toHaveText("本地演示");
-  const badge = header.locator(".demo-badge");
+  const badge = header.locator(".v2-demo");
   await expect(badge).toBeVisible();
-  const [headerBox, badgeBox, searchBox, heroBox] = await Promise.all([
-    header.boundingBox(), badge.boundingBox(), page.locator(".search").boundingBox(), page.locator(".mobile-hero").boundingBox(),
-  ]);
-  // The old 64px logo container must collapse to the status line's height.
-  expect(headerBox!.height).toBeLessThan(32);
-  expect(headerBox!.height).toBeCloseTo(badgeBox!.height, 0);
+  const [logoBox, badgeBox, searchBox] = await Promise.all([logo.boundingBox(), badge.boundingBox(), page.locator(".search").boundingBox()]);
+  expect(logoBox!.width).toBe(126);
+  expect(logoBox!.height).toBe(42);
+  expect(logoBox!.width / logoBox!.height).toBe(3);
+  expect(badgeBox!.x).toBeGreaterThanOrEqual(logoBox!.x + logoBox!.width + 8);
   expect(badgeBox!.x + badgeBox!.width).toBeLessThanOrEqual(viewportWidth - 15);
-  expect(badgeBox!.x + badgeBox!.width).toBeCloseTo(viewportWidth - 16, 0);
-  expect(heroBox!.y).toBeCloseTo(headerBox!.y + headerBox!.height, 0);
-  expect(searchBox!.y).toBeGreaterThanOrEqual(heroBox!.y);
-  expect(searchBox!.y + searchBox!.height).toBeLessThanOrEqual(heroBox!.y + heroBox!.height);
+  expect(badgeBox!.y).toBeGreaterThanOrEqual(logoBox!.y);
+  expect(badgeBox!.y + badgeBox!.height).toBeLessThanOrEqual(logoBox!.y + logoBox!.height);
+  expect(searchBox!.y).toBeGreaterThanOrEqual(logoBox!.y + logoBox!.height);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
 }
 
 for (const width of [375, 390, 414, 430]) {
-  test(`H5 omits company logo in three compact headers and keeps search and navigation usable at ${width}px`, async ({ page }, testInfo) => {
-    const logoRequests: string[] = [];
-    page.on("request", request => { if (new URL(request.url()).pathname === logoPath) logoRequests.push(request.url()); });
+  test(`H5 company logo keeps three catalog headers, search and navigation usable at ${width}px`, async ({ page }, testInfo) => {
     const requests = await brandingFixture(page);
     await page.setViewportSize({ width, height: 844 });
     await page.goto(urls.h5);
     await checkBrand(page, width);
-    await expect(page.getByText("中技于密，安全于行", { exact: true })).toBeVisible();
+    // Verify the served asset, not only a matching filename or DOM element.
+    const logoResponse = await page.request.get(urls.h5 + logoPath);
+    expect(logoResponse.ok()).toBe(true);
+    expect(createHash("sha256").update(await logoResponse.body()).digest("hex")).toBe(logoHash);
+    await expect(page.getByAltText("中技安全产品资料库品牌 Banner", {exact:true})).toBeVisible();
     await expect(page.locator(".series-card")).toHaveCount(4);
     await page.screenshot({ path: testInfo.outputPath(`home-brand-${width}.png`), fullPage: true });
 
     await page.locator(".search input").fill("品牌验收");
-    await page.locator(".search uni-button").filter({ hasText: "搜索" }).click();
+    await page.getByRole("button", { name: "搜索", exact: true }).click();
     await expect(page).toHaveURL(/pages\/products\/index/);
     await expect(page.locator(".search input")).toHaveValue("品牌验收");
     await expect(page.locator(".product-card")).toHaveCount(1);
     await expect.poll(() => requests.some(url => url.pathname.endsWith("/catalog/products") && url.searchParams.get("q") === "品牌验收")).toBe(true);
     await checkBrand(page, width);
-    await expect(page.locator("uni-page-head")).toContainText("产品中心");
+    await expect(page.locator(".v2-page-header")).toContainText("产品一览");
     await page.screenshot({ path: testInfo.outputPath(`products-brand-${width}.png`), fullPage: true });
 
-    await page.locator("uni-tabbar").getByText("资料", { exact: true }).click();
+    await page.locator(".v2-bottom-nav").getByText("资料", { exact: true }).click();
     await expect(page).toHaveURL(/pages\/materials\/index/);
     await expect(page.locator(".material-card")).toHaveCount(1);
     await checkBrand(page, width);
-    await expect(page.locator("uni-page-head")).toContainText("资料中心");
+    await expect(page.locator(".v2-page-header")).toContainText("资料中心");
     await page.locator(".search input").fill("品牌验收图集");
-    await page.locator(".search uni-button").filter({ hasText: "搜索" }).click();
+    await page.getByRole("button", { name: "搜索", exact: true }).click();
     await expect.poll(() => requests.some(url => url.pathname.endsWith("/catalog/materials") && url.searchParams.get("q") === "品牌验收图集")).toBe(true);
     await expect(page.locator(".material-card .published-title")).toHaveText(material.name);
     await page.screenshot({ path: testInfo.outputPath(`materials-brand-${width}.png`), fullPage: true });
@@ -114,15 +133,14 @@ for (const width of [375, 390, 414, 430]) {
       const preview = page.locator("#preview-surface img");
       await expect(preview).toBeVisible();
       expect(await preview.evaluate(node => (node as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
-      await page.locator(".viewer-navigation uni-button").filter({ hasText: "返回上一页" }).click();
+      await page.getByRole("button", {name:"返回上一页",exact:true}).click();
       await expect(page.locator(".search input")).toHaveValue("品牌验收图集");
       await checkBrand(page, width);
     }
-    await page.locator("uni-tabbar").getByText("首页", { exact: true }).click();
+    await page.locator(".v2-bottom-nav").getByText("首页", { exact: true }).click();
     // Uni's first page is canonically aliased to #/ when returning via the tab bar.
     await expect(page).toHaveURL(/#\/(?:pages\/home\/index)?$/);
-    await expect(page.getByText("中技于密，安全于行", { exact: true })).toBeVisible();
+    await expect(page.getByAltText("中技安全产品资料库品牌 Banner", {exact:true})).toBeVisible();
     await checkBrand(page, width);
-    expect(logoRequests, "the removed logo must not load on any H5 catalog page").toHaveLength(0);
   });
 }

@@ -1,0 +1,20 @@
+{
+  "apps/admin/src/components/ProductWizard.vue": true,
+  "apps/admin/src/style.css": true,
+  "apps/portal/app/globals.css": true,
+  "apps/portal/app/page.tsx": true,
+  "apps/portal/components/product-visual.tsx": true,
+  "tests/browser/series-icons.spec.ts": true,
+  "apps/mobile/src/static/series/miding.png": true,
+  "apps/mobile/src/static/series/miyi.png": true,
+  "apps/mobile/src/static/series/mishu.png": true,
+  "apps/mobile/src/static/series/ai.png": true,
+  "apps/admin/public/series/ai.png": true,
+  "apps/admin/public/series/miding.png": true,
+  "apps/admin/public/series/mishu.png": true,
+  "apps/admin/public/series/miyi.png": true,
+  "apps/portal/public/series/ai.png": true,
+  "apps/portal/public/series/miding.png": true,
+  "apps/portal/public/series/mishu.png": true,
+  "apps/portal/public/series/miyi.png": true
+}

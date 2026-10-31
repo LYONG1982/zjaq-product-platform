@@ -102,20 +102,20 @@ for (const width of [375, 390, 414, 430]) {
     await page.setViewportSize({ width, height: 844 });
     await page.goto(urls.h5 + "/#/pages/home/index");
     await expect(page.locator(".series-card")).toHaveCount(4);
-    await expect(page.locator(".series-name")).toHaveText(series.map(item => item.name));
+    await expect(page.locator(".v2-series-name")).toHaveText(series.map(item => item.shortName));
     for (const item of series) {
-      const card = page.locator(".series-card").filter({ hasText: item.name });
-      await expect(card).toHaveAttribute("aria-label", `${item.name}，${series.indexOf(item) + 1} 款产品，查看系列`);
+      const card = page.locator(".series-card").filter({ hasText: item.shortName });
+      await expect(card).toHaveAttribute("aria-label", `${item.shortName}，${series.indexOf(item) + 1} 款产品，查看系列`);
       const image = card.locator("img");
-      await expect(image).toHaveAttribute("src", `/static/series/${item.id}.png`);
-      await decodedImage(image);
+      await expect(image).toHaveAttribute("src", `/static/h5/series/${item.id}.svg`);
+      await decodedImage(image, 384);
     }
     await homeFits(page);
     await page.screenshot({ path: testInfo.outputPath(`series-home-${width}.png`), fullPage: true });
     for (const item of series) {
-      await page.locator(".series-card").filter({ hasText: item.name }).click();
+      await page.locator(".series-card").filter({ hasText: item.shortName }).click();
       await expect(page).toHaveURL(/pages\/products\/index/);
-      await expect(page.locator(".category-row .selected")).toHaveText(item.name);
+      await expect(page.locator(".v2-hero-name")).toHaveText(item.shortName);
       await expect(page.locator(".product-card").filter({ hasText: "【图标】" + item.shortName })).toBeVisible();
       await page.goto(urls.h5 + "/#/pages/home/index");
       await expect(page.locator(".series-card")).toHaveCount(4);

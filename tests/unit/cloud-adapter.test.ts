@@ -444,7 +444,12 @@ test("site banner changes persist and serialize under the CloudBase transaction 
     assert.equal(results.filter((r) => r.status === "fulfilled").length, 1);
     assert.equal(results.filter((r) => r.status === "rejected").length, 1);
     backend = new CloudBackend(repo, identity, storage);
-    assert.deepEqual(await backend.siteBanner(), { version: 1, imageData, link: "/pages/products/index", startsAt: null, endsAt: null, introduction: null, introLink: null });
+    const banner = await backend.siteBanner();
+    assert.equal(banner.version, 1);
+    assert.deepEqual(banner.items.map(item => item.id), ["default", "legacy"]);
+    assert.equal(banner.items[0].link, null);
+    assert.equal(banner.imageData, imageData);
+    assert.equal(banner.link, "/pages/products/index");
     assert.equal((await repo.list<{ action: string }>("audit")).filter((e) => e.action === "UPDATE_SITE_BANNER").length, 1);
   });
 });

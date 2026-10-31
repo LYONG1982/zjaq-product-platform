@@ -25,12 +25,12 @@ defineExpose({ reload });
 </script>
 <template>
   <view v-if="contact" class="contact-block">
-    <text class="contact-title">联系方式</text>
+    <text class="contact-title"><!-- #ifdef H5 -->与我们联系<!-- #endif --><!-- #ifndef H5 -->联系方式<!-- #endif --></text>
     <view class="contact-qrs">
       <view class="contact-qr"><image v-if="officialPath && !failedOfficial" :src="officialPath" mode="aspectFit" alt="官方公众号二维码" @error="failedOfficial = true" /><view v-else class="placeholder">暂未配置</view><text>官方公众号</text></view>
       <view class="contact-qr"><image v-if="servicePath && !failedService" :src="servicePath" mode="aspectFit" alt="客服微信二维码" @error="failedService = true" /><view v-else class="placeholder">暂未配置</view><text>客服微信</text></view>
     </view>
-    <view class="contact-phone"><view><text>官方电话</text><text class="number">{{ contact.phone || '暂未配置' }}</text></view><button role="button" :tabindex="contact.phone ? 0 : -1" :disabled="!contact.phone" @click="call" @keydown="onCallKey">拨打</button></view>
+    <view class="contact-phone"><view><text>官方电话</text><text class="number">{{ contact.phone || '暂未配置' }}</text></view><button role="button" :tabindex="contact.phone ? 0 : -1" :disabled="!contact.phone" @click="call" @keydown="onCallKey"><!-- #ifdef H5 -->拨打电话 ↗<!-- #endif --><!-- #ifndef H5 -->拨打<!-- #endif --></button></view>
   </view>
 </template>
 <style scoped>

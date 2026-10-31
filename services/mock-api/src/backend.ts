@@ -4,7 +4,7 @@ import { requireValue } from "./errors";
 import { MockStore } from "./store";
 import { salesIdentity } from "../../domain/src/identity";
 import { actorContext } from "../../domain/src/identity";
-import { bannerFields, emptySiteBanner, validateSiteBanner } from "../../domain/src/site-banner";
+import { bannerFields, emptySiteBanner, normalizeSiteBanner, validateSiteBanner } from "../../domain/src/site-banner";
 import { emptySiteContact, validateSiteContact } from "../../domain/src/site-contact";
 import { validateFeedback } from "../../domain/src/feedback";
 import { emptyAnalyticsSettings, validateAnalyticsSettings, validateAnalyticsView, analyticsRecord, analyticsKey, recentAnalytics, type StoredAnalyticsEvent, type AnalyticsCapture } from "../../domain/src/analytics";
@@ -80,7 +80,7 @@ export function mockBackend(store: MockStore, env: NodeJS.ProcessEnv): Backend {
     salesManifest: bind("salesManifest"),
     salesPreviewAsset: bind("salesPreviewAsset"),
     salesSourceAsset: bind("salesSourceAsset"),
-    siteBanner: () => structuredClone(banner),
+    siteBanner: () => structuredClone(normalizeSiteBanner(banner as typeof banner & Record<string, unknown>)),
     siteContact: () => structuredClone(contact),
     submitFeedback(body, ip) {
       const data = validateFeedback(body), hour = Math.floor(Date.now() / 3600000), key = `${ip}:${hour}`;
@@ -107,7 +107,7 @@ export function mockBackend(store: MockStore, env: NodeJS.ProcessEnv): Backend {
       requireValue(actor?.role === "ADMIN", 403, "FORBIDDEN", "仅管理员可维护 Banner");
       const data = await validateSiteBanner(body);
       requireValue(data.expectedVersion === banner.version, 409, "VERSION_CONFLICT", "Banner 已被修改，请重新读取");
-      banner = { version: banner.version + 1, ...bannerFields(data) };
+      banner = { version: banner.version + 1, ...bannerFields(data, banner) };
       store.events.push({ eventId: randomUUID(), actorId: actor.userId, actorName: actor.displayName, action: "UPDATE_SITE_BANNER", targetId: "site-banner", requestId, createdAt: new Date().toISOString(), draftVersion: null, publicationVersion: null, releaseSequence: null });
       return structuredClone(banner);
     },

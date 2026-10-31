@@ -1335,7 +1335,7 @@ paths:
                 $ref: ./domain.schema.json#/$defs/Error
     put:
       operationId: updateAdminSiteBanner
-      summary: 管理员替换或移除首页 Banner。
+      summary: 管理员维护首页默认 Banner 与自定义 Banner 列表。
       tags:
         - admin
       security:
@@ -1349,7 +1349,7 @@ paths:
               $ref: ./domain.schema.json#/$defs/SiteBannerWrite
       responses:
         '200':
-          description: Banner 配置。
+          description: Banner 配置。默认首张固定保留；自定义页最多五张。
           content:
             application/json:
               schema:
@@ -1378,6 +1378,24 @@ paths:
             application/json:
               schema:
                 $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/catalog/site-banner/default-image:
+    get:
+      operationId: getDefaultSiteBannerImage
+      summary: 获取内置默认首页 Banner 图片。
+      tags:
+        - catalog
+      security: []
+      x-required-role: public
+      responses:
+        '200':
+          description: 默认 Banner 原图。
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: 内置默认 Banner 素材缺失。
   /api/v1/catalog/site-contact:
     get:
       operationId: getPublicSiteContact

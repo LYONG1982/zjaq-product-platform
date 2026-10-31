@@ -58,6 +58,7 @@ export interface Responses {
   AdminUserResponse: AdminUserResponse;
   AdminUserListResponse: AdminUserListResponse;
   SiteBanner: SiteBanner;
+  SiteBannerItem: SiteBannerItem;
   SiteBannerResponse: SiteBannerResponse;
   SiteContact: SiteContact;
   SiteContactResponse: SiteContactResponse;
@@ -818,6 +819,11 @@ export interface AdminUserListResponse {
  */
 export interface SiteBanner {
   version: number;
+  /**
+   * @minItems 1
+   * @maxItems 6
+   */
+  items: SiteBannerItem[];
   imageData: string | null;
   link: string | null;
   startsAt?: string | null;
@@ -825,6 +831,19 @@ export interface SiteBanner {
   introduction?: string | null;
   introLink?: string | null;
   refreshAfterSeconds?: number;
+}
+/**
+ * This interface was referenced by `Responses`'s JSON-Schema
+ * via the `definition` "SiteBannerItem".
+ */
+export interface SiteBannerItem {
+  id: string;
+  isDefault: boolean;
+  imagePath: string | null;
+  imageData: string | null;
+  link: string | null;
+  startsAt: string | null;
+  endsAt: string | null;
 }
 /**
  * This interface was referenced by `Responses`'s JSON-Schema

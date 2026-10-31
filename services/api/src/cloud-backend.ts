@@ -5,7 +5,7 @@ import type { Backend, Query } from "../../domain/src/backend";
 import { filters } from "../../domain/src/backend";
 import { DomainEngine, type Release, type Meta } from "../../domain/src/engine";
 import { actorContext } from "../../domain/src/identity";
-import { bannerFields, emptySiteBanner, validateSiteBanner } from "../../domain/src/site-banner";
+import { bannerFields, emptySiteBanner, normalizeSiteBanner, validateSiteBanner } from "../../domain/src/site-banner";
 import { emptySiteContact, validateSiteContact } from "../../domain/src/site-contact";
 import { emptyAnalyticsSettings, validateAnalyticsSettings, validateAnalyticsView, analyticsRecord, analyticsKey, recentAnalytics, type StoredAnalyticsEvent, type AnalyticsCapture } from "../../domain/src/analytics";
 import { validateFeedback } from "../../domain/src/feedback";
@@ -152,7 +152,7 @@ export class CloudBackend implements Backend {
     return recentAnalytics(rows);
   }
   async siteBanner() {
-    return (await this.repo.get<Responses["SiteBanner"]>("control", "site-banner")) ?? emptySiteBanner();
+    return normalizeSiteBanner(((await this.repo.get<Responses["SiteBanner"]>("control", "site-banner")) ?? emptySiteBanner()) as Responses["SiteBanner"] & Record<string, unknown>);
   }
   async submitFeedback(body: unknown, ip: string) {
     const data = validateFeedback(body), hour = Math.floor(Date.now() / 3600000), rateId = "feedback-" + hash(ip + ":" + hour);
@@ -198,7 +198,7 @@ export class CloudBackend implements Backend {
       requireValue(actor.role === "ADMIN", 403, "FORBIDDEN", "仅管理员可维护 Banner");
       const current = (await tx.get<Responses["SiteBanner"]>("control", "site-banner")) ?? emptySiteBanner();
       requireValue(current.version === data.expectedVersion, 409, "VERSION_CONFLICT", "Banner 已被修改，请重新读取");
-      const next = { version: current.version + 1, ...bannerFields(data) };
+      const next = { version: current.version + 1, ...bannerFields(data, current) };
       await advance(tx);
       await tx.set("control", "site-banner", next);
       const eventId = randomUUID();

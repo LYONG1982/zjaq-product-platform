@@ -45,6 +45,7 @@ export interface Domain {
   AdminUserWrite: AdminUserWrite;
   Error: Error;
   SiteBannerWrite: SiteBannerWrite;
+  SiteBannerItemWrite: SiteBannerItemWrite;
   SiteContactWrite: SiteContactWrite;
   FeedbackSubmit: FeedbackSubmit;
   AnalyticsSettingsWrite: AnalyticsSettingsWrite;
@@ -251,12 +252,28 @@ export interface Error {
  */
 export interface SiteBannerWrite {
   expectedVersion: number;
-  imageData: string | null;
-  link: string | null;
+  /**
+   * @minItems 1
+   * @maxItems 6
+   */
+  items?: SiteBannerItemWrite[];
+  imageData?: string | null;
+  link?: string | null;
   startsAt?: string | null;
   endsAt?: string | null;
   introduction?: string | null;
   introLink?: string | null;
+}
+/**
+ * This interface was referenced by `Domain`'s JSON-Schema
+ * via the `definition` "SiteBannerItemWrite".
+ */
+export interface SiteBannerItemWrite {
+  id: string;
+  imageData: string | null;
+  link: string | null;
+  startsAt: string | null;
+  endsAt: string | null;
 }
 /**
  * This interface was referenced by `Domain`'s JSON-Schema

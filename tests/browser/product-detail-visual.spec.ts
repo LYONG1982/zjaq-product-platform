@@ -72,7 +72,7 @@ async function fixture(page: Page, options: FixtureOptions = {}) {
 
 async function noOverflow(page: Page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
-  for (const selector of [".detail-intro", ".detail-title", ".detail-intro .paragraph", ".feature-tags", ".capability-tag", ".contact-phone"]) {
+  for (const selector of [".v2-detail-intro", ".detail-title", ".v2-model", ".feature-tags", ".capability-card", ".contact-phone"]) {
     for (const node of await page.locator(selector).all()) {
       expect(await node.evaluate(element => element.scrollWidth <= element.clientWidth + 1), selector + " must not clip long content").toBe(true);
     }
@@ -89,16 +89,16 @@ for (const width of [375, 390, 414, 430]) {
     await fixture(page, { product: long });
     await page.setViewportSize({ width, height: 844 });
     await page.goto(detailUrl());
-    const detail = page.locator(".detail-page");
+    const detail = page.locator(".v2-detail");
     await expect(page.locator(".detail-title")).toHaveText(long.name);
-    await expect(page.locator(".detail-intro .paragraph")).toHaveText("产品型号：" + long.model);
+    await expect(page.locator(".v2-model")).toHaveText("产品型号：" + long.model);
     const expectedText = [
-      long.category.name, long.name, long.model, long.tagline,
+      "密鼎", long.name, long.model, long.tagline,
       "第一段  保留原有空格与文字。", "第二段介绍保持自然换行。", long.audiences,
       ...long.problemValues.flatMap(item => [item.title, item.text]),
       long.scenarios[0].title, long.scenarios[0].text, ...long.features.map(item => item.title),
       "本地样例展示图", "输入说明", long.technical.inputs, "人工复核与限制", long.technical.humanReview,
-      ...long.materials.map(item => item.name), "官方公众号", "客服微信", "官方电话", contact.phone!,
+      ...long.materials.map(item => item.name), "官方公众号", "客服微信", contact.phone!,
     ];
     // Check each expected string independently: intervening labels and sections
     // are intentional, and multiple spaces in the original summary must survive.
@@ -106,29 +106,27 @@ for (const width of [375, 390, 414, 430]) {
       await expect(detail).toContainText(value);
     }
     await expect(detail.locator(".section-title")).toHaveText([
-      "产品介绍", "问题与价值", "应用场景", "核心能力", "产品展示", "技术与使用说明", "产品资料",
+      "01  产品介绍", "02  解决什么问题", "03  核心能力", "04  适用场景", "产品展示", "05  当前资料", "06  技术与使用说明",
     ]);
     await expect(page.locator(".media-list .section-title")).toHaveCSS("font-size", "20px");
-    await expect(page.locator(".media-list .section-title")).toHaveCSS("color", "rgb(22, 93, 255)");
+    await expect(page.locator(".media-list .section-title")).toHaveCSS("color", "rgb(18, 43, 73)");
     const paragraphs = page.locator(".product-introduction .summary");
     await expect(paragraphs).toHaveCount(2);
     expect(await paragraphs.first().textContent()).toBe("第一段  保留原有空格与文字。");
     for (const paragraph of await paragraphs.all()) {
-      await expect(paragraph).toHaveCSS("font-size", "16px");
-      await expect(paragraph).toHaveCSS("text-indent", "32px");
+      await expect(paragraph).toHaveCSS("font-size", "14px");
+      await expect(paragraph).toHaveCSS("text-indent", "0px");
       await expect(paragraph).toHaveCSS("white-space", "pre-wrap");
     }
     await expect(page.locator(".section-nav uni-button")).toHaveText(["价值", "能力", "场景", "资料"]);
     const positions = await page.locator(".section-nav uni-button").evaluateAll(nodes => nodes.map(node => node.getBoundingClientRect().top));
     expect(Math.max(...positions) - Math.min(...positions)).toBeLessThanOrEqual(1);
-    for (const button of await page.locator(".view-materials, .section-nav uni-button, .capability-tag, .contact-phone uni-button").all()) {
+    for (const button of await page.locator(".view-materials, .section-nav uni-button, .capability-card, .contact-phone uni-button").all()) {
       const box = await button.boundingBox();
       expect(box!.height).toBeGreaterThanOrEqual(44);
       expect(box!.width).toBeGreaterThanOrEqual(44);
     }
-    await expect(page.locator(".material-meta")).toHaveText([
-      "V2.3 · 图片 · 2 页 · 2026-10-28", "V1.2 · PDF · 3 页 · 2026-10-27", "V1.0 · 视频 · 2026-10-26",
-    ]);
+    await expect(page.locator(".v2-material-top")).toHaveText(["图集V2.3 · 2 页", "PDFV1.2 · 3 页", "视频V1.0"]);
     await expect(page.locator(".contact-qr .placeholder")).toHaveCount(2);
     await noOverflow(page);
     await page.screenshot({ path: testInfo.outputPath(`detail-${width}.png`), fullPage: true });
@@ -154,17 +152,17 @@ test("detail keeps anchors, capability modal, image preview, phone binding and b
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(urls.h5 + "/#/pages/products/index");
   await page.locator(".search input").fill("视觉验证");
-  await page.locator(".search uni-button").filter({ hasText: "搜索" }).click();
+  await page.getByRole("button", {name:"搜索",exact:true}).click();
   const card = page.locator(".product-card").filter({ hasText: product.name.slice(0, 12) });
   await card.click();
   await expect(page.locator(".detail-title")).toHaveText(product.name);
-  await page.locator(".view-materials").click();
+  await page.locator(".section-nav uni-button").filter({hasText:"资料"}).click();
   await expect(page.locator("#section-materials .section-title")).toBeInViewport();
   for (const [label, section] of [["价值", "problemValues"], ["能力", "features"], ["场景", "scenarios"], ["资料", "materials"]]) {
     await page.locator(".section-nav uni-button").filter({ hasText: label }).click();
     await expect(page.locator("#section-" + section + " .section-title")).toBeInViewport();
   }
-  await page.locator(".capability-tag").first().click();
+  await page.locator(".capability-card").first().click();
   await expect(page.locator(".uni-modal__title")).toHaveText(product.features[0].title);
   await expect(page.locator(".uni-modal__bd")).toHaveText(product.features[0].text);
   // The framework localizes its single confirmation action to the browser locale.
@@ -183,26 +181,24 @@ test("detail keeps anchors, capability modal, image preview, phone binding and b
   await page.keyboard.press("Space");
   expect(await page.evaluate(() => (window as unknown as { __visualPhones: string[] }).__visualPhones)).toEqual(["4006850800", "4006850800", "4006850800"]);
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await expect(page.locator(".view-materials")).toHaveCSS("transition-duration", "0s");
+  await expect(page.locator(".section-nav")).toHaveCSS("transition-duration", "0s");
   await page.locator(".material-card").filter({ hasText: "视觉验收分页图集" }).click();
   await expect(page).toHaveURL(/pages\/viewer\/index\?productId=/);
   const image = page.locator("#preview-surface img");
   await expect(image).toBeVisible();
   expect(await image.evaluate(node => (node as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
-  await page.locator(".controls uni-button").filter({ hasText: "下一页" }).click();
-  await expect(page.locator(".controls input").first()).toHaveValue("2");
+  await page.locator(".v2-view-controls uni-button").filter({ hasText: "下一页" }).click();
+  await expect(page.locator(".v2-view-controls input").first()).toHaveValue("2");
   await expect(image).toBeVisible();
-  await expect(page.locator(".controls uni-button").filter({ hasText: "下一页" })).toHaveAttribute("disabled", "true");
-  await page.locator(".viewer-navigation uni-button").filter({ hasText: "返回上一页" }).click();
+  await expect(page.locator(".v2-view-controls uni-button").filter({ hasText: "下一页" })).toHaveAttribute("disabled", "true");
+  await page.getByRole("button", {name:"返回上一页",exact:true}).click();
   await expect(page.locator(".detail-title")).toHaveText(product.name);
-  await page.locator(".back-link").click();
+  await page.locator(".v2-detail-header uni-button").click();
   await expect(page).toHaveURL(/pages\/products\/index/);
   await expect(page.locator(".search input")).toHaveValue("视觉验证");
   await card.click();
   await expect(page.locator(".detail-title")).toHaveText(product.name);
-  const nativeBack = page.locator("uni-page-head .uni-page-head-btn");
-  await expect(nativeBack).toHaveCount(1);
-  await nativeBack.click();
+  await page.goBack();
   await expect(page).toHaveURL(/pages\/products\/index/);
   await expect(page.locator(".search input")).toHaveValue("视觉验证");
 });
@@ -250,16 +246,16 @@ test("detail loading, retry, absent sections, empty materials and failed images 
   await noOverflow(page);
 });
 
-test("detail-only contact styling does not alter the shared home contact block", async ({ page }) => {
+test("V2 home keeps configured contact content with updated card styling", async ({ page }) => {
   await fixture(page);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(urls.h5);
   const block = page.locator(".contact-block");
   await expect(block).toBeVisible();
-  await expect(block).toHaveCSS("padding", "16px");
-  await expect(block).toHaveCSS("border-radius", "12px");
+  await expect(block).toHaveCSS("padding", "20px");
+  await expect(block).toHaveCSS("border-radius", "24px");
   await expect(block.locator(".contact-title")).toHaveCSS("font-size", "18px");
-  await expect(block.locator(".contact-phone uni-button")).toHaveCSS("line-height", "38px");
+  await expect(block.locator(".contact-phone uni-button")).toHaveCSS("line-height", "24px");
   await expect(block.locator(".contact-phone .number")).toHaveText(contact.phone!);
   await expect(block.locator(".placeholder")).toHaveCount(2);
 });

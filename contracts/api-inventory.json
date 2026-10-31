@@ -360,6 +360,16 @@
     "role": "ADMIN"
   },
   {
+    "method": "get",
+    "path": "/api/v1/catalog/site-banner/default-image",
+    "operationId": "getDefaultSiteBannerImage",
+    "description": "获取内置默认首页 Banner 图片。",
+    "admin": false,
+    "request": null,
+    "response": "Binary",
+    "role": "public"
+  },
+  {
     "method": "put",
     "path": "/api/v1/admin/site-banner",
     "operationId": "updateAdminSiteBanner",

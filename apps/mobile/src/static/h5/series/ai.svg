@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="384" height="280" viewBox="0 0 384 280" role="img" aria-labelledby="ai-accessible-title ai-accessible-description">
+<defs><linearGradient id="ai-background-fill" x1="0" y1="0" x2="384" y2="280" gradientUnits="userSpaceOnUse"><stop stop-color="#F1F8FF" /><stop offset="1" stop-color="#E7F5FC" /></linearGradient></defs>
+<g id="ai-background" data-layer="background"><rect x="0.65" y="0.65" width="382.7" height="278.7" rx="27.35" fill="url(#ai-background-fill)" stroke="#D7E9F7" stroke-width="1.3" /></g>
+<g id="ai-illustration" data-layer="illustration" transform="translate(22 12) scale(1.04)"><g id="ai-art" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M53 50H32V34M115 53h25V33M115 96h26v20" fill="none" stroke="#8EA9E7" stroke-width="2.8" />
+  <circle cx="32" cy="28" r="8" fill="#DDF5FA" stroke="#61C8DE" stroke-width="2.8" />
+  <circle cx="140" cy="27" r="7" fill="#E4EDFF" stroke="#516CF4" stroke-width="2.8" />
+  <circle cx="141" cy="122" r="7" fill="#DDF5FA" stroke="#61C8DE" stroke-width="2.8" />
+  <path d="M68 30v10M83 30v10M98 30v10M68 108v10M83 108v10M98 108v10M40 61h10M40 76h10M40 91h10M116 68h10M116 82h10" fill="none" stroke="#516CF4" stroke-width="3.2" />
+  <rect x="52" y="44" width="68" height="68" rx="16" fill="#C9D9F9" opacity=".55" />
+  <rect x="47" y="39" width="68" height="68" rx="16" fill="#F8FBFF" stroke="#516CF4" stroke-width="2.8" />
+  <rect x="56" y="48" width="50" height="50" rx="11" fill="#E4EDFF" />
+  <path d="M81 54c3.5 12 7 15.5 19 19-12 3.5-15.5 7-19 19-3.5-12-7-15.5-19-19 12-3.5 15.5-7 19-19Z" fill="#516CF4" />
+  <path d="M81 54c3.5 12 7 15.5 19 19H81Z" fill="#61C8DE" />
+</g></g>
+<g id="ai-navigation" data-layer="navigation" fill="none" stroke="#2869F5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m332 54 20-20M333 34h19v19" /></g>
+</svg>

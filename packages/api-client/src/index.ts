@@ -112,6 +112,7 @@ export function createClient(
     analyticsEvents: (q: Record<string, string | number | undefined> = {}) => get<Responses["AnalyticsEventListResponse"]>("/admin/analytics/events", q),
     analyticsSummary: () => get<Responses["AnalyticsSummaryResponse"]>("/admin/analytics/summary"),
     publicSiteBanner: () => get<Responses["SiteBannerResponse"]>("/catalog/site-banner"),
+    siteBannerDefaultImageUrl: () => base + "/catalog/site-banner/default-image",
     adminSiteBanner: () => get<Responses["SiteBannerResponse"]>("/admin/site-banner"),
     updateSiteBanner: (body: Domain["SiteBannerWrite"]) => write<Responses["SiteBanner"]>("PUT", "/admin/site-banner", body),
     publicSiteContact: () => get<Responses["SiteContactResponse"]>("/catalog/site-contact"),

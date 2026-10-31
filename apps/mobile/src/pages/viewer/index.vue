@@ -28,6 +28,7 @@ let productId = "",
   disposed = false,
   sequence = 0;
 const fail = (e: unknown) => {
+  videoPaused();
   videoPath.value = "";
   error.value = e instanceof Error ? e.message : "预览失败，请重试";
   imagePath.value = "";
@@ -117,6 +118,10 @@ async function videoStarted() {
   if (!videoCheck) videoCheck = setInterval(() => { void check().catch(fail); }, 15000);
 }
 function videoPaused() { if (videoCheck) clearInterval(videoCheck); videoCheck = undefined; }
+function pageInput(event: unknown) {
+  const detail = (event as { detail?: unknown }).detail;
+  if (detail && typeof detail === 'object' && 'value' in detail) void turn(Number(detail.value));
+}
 async function turn(n: number) {
   if (!Number.isFinite(n) || !Number.isInteger(n) || loading.value) return;
   page.value = Math.max(1, Math.min(manifest.value?.pageCount ?? 1, n));
@@ -194,10 +199,30 @@ onUnload(() => {
 });
 </script>
 <template>
+<!-- #ifdef H5 -->
+  <view class="h5-v2 v2-viewer">
+    <view class="v2-viewer-header"><button role="button" tabindex="0" @click="backToSource(source)" aria-label="返回上一页">← 资料预览</button><text class="v2-demo">本地演示</text></view>
+    <view class="v2-viewer-title"><text>{{ manifest?.name ?? '资料预览' }}</text><text class="version">{{ manifest ? (manifest.previewKind === 'pdf' ? 'PDF' : manifest.previewKind === 'video' ? '视频' : '图集') + ' / ' + manifest.versionLabel + (manifest.previewKind === 'video' ? '' : ' / 共 ' + manifest.pageCount + ' 页') : '' }}</text></view>
+    <view v-if="error" class="v2-viewer-error" role="alert"><text>{{ error }}</text><button role="button" tabindex="0" @click="open">重新打开</button></view>
+    <view v-show="!error">
+      <video v-if="manifest?.previewKind === 'video' && videoPath" :src="videoPath" controls :autoplay="false" :show-center-play-btn="true" class="material-video" @play="videoStarted" @pause="videoPaused" @ended="videoPaused" @error="fail(new Error('此终端无法播放该视频或资料已更新；请重试，或联系管理员提供兼容的 MP4。'))" />
+      <text v-if="loading" class="v2-viewer-loading" role="status">正在读取…</text>
+      <view id="preview-surface" class="surface" v-show="manifest?.previewKind !== 'video'" />
+      <view v-if="manifest?.previewKind !== 'video'" class="v2-view-controls"><button role="button" tabindex="0" :disabled="loading || page <= 1" @click="turn(page - 1)">上一页</button><view class="v2-page-input"><input type="number" :value="String(page)" aria-label="页码" :disabled="loading" @confirm="pageInput" @blur="pageInput" /><text>/ {{ manifest?.pageCount ?? '—' }}</text></view><button role="button" tabindex="0" class="v2-next-page" :disabled="loading || page >= (manifest?.pageCount ?? 1)" @click="turn(page + 1)">下一页</button></view>
+      <view v-if="manifest?.previewKind !== 'video'" class="v2-zoom-controls"><button role="button" tabindex="0" :disabled="loading || zoom <= 0.5" @click="zoom = Math.max(0.5, zoom - 0.25); render()">− 缩小</button><text>{{ Math.round(zoom * 100) }}%</text><button role="button" tabindex="0" :disabled="loading || zoom >= 2.5" @click="zoom = Math.min(2.5, zoom + 0.25); render()">放大 +</button></view>
+      <text v-if="manifest && !loading" class="v2-current-version">正在查看当前发布版本</text>
+      <button role="button" tabindex="0" class="v2-owner-product" @click="openProduct">查看所属产品 ↗</button>
+      <AnalyticsNotice ref="analyticsNotice" />
+    </view>
+  </view>
+
+<!-- #endif -->
+<!-- #ifndef H5 -->
+
   <view class="viewer"
     ><view class="viewer-navigation"
-      ><button @click="backToSource(source)">← 返回上一页</button
-      ><button v-if="!source.startsWith('/pages/detail/')" @click="openProduct">
+      ><button role="button" tabindex="0" @click="backToSource(source)">← 返回上一页</button
+      ><button role="button" tabindex="0" v-if="!source.startsWith('/pages/detail/')" @click="openProduct">
         查看所属产品
       </button></view
     ><view class="viewer-title"
@@ -205,12 +230,12 @@ onUnload(() => {
       ><text class="version">{{ manifest?.versionLabel }}</text></view
     ><AnalyticsNotice ref="analyticsNotice" /><view v-if="error" class="error" role="alert"
       ><text>{{ error }}</text
-      ><button @click="open">重新打开</button></view
+      ><button role="button" tabindex="0" @click="open">重新打开</button></view
     ><view v-show="!error"
       ><view
         v-if="manifest?.previewKind !== 'video' && (!native || manifest?.previewKind === 'images')"
         class="controls"
-        ><button :disabled="loading || page <= 1" @click="turn(page - 1)">
+        ><button role="button" tabindex="0" :disabled="loading || page <= 1" @click="turn(page - 1)">
           上一页</button
         ><input
           type="number"
@@ -219,14 +244,14 @@ onUnload(() => {
           :disabled="loading"
           @confirm="turn(Number($event.detail.value))"
         /><text>/ {{ manifest?.pageCount ?? "—" }}</text
-        ><button
+        ><button role="button" tabindex="0"
           :disabled="loading || page >= (manifest?.pageCount ?? 1)"
           @click="turn(page + 1)"
         >
           下一页
         </button></view
       ><view v-if="!native && manifest?.previewKind !== 'video'" class="controls"
-        ><button
+        ><button role="button" tabindex="0"
           :disabled="loading || zoom <= 0.5"
           @click="
             zoom = Math.max(0.5, zoom - 0.25);
@@ -235,7 +260,7 @@ onUnload(() => {
         >
           缩小</button
         ><text>{{ Math.round(zoom * 100) }}%</text
-        ><button
+        ><button role="button" tabindex="0"
           :disabled="loading || zoom >= 2.5"
           @click="
             zoom = Math.min(2.5, zoom + 0.25);
@@ -257,10 +282,12 @@ onUnload(() => {
         @error="fail(new Error('图片载入失败，请重试'))"
       /><view v-if="manifest?.previewKind === 'pdf'" class="native-pdf"
         ><text>使用微信预览 PDF</text
-        ><button :disabled="loading" @click="nativePdf">打开资料</button></view
+        ><button role="button" tabindex="0" :disabled="loading" @click="nativePdf">打开资料</button></view
       ><!-- #endif --></view
     ></view
   >
+
+<!-- #endif -->
 </template>
 <style scoped>
 .viewer {

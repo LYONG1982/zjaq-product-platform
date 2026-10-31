@@ -1,0 +1,92 @@
+[
+  {
+    "path": "apps/mobile/src/static/h5/brand/default-banner.png",
+    "bytes": 1593894,
+    "sha256": "7900797454610182f6dbdbc5f7d9332dbb17c564e227a37fedd0868c92207359"
+  },
+  {
+    "path": "apps/mobile/src/static/h5/brand/zhongji-security-logo.png",
+    "bytes": 787903,
+    "sha256": "805c27ec4ebba01b37351f7071d7a00eb32fabda75c31e844ba88fbda7463c3c"
+  },
+  {
+    "path": "apps/mobile/src/static/h5/figma/196d7.svg",
+    "bytes": 1291,
+    "sha256": "cb0425fd83cf8a72cbfa79af052cddbb0c64295a1622339e9117e2f51b505024"
+  },
+  {
+    "path": "apps/mobile/src/static/h5/figma/39878.svg",
+    "bytes": 1521,
+    "sha256": "1eeb3a3912eb7d6c73874210f70223880c0e2e670590ea75a38b70c6778da21a"
+  },
+  {
+    "path": "apps/mobile/src/static/h5/figma/4e096.svg",
+    "bytes": 1720,
+    "sha256": "fec357e601d353761452c80111a22503d548f9a74257d61e5af4464e3186df0d"
+  },
+  {
+    "path": "apps/mobile/src/static/h5/figma/635af.svg",
+    "bytes": 554,
+    "sha256": "91ab0ccd91be3399b585155191817fd82545770ebf13e31bf472f816853c7996"
+  },
+  {
+    "path": "apps/mobile/src/static/h5/figma/6c53b.svg",
+    "bytes": 1521,
+    "sha256": "cea8fd41df94ec80272200c0187a45a9cf7beab1cb075f324d7560bbf6d0881c"
+  },
+  {
+    "path": "apps/mobile/src/static/h5/figma/70e58.svg",
+    "bytes": 430,
+    "sha256": "e5ad560d6a2ea7abe5e201a4d91fd24095981fd197f32fab1a54b50b6a9d5c17"
+  },
+  {
+    "path": "apps/mobile/src/static/h5/figma/784af.svg",
+    "bytes": 554,
+    "sha256": "74f89abb580423791f0738cca69dc3479df4548df7681ded331c518b467b3bad"
+  },
+  {
+    "path": "apps/mobile/src/static/h5/figma/c1c00.svg",
+    "bytes": 627,
+    "sha256": "efd7979bc760a12d9fa6bd9bc4d436536534f9d1b65f8c22d951dfa52be84380"
+  },
+  {
+    "path": "apps/mobile/src/static/h5/figma/c2bc2.svg",
+    "bytes": 1304,
+    "sha256": "e8d1ed969cec8e2619d2d2b7d6c169a4f7ba9da0175e5e918811c23b073cedae"
+  },
+  {
+    "path": "apps/mobile/src/static/h5/figma/e60fd.svg",
+    "bytes": 559,
+    "sha256": "e3338a5f2dda1c06195012684ad211e450bf2ad39df85037c1835fb15cc43bd6"
+  },
+  {
+    "path": "apps/mobile/src/static/h5/figma/f9fc2.svg",
+    "bytes": 430,
+    "sha256": "af1a046ed6144e9ef9b8c0461c10168fa6cfdc490ee78e16da608f4a88b653d3"
+  },
+  {
+    "path": "apps/mobile/src/static/h5/series/ai.svg",
+    "bytes": 1876,
+    "sha256": "f416c0e16b0ab9ab3d91a49f4b48f209823dbc5152d2fe5fe37f19cd3ce7e860"
+  },
+  {
+    "path": "apps/mobile/src/static/h5/series/miding.svg",
+    "bytes": 2453,
+    "sha256": "a408548b6bf8162e92a76fb24dd39d4da2baeae96649c72a4ed2fbbc17826d0b"
+  },
+  {
+    "path": "apps/mobile/src/static/h5/series/mishu.svg",
+    "bytes": 1965,
+    "sha256": "fea2fbbd6c07f4a0147db4ffaaca9171766ff08bff633f49ac408db22e5cba8f"
+  },
+  {
+    "path": "apps/mobile/src/static/h5/series/miyi.svg",
+    "bytes": 2222,
+    "sha256": "9e27d2bd9612acc6fc13e721160326057ac4ee6bf26f854b670a7a5a818c66b5"
+  },
+  {
+    "path": "services/domain/assets/default-banner.png",
+    "bytes": 1593894,
+    "sha256": "7900797454610182f6dbdbc5f7d9332dbb17c564e227a37fedd0868c92207359"
+  }
+]

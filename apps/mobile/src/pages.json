@@ -11,24 +11,36 @@
       "path": "pages/products/index",
       "style": {
         "navigationBarTitleText": "产品中心"
+        // #ifdef H5
+        ,"navigationStyle": "custom"
+        // #endif
       }
     },
     {
       "path": "pages/materials/index",
       "style": {
         "navigationBarTitleText": "资料中心"
+        // #ifdef H5
+        ,"navigationStyle": "custom"
+        // #endif
       }
     },
     {
       "path": "pages/detail/index",
       "style": {
         "navigationBarTitleText": "产品详情"
+        // #ifdef H5
+        ,"navigationStyle": "custom"
+        // #endif
       }
     },
     {
       "path": "pages/viewer/index",
       "style": {
         "navigationBarTitleText": "资料预览"
+        // #ifdef H5
+        ,"navigationStyle": "custom"
+        // #endif
       }
     },
     {

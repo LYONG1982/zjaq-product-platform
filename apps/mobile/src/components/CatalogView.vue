@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, nextTick } from "vue";
-import { api } from "../api";
+import { api, resourceUrl } from "../api";
+import { seriesIds, seriesName, seriesThemes, seriesStyle } from "../series-display";
+// #ifdef H5
+import H5BottomNav from "./H5BottomNav.vue";
+import SeriesHero from "./SeriesHero.vue";
+// #endif
 import { catalogState, openCatalog, type CatalogKind } from "../navigation";
 import ProductVisual from "./ProductVisual.vue";
 import ContactBlock from "./ContactBlock.vue";
@@ -18,7 +23,19 @@ const rows = ref<Row[]>([]),
   next = ref<string | null>(null),
   categories = ref<Responses["PublicCategory"][]>([]);
 const banner = ref<Responses["SiteBanner"] | null>(null);
-const bannerPath = ref<string | null>(null);
+type BannerSlide = { id: string; isDefault: boolean; path: string; link: string | null };
+const bannerSlides = ref<BannerSlide[]>([]), bannerIndex = ref(0);
+const currentBanner = computed(() => bannerSlides.value[bannerIndex.value]);
+let touchStart = 0;
+function swipeBanner(event: { changedTouches: ArrayLike<{ clientX: number }> }) {
+  const dx = (event.changedTouches[0]?.clientX ?? touchStart) - touchStart;
+  if (Math.abs(dx) > 35 && bannerSlides.value.length > 1) bannerIndex.value = (bannerIndex.value + (dx < 0 ? 1 : -1) + bannerSlides.value.length) % bannerSlides.value.length;
+}
+function bannerFailed() {
+  const current = currentBanner.value;
+  if (current?.isDefault) current.path = '/static/h5/brand/default-banner.png';
+  else { bannerSlides.value = bannerSlides.value.filter(x => x.id !== current?.id); bannerIndex.value = 0; }
+}
 const contactBlock = ref<InstanceType<typeof ContactBlock> | null>(null);
 let bannerSequence = 0, bannerActive = true;
 let bannerTimer: ReturnType<typeof setTimeout> | undefined;
@@ -36,14 +53,29 @@ async function reloadBanner() {
   try {
     const result = await api.publicSiteBanner(); if (current !== bannerSequence || !bannerActive) return;
     refresh = result.data.refreshAfterSeconds ?? 30;
-    const path = await siteImagePath(result.data.imageData, "banner", result.data.version);
-    if (current === bannerSequence && bannerActive) { banner.value = result.data; bannerPath.value = path; }
-  } catch { if (current === bannerSequence) { banner.value = null; bannerPath.value = null; } }
+    const configured = result.data.items;
+    const selectedId = currentBanner.value?.id;
+    const previousIds = bannerSlides.value.map(item => item.id);
+    const slides: BannerSlide[] = [];
+    for (const item of configured ?? []) {
+      // Native data images need a per-item cache slot; remote controlled resources work on both platforms.
+      const image = item.imagePath ? resourceUrl(item.imagePath) : await siteImagePath(item.imageData, `banner-${item.id}`, result.data.version);
+      if (image) slides.push({ id: item.id, isDefault: item.isDefault, path: image, link: item.link });
+    }
+    if (current === bannerSequence && bannerActive) {
+      const visibleIds = new Set(slides.map(item => item.id));
+      await Promise.all(previousIds.filter(id => !visibleIds.has(id)).map(id => siteImagePath(null, `banner-${id}`, result.data.version)));
+      if (current !== bannerSequence || !bannerActive) return;
+      bannerSlides.value = slides;
+      bannerIndex.value = Math.max(0, slides.findIndex(x => x.id === selectedId));
+    }
+    if (current === bannerSequence && bannerActive) { banner.value = result.data; }
+  } catch { if (current === bannerSequence) { banner.value = null; bannerSlides.value = []; } }
   finally { if (current === bannerSequence && bannerActive) scheduleBanner(refresh); }
 }
-const homeSeriesIds = new Set(["miding", "miyi", "mishu", "ai"]);
+const selectedCategory = computed(() => categories.value.find(c => c.id === category.value));
 const homeSeries = computed(() =>
-  categories.value.filter((category) => homeSeriesIds.has(category.id)),
+  seriesIds.map(id => categories.value.find(category => category.id === id)).filter((category): category is Responses["PublicCategory"] => !!category),
 );
 let sequence = 0,
   lastQuery = "",
@@ -141,6 +173,9 @@ async function reload(append = false, restore = false) {
   }
 }
 function displayName(name: string) {
+  // #ifdef H5
+  return name;
+  // #endif
   const chars = Array.from(name);
   return chars.length > 15 ? chars.slice(0, 15).join("") + "…" : name;
 }
@@ -165,7 +200,7 @@ function openSiteLink(link?: string | null) {
   uni.navigateTo({ url: "/pages/banner-web/index?url=" + encodeURIComponent(link) });
   // #endif
 }
-function openBanner() { openSiteLink(banner.value?.link); }
+function openBanner() { openSiteLink(currentBanner.value?.link ?? (bannerSlides.value.length ? null : banner.value?.link)); }
 function onKeyboard(event: KeyboardEvent, action: () => void) {
   // #ifdef H5
   if (event.key === "Enter" || event.key === " ") {
@@ -226,8 +261,83 @@ defineExpose({
 });
 </script>
 <template>
+  <!-- #ifdef H5 -->
+  <view :class="['h5-v2', 'v2-catalog', 'v2-kind-' + kind, { 'v2-filtered': kind === 'products' && category }]">
+    <view v-if="kind === 'home'" class="v2-brand-row">
+      <image class="brand-logo" src="/static/h5/brand/zhongji-security-logo.png" mode="aspectFit" alt="中技安全" role="img" aria-label="中技安全" />
+      <text class="v2-demo">本地演示</text>
+    </view>
+    <view v-else class="v2-page-header">
+      <button role="button" tabindex="0" v-if="kind === 'products' && category" class="v2-page-title" @click="choose('')">← 产品一览</button>
+      <text v-else class="v2-page-title">{{ kind === 'products' ? '产品一览' : '资料中心' }}</text>
+      <text class="v2-demo">本地演示</text>
+    </view>
+    <view class="v2-content">
+      <view v-if="kind === 'home' && currentBanner" class="home-banner v2-banner" @touchstart="touchStart = $event.changedTouches[0]?.clientX ?? 0" @touchend="swipeBanner">
+        <view class="v2-banner-slide" :role="currentBanner.link ? 'button' : 'img'" :tabindex="currentBanner.link ? 0 : -1" :aria-label="currentBanner.isDefault ? '中技安全产品资料库：中技于密，安全于行。专业产品体系，让沟通更高效。' : '自定义 Banner'" @click="openBanner" @keydown="onKeyboard($event, openBanner)">
+          <image :key="currentBanner.id" :src="currentBanner.path" mode="aspectFit" :alt="currentBanner.isDefault ? '中技安全产品资料库品牌 Banner' : '自定义 Banner'" @error="bannerFailed" />
+        </view>
+        <view v-if="bannerSlides.length > 1" class="v2-banner-dots" role="group" aria-label="Banner 切换">
+          <button role="button" tabindex="0" v-for="(slide, index) in bannerSlides" :key="slide.id" :aria-label="'第' + (index + 1) + '张 Banner'" :aria-pressed="bannerIndex === index" :class="{ active: bannerIndex === index }" @click.stop="bannerIndex = index"><text /></button>
+        </view>
+      </view>
+      <view v-else-if="kind === 'home'" class="v2-banner-error" role="status">Banner 暂时无法读取<button role="button" tabindex="0" @click="reloadBanner">重新加载</button></view>
+      <SeriesHero v-if="kind === 'products' && selectedCategory" :category-id="category" :name="selectedCategory.name" />
+      <text v-else-if="kind !== 'home'" class="v2-page-subtitle">{{ kind === 'products' ? '看清产品能力，找到适用场景。' : '以当前版本，支持每一次产品沟通。' }}</text>
+      <view class="search v2-search">
+        <image src="/static/h5/figma/c1c00.svg" mode="aspectFit" aria-hidden="true" />
+        <input v-model="q" :maxlength="100" confirm-type="search" :placeholder="kind === 'materials' ? '搜索资料或产品名称' : '搜索产品名称'" :aria-label="kind === 'materials' ? '搜索资料' : '搜索产品'" @confirm="search" />
+        <button role="button" tabindex="0" v-if="q" class="clear-query" aria-label="清空搜索" @click="q = ''; search()">×</button>
+        <button role="button" tabindex="0" class="v2-search-submit" aria-label="搜索" @click="search">↗</button>
+      </view>
+      <view v-if="kind !== 'home' && !(kind === 'products' && category)" class="v2-filters" role="group" aria-label="系列筛选">
+        <button role="button" tabindex="0" :class="{ selected: !category }" @click="choose('')">全部</button>
+        <button role="button" tabindex="0" v-for="c in categories" :key="c.id" :class="{ selected: category === c.id }" @click="choose(c.id)">{{ seriesName(c.id, c.name) }}</button>
+      </view>
+      <view v-if="kind === 'home'" class="v2-series-grid">
+        <button role="button" tabindex="0" v-for="c in homeSeries" :key="c.id" class="series-card v2-series-card" :aria-label="`${seriesName(c.id, c.name)}，${c.productCount} 款产品，查看系列`" @click="choose(c.id)">
+          <image :src="'/static/h5/series/' + c.id + '.svg'" mode="aspectFit" class="v2-series-art" aria-hidden="true" />
+          <view class="v2-series-labels"><view class="v2-series-line"><text class="v2-series-name">{{ seriesName(c.id, c.name) }}</text><text class="v2-series-count">{{ c.productCount }} 款</text></view><text class="v2-series-description">{{ seriesThemes[c.id]?.description }}</text></view>
+        </button>
+      </view>
+      <view v-if="kind === 'home'" class="v2-section-head"><text>产品一览</text><button role="button" tabindex="0" @click="openCatalog()">浏览全部 ↗</button></view>
+      <view v-else-if="kind === 'products' && category" class="v2-section-head"><text>{{ seriesName(category, selectedCategory?.name ?? category) }}</text><text class="v2-count">{{ selectedCategory?.productCount ?? rows.length }} 款</text></view>
+      <text v-else-if="!loading && !error" class="v2-list-count">{{ rows.length }} {{ kind === 'materials' ? '份资料' : '款产品' }}{{ next ? ' · 继续加载查看更多' : '' }}</text>
+      <view v-if="error" class="v2-empty" role="alert"><text class="v2-empty-title">暂时无法连接</text><text>{{ error }}</text><button role="button" tabindex="0" @click="reload()">重新加载</button></view>
+      <view v-else-if="loading && !rows.length" class="v2-empty" role="status">正在读取…</view>
+      <template v-else>
+        <text v-if="loading" class="v2-loading" role="status">正在读取…</text>
+        <view v-if="!rows.length" class="v2-empty"><text class="v2-empty-title">{{ kind === 'home' ? '产品资料正在整理' : q || category ? '没有找到相关内容' : '暂无发布内容' }}</text><text>{{ kind === 'home' ? '资料发布后将在这里展示。' : '试试其他关键词或系列。' }}</text><button role="button" tabindex="0" v-if="kind === 'home'" @click="openCatalog()">浏览产品 ↗</button><button role="button" tabindex="0" v-else-if="q || category" @click="clear">清除筛选</button></view>
+        <view v-else class="v2-published-list" :aria-busy="loading">
+          <template v-for="item in rows" :key="'name' in item ? item.productId : item.productId + item.material.materialId">
+            <button role="button" tabindex="0" v-if="'name' in item" class="product-card v2-product-card" :style="seriesStyle(item.categoryId)" :aria-label="item.name" @click="openProduct(item.productId)">
+              <text class="v2-series-badge">{{ seriesName(item.categoryId, item.categoryName) }}</text>
+              <ProductVisual :path="item.coverPath" :alt="item.name" :category-id="item.categoryId" />
+              <text class="published-title v2-product-title">{{ item.name }}</text><text class="published-description v2-product-description">{{ item.tagline || '产品介绍待完善' }}</text><text class="v2-product-action">查看详情 ↗</text>
+            </button>
+            <view v-else class="material-card v2-material-card" :style="seriesStyle(item.categoryId)">
+              <view class="v2-material-top"><text class="v2-format">{{ item.material.previewKind === 'pdf' ? 'PDF' : item.material.previewKind === 'video' ? '视频' : '图集' }}</text><text>{{ item.material.versionLabel }}{{ item.material.previewKind === 'video' ? '' : ' · ' + item.material.pageCount + ' 页' }}</text></view>
+              <text class="published-title v2-material-title">{{ item.material.name }}</text><button role="button" tabindex="0" class="product-link v2-material-product" @click="openProduct(item.productId)">{{ item.productName }} ↗</button>
+              <view class="v2-material-foot"><button role="button" tabindex="0" class="preview-button" @click="preview(item)">预览资料 ↗</button><text>{{ item.material.publishedAt.slice(0, 10) }}</text></view>
+            </view>
+          </template>
+          <button role="button" tabindex="0" v-if="next" class="v2-load-more" :disabled="loading" @click="reload(true)">{{ loading ? '正在读取…' : '加载更多' }}</button>
+        </view>
+      </template>
+      <view v-if="kind === 'home' && banner?.introduction" class="v2-brand-story" :role="banner.introLink ? 'link' : undefined" :tabindex="banner.introLink ? 0 : -1" @click="openSiteLink(banner?.introLink)" @keydown="onKeyboard($event, () => openSiteLink(banner?.introLink))"><text class="v2-story-label">关于中技</text><text>{{ banner.introduction }}</text><text v-if="banner.introLink" class="v2-story-action">了解更多 ↗</text></view>
+      <ContactBlock v-if="kind === 'home'" ref="contactBlock" />
+      <FeedbackForm v-if="kind === 'home'" />
+    </view>
+    <H5BottomNav :selected="kind" />
+  </view>
+  <!-- #endif -->
+  <!-- #ifndef H5 -->
+
   <view class="mobile-body">
     <view class="brand-row">
+      <!-- #ifdef H5 -->
+      <image class="brand-logo" src="/static/h5/brand/zhongji-security-logo.png" mode="aspectFit" alt="中技安全" role="img" aria-label="中技安全" />
+      <!-- #endif -->
       <!-- #ifndef H5 -->
       <view class="brand-badge">中技</view>
       <text class="brand-title">中技安全产品平台</text>
@@ -245,9 +355,9 @@ defineExpose({
       <text v-if="kind === 'home'" class="intro"
         >产品介绍、应用场景与当前资料</text
       >
-      <view v-if="kind === 'home' && banner && bannerPath" class="home-banner" :role="banner.link ? 'button' : 'img'" :tabindex="banner.link ? 0 : -1" @click="openBanner" @keydown="onKeyboard($event, openBanner)" :aria-label="banner.link ? '打开首页 Banner 链接' : '首页 Banner'">
-        <image :src="bannerPath" mode="aspectFill" alt="首页 Banner" @error="bannerPath = null" />
-      </view>
+      <swiper v-if="kind === 'home' && bannerSlides.length" class="home-banner" :indicator-dots="bannerSlides.length > 1" :current="bannerIndex" @change="bannerIndex = $event.detail.current">
+        <swiper-item v-for="slide in bannerSlides" :key="slide.id"><view :role="slide.link ? 'button' : 'img'" @click="openSiteLink(slide.link)"><image :src="slide.path" mode="aspectFit" alt="首页 Banner" /></view></swiper-item>
+      </swiper>
       <view class="search"
         ><input
           v-model="q"
@@ -258,7 +368,7 @@ defineExpose({
           "
           :aria-label="kind === 'materials' ? '搜索资料' : '搜索产品'"
           @confirm="search"
-        /><button
+        /><button role="button" tabindex="0"
           v-if="q"
           class="clear-query"
           aria-label="清空搜索"
@@ -268,7 +378,7 @@ defineExpose({
           "
         >
           ×</button
-        ><button @click="search">搜索</button></view
+        ><button role="button" tabindex="0" @click="search">搜索</button></view
       >
     </view>
     <view v-if="kind !== 'home'" class="category-wrap"
@@ -321,11 +431,11 @@ defineExpose({
     </view>
     <view v-if="kind === 'home'" class="section-head"
       ><text>首批产品</text
-      ><button @click="openCatalog()">浏览全部 →</button></view
+      ><button role="button" tabindex="0" @click="openCatalog()">浏览全部 →</button></view
     >
     <view v-if="error" class="empty" role="alert"
       ><text class="empty-title">暂时无法连接</text><text>{{ error }}</text
-      ><button @click="reload()">重新加载</button></view
+      ><button role="button" tabindex="0" @click="reload()">重新加载</button></view
     >
     <view v-else-if="loading && !rows.length" class="empty" role="status"
       >正在读取…</view
@@ -340,8 +450,8 @@ defineExpose({
               ? "没有找到相关内容"
               : "暂无发布内容"
         }}</text
-        ><button v-if="kind === 'home'" @click="openCatalog()">浏览产品</button
-        ><button v-else-if="q || category" @click="clear">
+        ><button role="button" tabindex="0" v-if="kind === 'home'" @click="openCatalog()">浏览产品</button
+        ><button role="button" tabindex="0" v-else-if="q || category" @click="clear">
           清除筛选
         </button></view
       >
@@ -354,7 +464,7 @@ defineExpose({
               : item.productId + item.material.materialId
           "
         >
-          <button
+          <button role="button" tabindex="0"
             v-if="'name' in item"
             class="product-card"
             :aria-label="item.name"
@@ -382,19 +492,19 @@ defineExpose({
               >{{ item.material.previewKind === "pdf" ? "PDF" : item.material.previewKind === "video" ? "视频" : "图集" }} ·
               {{ item.material.previewKind === "video" ? "" : item.material.pageCount + " 页" }}</text
             ><text class="published-title">{{ item.material.name }}</text
-            ><button class="product-link" @click="openProduct(item.productId)">
+            ><button role="button" tabindex="0" class="product-link" @click="openProduct(item.productId)">
               所属产品：{{ item.productName }} →</button
             ><view class="material-foot"
               ><text
                 >{{ item.material.versionLabel }} ·
                 {{ item.material.publishedAt.slice(0, 10) }}</text
-              ><button class="preview-button" @click="preview(item)">
+              ><button role="button" tabindex="0" class="preview-button" @click="preview(item)">
                 预览 →
               </button></view
             ></view
           >
         </template>
-        <button
+        <button role="button" tabindex="0"
           v-if="next"
           :disabled="loading"
           class="load-more"
@@ -408,6 +518,8 @@ defineExpose({
     <ContactBlock v-if="kind === 'home'" ref="contactBlock" />
     <FeedbackForm v-if="kind === 'home'" />
   </view>
+
+  <!-- #endif -->
 </template>
 <style scoped>
 .home-banner { width: 100%; height: 112px; overflow: hidden; border-radius: 10px; margin: 12px 0; }
@@ -445,7 +557,14 @@ defineExpose({
 /* #ifdef H5 */
 .brand-row {
   flex-wrap: nowrap;
-  justify-content: flex-end;
+}
+.brand-logo {
+  display: block;
+  flex: none;
+  width: 192px;
+  height: 64px;
+  background: #fff;
+  border-radius: 8px;
 }
 .brand-row .demo-badge {
   flex: none;

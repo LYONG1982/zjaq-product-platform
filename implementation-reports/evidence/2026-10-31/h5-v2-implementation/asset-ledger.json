@@ -1,0 +1,392 @@
+[
+  {
+    "node": "figma-16-1136",
+    "variable": "img",
+    "path": "apps/mobile/src/static/h5/figma/70e58.svg",
+    "bytes": 430,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-1136",
+    "variable": "img1",
+    "path": "apps/mobile/src/static/h5/figma/6c53b.svg",
+    "bytes": 1521,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-1136",
+    "variable": "img2",
+    "path": "apps/mobile/src/static/h5/figma/784af.svg",
+    "bytes": 554,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-1136",
+    "variable": "img3",
+    "path": "apps/mobile/src/static/h5/figma/c1c00.svg",
+    "bytes": 627,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-126",
+    "variable": "imgAiBackground",
+    "path": "apps/mobile/src/static/h5/figma/273b3.svg",
+    "bytes": 792,
+    "usedInApp": false
+  },
+  {
+    "node": "figma-16-126",
+    "variable": "imgAiArt",
+    "path": "apps/mobile/src/static/h5/figma/80ec8.svg",
+    "bytes": 3119,
+    "usedInApp": false
+  },
+  {
+    "node": "figma-16-126",
+    "variable": "imgAiNavigation",
+    "path": "apps/mobile/src/static/h5/figma/d1d7a.svg",
+    "bytes": 394,
+    "usedInApp": false
+  },
+  {
+    "node": "figma-16-126",
+    "variable": "imgShuBackground",
+    "path": "apps/mobile/src/static/h5/figma/85d3b.svg",
+    "bytes": 793,
+    "usedInApp": false
+  },
+  {
+    "node": "figma-16-126",
+    "variable": "imgShuArt",
+    "path": "apps/mobile/src/static/h5/figma/82c1a.svg",
+    "bytes": 2748,
+    "usedInApp": false
+  },
+  {
+    "node": "figma-16-126",
+    "variable": "imgYiBackground",
+    "path": "apps/mobile/src/static/h5/figma/96941.svg",
+    "bytes": 792,
+    "usedInApp": false
+  },
+  {
+    "node": "figma-16-126",
+    "variable": "imgYiArt",
+    "path": "apps/mobile/src/static/h5/figma/795c6.svg",
+    "bytes": 4041,
+    "usedInApp": false
+  },
+  {
+    "node": "figma-16-126",
+    "variable": "imgDingBackground",
+    "path": "apps/mobile/src/static/h5/figma/7d00b.svg",
+    "bytes": 794,
+    "usedInApp": false
+  },
+  {
+    "node": "figma-16-126",
+    "variable": "imgDingArt",
+    "path": "apps/mobile/src/static/h5/figma/5745f.svg",
+    "bytes": 4633,
+    "usedInApp": false
+  },
+  {
+    "node": "figma-16-126",
+    "variable": "img",
+    "path": "apps/mobile/src/static/h5/figma/f9fc2.svg",
+    "bytes": 430,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-126",
+    "variable": "img1",
+    "path": "apps/mobile/src/static/h5/figma/6c53b.svg",
+    "bytes": 1521,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-126",
+    "variable": "img2",
+    "path": "apps/mobile/src/static/h5/figma/635af.svg",
+    "bytes": 554,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-126",
+    "variable": "imgPngMiding",
+    "path": "apps/mobile/src/static/h5/figma/0d55d.png",
+    "bytes": 448907,
+    "usedInApp": false,
+    "exactExistingAsset": "apps/mobile/src/static/series/miding.png"
+  },
+  {
+    "node": "figma-16-126",
+    "variable": "imgPngMiyi",
+    "path": "apps/mobile/src/static/h5/figma/38a93.png",
+    "bytes": 418152,
+    "usedInApp": false,
+    "exactExistingAsset": "apps/mobile/src/static/series/miyi.png"
+  },
+  {
+    "node": "figma-16-126",
+    "variable": "imgPngAi",
+    "path": "apps/mobile/src/static/h5/figma/4b86d.png",
+    "bytes": 377562,
+    "usedInApp": false,
+    "exactExistingAsset": "apps/mobile/src/static/series/ai.png"
+  },
+  {
+    "node": "figma-16-126",
+    "variable": "img3",
+    "path": "apps/mobile/src/static/h5/figma/c1c00.svg",
+    "bytes": 627,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-126",
+    "variable": "imgLogo",
+    "path": "apps/mobile/src/static/h5/figma/8f72a.png",
+    "bytes": 787903,
+    "usedInApp": false,
+    "exactExistingAsset": "apps/mobile/src/static/h5/brand/zhongji-security-logo.png"
+  },
+  {
+    "node": "figma-16-523",
+    "variable": "img",
+    "path": "apps/mobile/src/static/h5/figma/70e58.svg",
+    "bytes": 430,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-523",
+    "variable": "img1",
+    "path": "apps/mobile/src/static/h5/figma/39878.svg",
+    "bytes": 1521,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-523",
+    "variable": "img2",
+    "path": "apps/mobile/src/static/h5/figma/635af.svg",
+    "bytes": 554,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-523",
+    "variable": "imgPngMiding",
+    "path": "apps/mobile/src/static/h5/figma/0d55d.png",
+    "bytes": 448907,
+    "usedInApp": false,
+    "exactExistingAsset": "apps/mobile/src/static/series/miding.png"
+  },
+  {
+    "node": "figma-16-523",
+    "variable": "imgPngMiyi",
+    "path": "apps/mobile/src/static/h5/figma/38a93.png",
+    "bytes": 418152,
+    "usedInApp": false,
+    "exactExistingAsset": "apps/mobile/src/static/series/miyi.png"
+  },
+  {
+    "node": "figma-16-523",
+    "variable": "imgPngAi",
+    "path": "apps/mobile/src/static/h5/figma/4b86d.png",
+    "bytes": 377562,
+    "usedInApp": false,
+    "exactExistingAsset": "apps/mobile/src/static/series/ai.png"
+  },
+  {
+    "node": "figma-16-523",
+    "variable": "img3",
+    "path": "apps/mobile/src/static/h5/figma/c1c00.svg",
+    "bytes": 627,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-621",
+    "variable": "img",
+    "path": "apps/mobile/src/static/h5/figma/70e58.svg",
+    "bytes": 430,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-621",
+    "variable": "img1",
+    "path": "apps/mobile/src/static/h5/figma/39878.svg",
+    "bytes": 1521,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-621",
+    "variable": "img2",
+    "path": "apps/mobile/src/static/h5/figma/635af.svg",
+    "bytes": 554,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-621",
+    "variable": "imgPngMiding",
+    "path": "apps/mobile/src/static/h5/figma/0d55d.png",
+    "bytes": 448907,
+    "usedInApp": false,
+    "exactExistingAsset": "apps/mobile/src/static/series/miding.png"
+  },
+  {
+    "node": "figma-16-621",
+    "variable": "img3",
+    "path": "apps/mobile/src/static/h5/figma/c1c00.svg",
+    "bytes": 627,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-621",
+    "variable": "imgPatternShield",
+    "path": "apps/mobile/src/static/h5/figma/196d7.svg",
+    "bytes": 1291,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-705",
+    "variable": "img",
+    "path": "apps/mobile/src/static/h5/figma/70e58.svg",
+    "bytes": 430,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-705",
+    "variable": "img1",
+    "path": "apps/mobile/src/static/h5/figma/39878.svg",
+    "bytes": 1521,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-705",
+    "variable": "img2",
+    "path": "apps/mobile/src/static/h5/figma/635af.svg",
+    "bytes": 554,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-705",
+    "variable": "imgPngMiyi",
+    "path": "apps/mobile/src/static/h5/figma/38a93.png",
+    "bytes": 418152,
+    "usedInApp": false,
+    "exactExistingAsset": "apps/mobile/src/static/series/miyi.png"
+  },
+  {
+    "node": "figma-16-705",
+    "variable": "img3",
+    "path": "apps/mobile/src/static/h5/figma/c1c00.svg",
+    "bytes": 627,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-705",
+    "variable": "imgPatternOrbit",
+    "path": "apps/mobile/src/static/h5/figma/c2bc2.svg",
+    "bytes": 1304,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-787",
+    "variable": "img",
+    "path": "apps/mobile/src/static/h5/figma/70e58.svg",
+    "bytes": 430,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-787",
+    "variable": "img1",
+    "path": "apps/mobile/src/static/h5/figma/39878.svg",
+    "bytes": 1521,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-787",
+    "variable": "img2",
+    "path": "apps/mobile/src/static/h5/figma/635af.svg",
+    "bytes": 554,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-787",
+    "variable": "img3",
+    "path": "apps/mobile/src/static/h5/figma/c1c00.svg",
+    "bytes": 627,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-787",
+    "variable": "imgPngMishu",
+    "path": "apps/mobile/src/static/h5/figma/dd118.png",
+    "bytes": 385571,
+    "usedInApp": false,
+    "exactExistingAsset": "apps/mobile/src/static/series/mishu.png"
+  },
+  {
+    "node": "figma-16-787",
+    "variable": "imgPatternPages",
+    "path": "apps/mobile/src/static/h5/figma/e60fd.svg",
+    "bytes": 559,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-871",
+    "variable": "img",
+    "path": "apps/mobile/src/static/h5/figma/70e58.svg",
+    "bytes": 430,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-871",
+    "variable": "img1",
+    "path": "apps/mobile/src/static/h5/figma/39878.svg",
+    "bytes": 1521,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-871",
+    "variable": "img2",
+    "path": "apps/mobile/src/static/h5/figma/635af.svg",
+    "bytes": 554,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-871",
+    "variable": "imgPngAi",
+    "path": "apps/mobile/src/static/h5/figma/4b86d.png",
+    "bytes": 377562,
+    "usedInApp": false,
+    "exactExistingAsset": "apps/mobile/src/static/series/ai.png"
+  },
+  {
+    "node": "figma-16-871",
+    "variable": "img3",
+    "path": "apps/mobile/src/static/h5/figma/c1c00.svg",
+    "bytes": 627,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-871",
+    "variable": "imgPatternNetwork",
+    "path": "apps/mobile/src/static/h5/figma/4e096.svg",
+    "bytes": 1720,
+    "usedInApp": true
+  },
+  {
+    "node": "figma-16-916",
+    "variable": "imgPngAi",
+    "path": "apps/mobile/src/static/h5/figma/4b86d.png",
+    "bytes": 377562,
+    "usedInApp": false,
+    "exactExistingAsset": "apps/mobile/src/static/series/ai.png"
+  },
+  {
+    "node": "figma-16-916",
+    "variable": "imgPatternNetwork",
+    "path": "apps/mobile/src/static/h5/figma/4e096.svg",
+    "bytes": 1720,
+    "usedInApp": true
+  }
+]

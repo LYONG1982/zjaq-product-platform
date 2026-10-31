@@ -1,0 +1,13 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="168" height="168" viewBox="0 0 168 168" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Pattern/orbit" opacity="0.14" clip-path="url(#clip0_0_44)">
+<path id="Vector" d="M153.109 44.1C162.387 60.1706 138.968 91.0623 100.8 113.098C62.6322 135.135 24.1696 139.971 14.8912 123.9C5.61279 107.829 29.0322 76.9377 67.2 54.9016C105.368 32.8654 143.83 28.0294 153.109 44.1Z" stroke-width="1.68" stroke="white"/>
+<path id="Vector_2" d="M120.373 105C98.3369 143.168 64.1883 164.707 44.1 153.109C24.0117 141.511 25.5908 101.168 47.6269 63C69.6631 24.8322 103.812 3.29319 123.9 14.8912C143.988 26.4892 142.409 66.8322 120.373 105Z" stroke-width="1.68" stroke="white"/>
+<path id="Vector_3" d="M75.6 28H92.4C101.678 28 109.2 35.5216 109.2 44.8V123.2C109.2 132.478 101.678 140 92.4 140H75.6C66.3216 140 58.8 132.478 58.8 123.2V44.8C58.8 35.5216 66.3216 28 75.6 28Z" stroke-width="1.68" stroke="white"/>
+<path id="Vector_4" d="M148.4 47.6C148.4 52.2392 144.639 56 140 56C135.361 56 131.6 52.2392 131.6 47.6C131.6 42.9608 135.361 39.2 140 39.2C144.639 39.2 148.4 42.9608 148.4 47.6Z" stroke-width="1.68" stroke="white"/>
+</g>
+<defs>
+<clipPath id="clip0_0_44">
+<rect width="168" height="168" fill="white"/>
+</clipPath>
+</defs>
+</svg>

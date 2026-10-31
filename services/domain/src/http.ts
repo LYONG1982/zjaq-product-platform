@@ -4,6 +4,7 @@ import {
   type ServerResponse,
 } from "node:http";
 import { createReadStream } from "node:fs";
+import { readFile } from "node:fs/promises";
 import { randomUUID, createHash } from "node:crypto";
 import type { Domain } from "@zj/contracts";
 import { assertSchema } from "@zj/contracts/validation";
@@ -60,7 +61,7 @@ function page<T>(data: T[], q: Record<string, string | number | boolean>) {
     },
   };
 }
-async function jsonBody(req: IncomingMessage) {
+async function jsonBody(req: IncomingMessage, maxBytes = 2 * 1024 * 1024) {
   requireValue(
     req.headers["content-type"]?.split(";")[0] === "application/json",
     400,
@@ -72,10 +73,10 @@ async function jsonBody(req: IncomingMessage) {
   for await (const chunk of req) {
     size += chunk.length;
     requireValue(
-      size <= 2 * 1024 * 1024,
+      size <= maxBytes,
       413,
       "FILE_TOO_LARGE",
-      "请求正文超出 2 MiB",
+      `请求正文超出 ${Math.floor(maxBytes / (1024 * 1024))} MiB`,
     );
     chunks.push(Buffer.from(chunk));
   }
@@ -361,6 +362,15 @@ export function makeApiServer(
         if (path === "/api/v1/catalog/site-banner") {
           query("getPublicSiteBanner", url);
           success("getPublicSiteBanner", { data: visibleSiteBanner(await store.siteBanner()) });
+          return;
+        }
+        if (path === "/api/v1/catalog/site-banner/default-image") {
+          query("getDefaultSiteBannerImage", url);
+          let image: Buffer;
+          try { image = await readFile(new URL("../assets/default-banner.png", import.meta.url)); }
+          catch { throw new AppError(503, "NOT_INITIALIZED", "默认 Banner 素材不可用"); }
+          res.writeHead(200, { "Content-Type": "image/png", "Content-Length": image.length, "Cache-Control": "public, max-age=300" });
+          res.end(image);
           return;
         }
         if (path === "/api/v1/admin/site-banner") {
@@ -649,7 +659,7 @@ export function makeApiServer(
       if (method === "PUT" && path === "/api/v1/admin/site-banner") {
         requireValue(currentIdentity?.role === "ADMIN", 403, "FORBIDDEN", "仅管理员可维护 Banner");
         query("updateAdminSiteBanner", url);
-        success("updateAdminSiteBanner", { data: await store.writeSiteBanner(await jsonBody(req), requestId) });
+        success("updateAdminSiteBanner", { data: await store.writeSiteBanner(await jsonBody(req, 3 * 1024 * 1024), requestId) });
         return;
       }
       const management = path.match(

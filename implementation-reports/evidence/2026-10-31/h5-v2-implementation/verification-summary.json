@@ -1,0 +1,47 @@
+{
+  "scope": "local H5 V2 and protected first Banner, not production or WeChat device acceptance",
+  "browserMain": {
+    "expected": 22,
+    "unexpected": 0,
+    "skipped": 0,
+    "flaky": 0,
+    "duration": 24582.116
+  },
+  "browserFeedback": {
+    "passed": 1,
+    "command": "pnpm exec playwright test tests/browser/feedback.spec.ts --reporter=line"
+  },
+  "unitBannerCloudHarnessNativeImages": {
+    "passed": 15
+  },
+  "contractsAndAPI": {
+    "passed": 11
+  },
+  "checks": [
+    "pnpm check",
+    "pnpm build:h5",
+    "pnpm build:admin",
+    "pnpm build:mp-weixin",
+    "git diff --check"
+  ],
+  "limitations": [
+    "No cloud connection or migration",
+    "No deployment",
+    "No physical WeChat device acceptance"
+  ],
+  "publishIntegration": {
+    "parentCommit": "ec7a98a1e05586750a5b3d40760c202d767531e7",
+    "browserPassed": 5,
+    "specializedUnitPassed": 15,
+    "checks": [
+      "generated consistency",
+      "root TypeScript",
+      "admin vue-tsc",
+      "mobile vue-tsc",
+      "H5 build",
+      "admin build"
+    ],
+    "preservedRemoteAdminAndPC": true,
+    "dependencies": "reused installed versions; no lockfile change"
+  }
+}

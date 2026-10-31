@@ -794,6 +794,12 @@
           "type": "integer",
           "minimum": 0
         },
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 6,
+          "items": { "$ref": "#/$defs/SiteBannerItemWrite" }
+        },
         "imageData": {
           "type": [
             "string",
@@ -838,10 +844,20 @@
         }
       },
       "required": [
-        "expectedVersion",
-        "imageData",
-        "link"
+        "expectedVersion"
       ],
+      "additionalProperties": false
+    },
+    "SiteBannerItemWrite": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 80 },
+        "imageData": { "type": ["string", "null"], "maxLength": 600000 },
+        "link": { "type": ["string", "null"], "maxLength": 2048 },
+        "startsAt": { "type": ["string", "null"], "maxLength": 40 },
+        "endsAt": { "type": ["string", "null"], "maxLength": 40 }
+      },
+      "required": ["id", "imageData", "link", "startsAt", "endsAt"],
       "additionalProperties": false
     },
     "SiteContactWrite": {

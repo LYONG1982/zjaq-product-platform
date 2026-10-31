@@ -34,3 +34,16 @@ test("mini image cache removes only generated files left by an earlier launch be
   assert.equal(path, "/isolated-cache/zj-banner-4-1.png");
   assert.deepEqual(removed, ["/isolated-cache/zj-banner-1.png", "/isolated-cache/zj-official-qr-2-3.jpg"]);
 });
+
+
+test("carousel image slots at the same version do not delete sibling native files", async () => {
+  const removed: string[] = [];
+  const resolve = createSiteImageResolver({ writeFile(options) { options.success(); }, unlink(options) { removed.push(options.filePath); } }, "/carousel-cache");
+  const first = await resolve("data:image/png;base64,AAAA", "banner-first", 1);
+  const second = await resolve("data:image/png;base64,BBBB", "banner-second", 1);
+  assert.notEqual(first, second);
+  await resolve(null, "banner-first", 2);
+  assert.ok(removed.includes(first!));
+  assert.ok(!removed.includes(second!));
+  assert.equal(await resolve("data:image/png;base64,BBBB", "banner-second", 1), second);
+});
