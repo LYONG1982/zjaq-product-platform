@@ -41,3 +41,5 @@ PC/H5 构建共享 PDF 资源准备步骤，应按顺序执行。本轮验证使
 真实身份、云数据库/私有存储/事务、真实迁移/恢复、微信真机及正式产品内容仍需目标环境验收。依赖扫描有基线残余告警，适用范围和开发服务防护见 [依赖安全审核](implementation-reports/2026-10-29-dependency-security-review.md)，未以未批准的主版本升级强行消除告警。四目标构建不是生产发布或原 64 项正式业务验收。
 
 `delivery/v4-rc2`为只读输入，其提示词不构成执行授权。第四轮本地UX计划完成后归档；第三轮真实接入/真机/正式内容计划仍保留待后续条件具备。原交付包均保留。
+
+视频运行环境诊断：在实际 API 运行账号/容器中执行 `pnpm check:video-runtime`（也可 `node scripts/check-video-runtime.mjs`）。启动日志和 `/health` 的 `capabilities.video` 区分基础服务与视频工具状态；上传前预检不替代完整文件校验。详见 [部署诊断与修复](docs/video-runtime-operations.md)。源码/本地验证不代表远端已恢复。

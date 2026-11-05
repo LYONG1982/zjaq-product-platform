@@ -1,7 +1,7 @@
 // Runs in a bounded subprocess. No network URLs or executable document actions are accepted.
 import { open, stat } from "node:fs/promises";
 import { execFile } from "node:child_process";
-import { isAbsolute } from "node:path";
+import { videoProbeCommand, classifyVideoProbeFailure } from "../../domain/src/video-probe.mjs";
 import sharp from "sharp";
 import yauzl from "yauzl";
 import { SaxesParser } from "saxes";
@@ -191,23 +191,15 @@ try {
   } else if (["mp4", "mov", "webm"].includes(type)) {
     if ((type === "webm" && header.subarray(0,4).toString("hex") !== "1a45dfa3") ||
         (type !== "webm" && header.subarray(4,8).toString() !== "ftyp")) throw failure("VIDEO_CONTAINER_MISMATCH", "视频容器与扩展名不符，请重新导出 MP4（H.264）后上传");
-    const probe = process.env.FFPROBE_PATH || "ffprobe";
-    if (probe !== "ffprobe" && !isAbsolute(probe)) throw failure("VIDEO_PROBE_UNAVAILABLE", "视频检查工具配置不可用，请联系管理员");
-    const metadata = await new Promise((resolve,reject) => execFile(probe,
+    const target = videoProbeCommand();
+    if (target.error) throw failure(target.error.code, target.error.message);
+    const metadata = await new Promise((resolve,reject) => execFile(target.command,
       ["-v","error","-protocol_whitelist","file",...(type === "webm" ? [] : ["-enable_drefs","0","-use_absolute_path","0"]),"-show_streams","-show_format","-of","json",input],
       {timeout:60000,maxBuffer:256*1024}, (err,out,stderr) => {
         if (err) {
-          const unavailable = ["ENOENT", "EACCES", "ENOEXEC"].includes(err.code);
-          const configuration = /Unrecognized option|Option .* not found|Error setting option|error while loading shared libraries|dyld:|Library not loaded|Exec format error/i.test(stderr ?? "");
-          const code = unavailable ? "VIDEO_PROBE_UNAVAILABLE" : err.code === "ERR_CHILD_PROCESS_STDIO_MAXBUFFER" ? "VIDEO_PROBE_INVALID_RESULT" : err.killed || err.code === "ETIMEDOUT" ? "VIDEO_PROBE_TIMEOUT" : configuration ? "VIDEO_PROBE_CONFIGURATION" : "VIDEO_CORRUPT";
-          const messages = {
-            VIDEO_PROBE_UNAVAILABLE: "服务端视频检查工具不可用，请管理员检查安装路径和执行权限",
-            VIDEO_PROBE_TIMEOUT: "视频检查超时，请重试；持续失败请管理员检查处理服务",
-            VIDEO_PROBE_CONFIGURATION: "服务端视频检查工具配置异常，请管理员检查工具版本和运行依赖",
-            VIDEO_PROBE_INVALID_RESULT: "视频检查结果超出处理范围，请联系管理员排查",
-            VIDEO_CORRUPT: "无法解析视频内容，请检查文件是否完整并重新导出",
-          };
-          return reject(failure(code, messages[code]));
+          const problem = classifyVideoProbeFailure(err, stderr);
+          return reject(problem ? failure(problem.code, problem.message)
+            : failure("VIDEO_CORRUPT", "无法解析视频内容，请检查文件是否完整并重新导出"));
         }
         try {
           const value = JSON.parse(out);

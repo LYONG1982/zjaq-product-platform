@@ -69,6 +69,32 @@ const formats: Record<
   mov: { mime: "video/quicktime", type: "mov", limit: MAX_ASSET_BYTES, purposes: ["preview"] },
   webm: { mime: "video/webm", type: "webm", limit: MAX_ASSET_BYTES, purposes: ["preview"] },
 };
+export function validateUploadIntentMetadata(intent: Domain["UploadIntent"]) {
+  requireValue(
+    !/[\\/\u0000-\u001f]/.test(intent.fileName),
+    400,
+    "INVALID_ARGUMENT",
+    "文件名不能包含路径或控制字符",
+  );
+  const ext = intent.fileName.split(".").pop()?.toLowerCase() ?? "",
+    format = formats[ext];
+  requireValue(
+    format &&
+      format.mime === intent.contentType &&
+      format.purposes.includes(intent.purpose),
+    422,
+    "VALIDATION_FAILED",
+    "不支持该文件类型或用途",
+  );
+  requireValue(intent.purpose !== "media" || intent.size <= 2_000_000, 413, "FILE_TOO_LARGE", "产品介绍图片单张不能超过 2 MB（2,000,000 字节）");
+  requireValue(
+    intent.size <= format.limit,
+    413,
+    "FILE_TOO_LARGE",
+    "单个文件不能超过 500 MiB（524,288,000 字节）",
+  );
+  return format;
+}
 export class AssetStore {
   readonly uploads = new Map<string, Upload>();
   readonly directory: string;
@@ -91,29 +117,7 @@ export class AssetStore {
     });
   }
   create(intent: Domain["UploadIntent"]): Responses["UploadIntentResult"] {
-    requireValue(
-      !/[\\/\u0000-\u001f]/.test(intent.fileName),
-      400,
-      "INVALID_ARGUMENT",
-      "文件名不能包含路径或控制字符",
-    );
-    const ext = intent.fileName.split(".").pop()?.toLowerCase() ?? "",
-      format = formats[ext];
-    requireValue(
-      format &&
-        format.mime === intent.contentType &&
-        format.purposes.includes(intent.purpose),
-      422,
-      "VALIDATION_FAILED",
-      "不支持该文件类型或用途",
-    );
-    requireValue(intent.purpose !== "media" || intent.size <= 2_000_000, 413, "FILE_TOO_LARGE", "产品介绍图片单张不能超过 2 MB（2,000,000 字节）");
-    requireValue(
-      intent.size <= format.limit,
-      413,
-      "FILE_TOO_LARGE",
-      "单个文件不能超过 500 MiB（524,288,000 字节）",
-    );
+    const format = validateUploadIntentMetadata(intent);
     requireValue(
       this.uploads.size < 500 &&
         this.reserved + intent.size <= UPLOAD_BUDGET_BYTES,

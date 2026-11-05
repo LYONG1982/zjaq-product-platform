@@ -40,3 +40,5 @@ Range 首读对象在受限 0700 临时目录校验大小和 SHA-256，随后按
 另对合法 free box 填充的 500 MiB MP4 完成实际流式写入、ffprobe 和全文件校验，通过。已覆盖三类视频及伪装视频拒绝、原图/派生隔离、后台 Cookie 只读/篡改/到期/账号禁用、公开视频下架、图集 ZIP 外部 unzip 校验、缓存去重/TTL、Cloud 拒绝文件删除及元数据清理。Playwright 场景位于 `tests/browser/upload-video.spec.ts`；最终全量结果由本轮总验证报告记录，不在此将未执行的真机/云测试冒充通过。
 
 补充浏览器证据：`upload-video.spec.ts` 两个场景已分别定向通过：统一入口 MP4 上传、后台 HttpOnly 媒体预览、发布后 H5/销售视频及销售下载；真实浏览器 500 MiB File 上传 READY 和 501 MiB 本地拒绝。另强制保留原生 fetch、移除测试夹具的无关 CDP 网络拦截后，同一 500 MiB 场景也通过（2.7 秒）；此前 Chrome 崩溃来自自动化拦截大 postData。最终用例对大文件关闭无关路由拦截，实际访问配置 API；应用默认使用原生 XHR File 上传并显示百分比/已传 MiB，不生成 JavaScript 大字符串。完整回归以总报告为准。
+
+视频运行环境诊断：在实际 API 运行账号/容器中执行 `pnpm check:video-runtime`（也可 `node scripts/check-video-runtime.mjs`）。启动日志和 `/health` 的 `capabilities.video` 区分基础服务与视频工具状态；上传前预检不替代完整文件校验。详见 [部署诊断与修复](video-runtime-operations.md)。源码/本地验证不代表远端已恢复。

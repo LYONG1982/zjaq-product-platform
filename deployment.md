@@ -111,3 +111,5 @@ PDF.js worker、cmaps、字体与 wasm 由 `preview:assets` 从固定依赖复�
 - 微信 AppID、合法域名、开发工具与 iOS/Android 真机未验证；小程序仅编译通过。真实身份、数据库事务、私有桶、重启恢复、备份恢复、六款正式内容均未验收。
 
 后续如需云端执行，先审阅精确目标、资源变更、成本、回退清单，并获得对应授权。
+
+视频运行环境诊断：在实际 API 运行账号/容器中执行 `pnpm check:video-runtime`（也可 `node scripts/check-video-runtime.mjs`）。启动日志和 `/health` 的 `capabilities.video` 区分基础服务与视频工具状态；上传前预检不替代完整文件校验。详见 [部署诊断与修复](docs/video-runtime-operations.md)。源码/本地验证不代表远端已恢复。

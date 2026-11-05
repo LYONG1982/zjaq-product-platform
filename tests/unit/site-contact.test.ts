@@ -24,3 +24,25 @@ test("site contact is admin-managed, versioned, validated and publicly readable"
     assert.equal(store.events.filter((event) => event.action === "UPDATE_SITE_CONTACT").length, 2);
   } finally { server.closeAllConnections(); await new Promise<void>((resolve) => server.close(() => resolve())); await rm(store.assets.directory, { recursive: true, force: true }); }
 });
+
+test("contact images accept the exact 240 KiB boundary and report their own limit without changing Banner", async () => {
+  const { crc32 } = await import("node:zlib");
+  const { validateSiteContact } = await import("../../services/domain/src/site-contact");
+  const { validateSiteImage } = await import("../../services/domain/src/site-banner");
+  const png = await readFile(new URL("../fixtures/validation/page-1.png", import.meta.url));
+  function padded(size: number) {
+    const text = Buffer.alloc(size - png.length - 12, 32); text.write("padding\0");
+    const chunk = Buffer.concat([Buffer.from("tEXt"), text]);
+    const length = Buffer.alloc(4), checksum = Buffer.alloc(4);
+    length.writeUInt32BE(text.length); checksum.writeUInt32BE(crc32(chunk));
+    const result = Buffer.concat([png.subarray(0, -12), length, chunk, checksum, png.subarray(-12)]);
+    assert.equal(result.length, size);
+    return "data:image/png;base64," + result.toString("base64");
+  }
+  const body = { expectedVersion: 0, officialQr: padded(240 * 1024), serviceQr: null, phone: null };
+  await validateSiteContact(body);
+  await assert.rejects(validateSiteContact({ ...body, officialQr: padded(240 * 1024 + 1) }), /240 KiB/);
+  await validateSiteImage(padded(400 * 1024));
+  await assert.rejects(validateSiteImage(padded(400 * 1024 + 1)), /400 KiB/);
+  await assert.rejects(validateSiteContact({ ...body, officialQr: "data:image/png;base64," + Buffer.from("not an image").toString("base64") }), /图片无法读取/);
+});

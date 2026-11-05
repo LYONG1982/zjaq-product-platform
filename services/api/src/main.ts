@@ -1,3 +1,4 @@
+import { checkVideoRuntimeAtStartup } from "../../domain/src/video-probe.mjs";
 import { requireRealConfiguration } from "./config";
 import { CloudBasePrivateStorage } from "./private-storage";
 import { CloudBaseRepository } from "./repository";
@@ -19,6 +20,7 @@ const backend = new CloudBackend(repo, identity, new CloudBasePrivateStorage(rep
 const state = await repo.get<{ ready: boolean }>("control", "state");
 if (!state?.ready) throw new Error("CLOUDBASE_NOT_INITIALIZED");
 await verifyProductIndexes(repo);
+await checkVideoRuntimeAtStartup();
 const server = makeApiServer(backend, {
   trustedProxyAddresses: process.env.TRUSTED_PROXY_ADDRESSES?.split(",").map((value) => value.trim()).filter(Boolean),
   origins: process.env.ALLOWED_ORIGINS!.split(","),

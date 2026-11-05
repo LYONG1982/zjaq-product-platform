@@ -27,6 +27,10 @@ const expired = () => {
 window.addEventListener("zj-session-expired", expired);
 onUnmounted(() => window.removeEventListener("zj-session-expired", expired));
 const auditTab = ref("operations");
+const contactSettings = ref<InstanceType<typeof SiteContactSettings> | null>(null);
+function scrollToSetting(id: string) {
+  document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
 const section = ref("products"),
   q = ref(""),
   category = ref(""),
@@ -151,6 +155,7 @@ function navigate(target: string) {
     else if (target === "audit") void loadAudit();
   };
   if (editing.value && editor.value) editor.value.requestLeave(go);
+  else if (section.value === "settings" && target !== "settings" && contactSettings.value) contactSettings.value.requestLeave(go);
   else go();
 }
 function logout() {
@@ -163,7 +168,9 @@ function logout() {
     auditProduct.value = ""; auditAction.value = ""; error.value = ""; removalNotice.value = "";
     section.value = "products"; loading.value = false; loggedOut.value = true; authNeeded.value = true;
   };
-  if (editing.value && editor.value) editor.value.requestLeave(leave); else leave();
+  if (editing.value && editor.value) editor.value.requestLeave(leave);
+  else if (section.value === "settings" && contactSettings.value) contactSettings.value.requestLeave(leave);
+  else leave();
 }
 function chooseCategory(id: string, event: MouseEvent) {
   category.value = id; void load();
@@ -442,10 +449,14 @@ onMounted(() => { if (!loggedOut.value) void bootstrap(); });
             </section>
           </template>
           <template v-else-if="section === 'settings'">
-            <ShareSettings :can-manage="isAdmin" />
+            <nav v-if="isAdmin" class="settings-shortcuts" aria-label="设置快捷入口">
+              <button type="button" aria-controls="h5-footer-contact" @click="scrollToSetting('h5-footer-contact')">H5 底部联系方式</button>
+              <button type="button" aria-controls="product-share-settings" @click="scrollToSetting('product-share-settings')">产品与资料分享</button>
+            </nav>
+            <div id="product-share-settings"><ShareSettings :can-manage="isAdmin" /></div>
             <AnalyticsPanel v-if="isAdmin" mode="settings" />
             <SiteBannerSettings :can-manage="isAdmin" />
-            <SiteContactSettings :can-manage="isAdmin" />
+            <SiteContactSettings ref="contactSettings" :can-manage="isAdmin" />
             <Management kind="users" :templates="templates" :can-manage="isAdmin" />
           </template>
           <AnalyticsPanel v-else-if="section === 'analytics' && isAdmin" mode="dashboard" />

@@ -72,7 +72,7 @@ export async function validateSiteImage(imageData: string | null, limit = SITE_B
   const match = imageData.match(/^data:image\/(png|jpeg);base64,([A-Za-z0-9+/]+={0,2})$/);
   requireValue(match, 422, "VALIDATION_FAILED", `${label}仅支持 PNG 或 JPG 图片`);
   const bytes = Buffer.from(match[2], "base64");
-  requireValue(bytes.length > 0 && bytes.length <= limit && bytes.toString("base64") === match[2], 422, "VALIDATION_FAILED", `${label}图片无效或超过 400 KiB 限制`);
+  requireValue(bytes.length > 0 && bytes.length <= limit && bytes.toString("base64") === match[2], 422, "VALIDATION_FAILED", `${label}图片无效或超过 ${limit / 1024} KiB 限制`);
   try { const info = await siteImageMetadata(bytes); requireValue(info.format === (match[1] === "jpeg" ? "jpeg" : "png") && !!info.width && !!info.height, 422, "VALIDATION_FAILED", `${label}图片格式不匹配或损坏`); }
   catch { requireValue(false, 422, "VALIDATION_FAILED", `${label}图片无法读取或尺寸过大`); }
 }

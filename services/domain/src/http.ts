@@ -17,6 +17,8 @@ import { mediaSessions } from "./media-session";
 import { zipDownload } from "./zip-download";
 import { actorContext } from "./identity";
 import { visibleSiteBanner } from "./site-banner";
+import { videoProbeRuntime, type VideoProbeRuntime } from "./video-probe.mjs";
+import { validateUploadIntentMetadata } from "../../mock-api/src/assets";
 import { publicAnalyticsSettings, analyticsSummary, filterAnalytics, sourceIp } from "./analytics";
 const allowedOrigins = new Set(
   [3200, 3201, 3202, 3300, 3301, 3302, 3400, 3401, 3402].flatMap((p) => [
@@ -167,8 +169,9 @@ async function binary(
 }
 export function makeApiServer(
   store: Backend,
-  options: { origins?: string[]; hosts?: string[]; trustedProxyAddresses?: string[] } = {},
+  options: { origins?: string[]; hosts?: string[]; trustedProxyAddresses?: string[]; videoRuntime?: VideoProbeRuntime } = {},
 ) {
+  const videoRuntime = options.videoRuntime ?? videoProbeRuntime;
   const media = mediaSessions(store.provider === "cloudbase", process.env.ADMIN_MEDIA_SESSION_SECRET);
   const rates = new Map<string, { minute: number; count: number }>();
   const server = createServer((req, res) => {
@@ -318,6 +321,7 @@ export function makeApiServer(
           status: "ok",
           provider: store.provider,
           scope: "TASK-02/03",
+          capabilities: { video: videoRuntime.status() },
           sessionId: store.sessionId,
           requestId,
         });
@@ -768,9 +772,19 @@ export function makeApiServer(
       }
       if (method === "POST" && path === "/api/v1/admin/uploads") {
         query("createUpload", url);
-        success("createUpload", {
-          data: await store.createUpload(await jsonBody(req), key),
-        });
+        const body = await jsonBody(req);
+        const intent = validateBody<Domain["UploadIntent"]>("UploadIntent", body);
+        await store.assertProductWritable(intent.productId);
+        // Validate before spawning any process or allocating an upload. The backend
+        // still performs authoritative authorization, idempotency and quota checks.
+        requireValue(key && key.length >= 16 && key.length <= 120 && !/[\u0000-\u001f]/.test(key),
+          400, "INVALID_ARGUMENT", "需要有效的 Idempotency-Key");
+        const format = validateUploadIntentMetadata(intent);
+        if (["mp4", "mov", "webm"].includes(format.type)) {
+          const probe = await videoRuntime.check();
+          if (!probe.ready) throw new AppError(503, probe.code, probe.message);
+        }
+        success("createUpload", { data: await store.createUpload(body, key) });
         return;
       }
       const put = path.match(/^\/api\/v1\/admin\/uploads\/([^/]+)\/content$/);

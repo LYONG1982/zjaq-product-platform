@@ -10,6 +10,7 @@
   },
   "scripts": {
     "generate": "node --import tsx scripts/generate.ts",
+    "check:video-runtime": "node scripts/check-video-runtime.mjs",
     "check:generated": "node --import tsx scripts/generate.ts --check",
     "check": "pnpm check:generated && tsc -p tsconfig.json && pnpm --filter @zj/portal check && pnpm --filter @zj/admin check && pnpm --filter @zj/mobile check",
     "test": "node --import tsx --test tests/unit/*.test.ts",

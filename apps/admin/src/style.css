@@ -1504,3 +1504,7 @@ a.primary-button { display:inline-flex;align-items:center;justify-content:center
 a.primary-button:hover { background:#174fb3; }
 a.primary-button:active { background:#103f94; }
 a.primary-button:focus-visible { outline:3px solid #2563eb;outline-offset:3px; }
+
+/* Quick navigation for the two distinct QR configuration workflows. */
+.settings-shortcuts{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:16px}
+#product-share-settings{scroll-margin-top:24px}
