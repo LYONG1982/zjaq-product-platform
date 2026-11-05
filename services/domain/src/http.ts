@@ -278,6 +278,12 @@ export function makeApiServer(
           typeof req.headers["idempotency-key"] === "string"
             ? req.headers["idempotency-key"]
             : undefined;
+      if (path === "/api/v1/admin/logout" && method === "POST") {
+        query("logoutAdminBrowser", url);
+        // Allowed-origin checks above apply even when the bearer has expired.
+        res.setHeader("Set-Cookie", "zj_admin_media=; HttpOnly; SameSite=Strict; Max-Age=0; Path=/api/v1/admin/products/" + (store.provider === "cloudbase" ? "; Secure" : ""));
+        res.writeHead(204); res.end(); return;
+      }
       let currentIdentity;
       if (path.startsWith("/api/v1/admin/")) {
         const mediaCookie = method === "GET" && /^\/api\/v1\/admin\/products\/[^/]+\/assets\/[^/]+\/content$/.test(path)
@@ -346,6 +352,17 @@ export function makeApiServer(
           requireValue(currentIdentity?.role === "ADMIN", 403, "FORBIDDEN", "仅管理员可查看反馈");
           const q = query("listFeedback", url);
           success("listFeedback", page(await store.listFeedback(), q));
+          return;
+        }
+        if (path === "/api/v1/catalog/share-settings") {
+          query("getPublicShareSettings", url);
+          success("getPublicShareSettings", { data: await store.shareSettings() });
+          return;
+        }
+        if (path === "/api/v1/admin/share-settings") {
+          requireValue(currentIdentity?.role === "ADMIN", 403, "FORBIDDEN", "仅管理员可维护分享设置");
+          query("getAdminShareSettings", url);
+          success("getAdminShareSettings", { data: await store.shareSettings() });
           return;
         }
         if (path === "/api/v1/catalog/site-contact") {
@@ -498,6 +515,12 @@ export function makeApiServer(
           success("listAuditEvents", page(await store.listAudit(q), q));
           return;
         }
+        const shareTarget = path.match(/^\/api\/v1\/admin\/products\/([^/]+)\/share-target$/);
+        if (shareTarget) {
+          const q = query("getAdminShareTarget", url);
+          success("getAdminShareTarget", { data: await store.shareTarget(decodeURIComponent(shareTarget[1]), q.materialId ? String(q.materialId) : undefined) });
+          return;
+        }
         const history = path.match(/^\/api\/v1\/admin\/products\/([^/]+)\/material-versions$/);
         if (history) {
           const q = query("listMaterialVersions", url);
@@ -648,6 +671,12 @@ export function makeApiServer(
         query("submitFeedback", url);
         await store.submitFeedback(await jsonBody(req), ip);
         success("submitFeedback", { data: { accepted: true } });
+        return;
+      }
+      if (method === "PUT" && path === "/api/v1/admin/share-settings") {
+        requireValue(currentIdentity?.role === "ADMIN", 403, "FORBIDDEN", "仅管理员可维护分享设置");
+        query("updateAdminShareSettings", url);
+        success("updateAdminShareSettings", { data: await store.writeShareSettings(await jsonBody(req), requestId) });
         return;
       }
       if (method === "PUT" && path === "/api/v1/admin/site-contact") {

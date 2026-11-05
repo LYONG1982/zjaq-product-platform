@@ -75,6 +75,10 @@ export interface Responses {
   AnalyticsSettingsResponse: AnalyticsSettingsResponse;
   AnalyticsSummaryResponse: AnalyticsSummaryResponse;
   AnalyticsEventListResponse: AnalyticsEventListResponse;
+  ShareSettings: ShareSettings;
+  ShareSettingsResponse: ShareSettingsResponse;
+  ShareTarget: ShareTarget;
+  ShareTargetResponse: ShareTargetResponse;
 }
 /**
  * This interface was referenced by `Responses`'s JSON-Schema
@@ -112,6 +116,7 @@ export interface PublicMaterial {
   pageCount: number;
   publishedAt: string;
   previewPath: string;
+  shareRequiresSales?: boolean;
 }
 /**
  * This interface was referenced by `Responses`'s JSON-Schema
@@ -1012,5 +1017,40 @@ export interface AnalyticsEventListResponse {
     nextCursor: string | null;
     hasMore: boolean;
   };
+  requestId: string;
+}
+/**
+ * This interface was referenced by `Responses`'s JSON-Schema
+ * via the `definition` "ShareSettings".
+ */
+export interface ShareSettings {
+  version: number;
+  baseUrl: string | null;
+  target: 'h5' | 'portal';
+  size: 256 | 512 | 1024;
+}
+/**
+ * This interface was referenced by `Responses`'s JSON-Schema
+ * via the `definition` "ShareSettingsResponse".
+ */
+export interface ShareSettingsResponse {
+  data: ShareSettings;
+  requestId: string;
+}
+/**
+ * This interface was referenced by `Responses`'s JSON-Schema
+ * via the `definition` "ShareTarget".
+ */
+export interface ShareTarget {
+  publicId: string;
+  materialId: string | null;
+  requiresSales: boolean;
+}
+/**
+ * This interface was referenced by `Responses`'s JSON-Schema
+ * via the `definition` "ShareTargetResponse".
+ */
+export interface ShareTargetResponse {
+  data: ShareTarget;
   requestId: string;
 }

@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { ShareButton } from "./share-button";
 import Link from "next/link";
 import { safeReturnTo } from "./navigation-context";
 import { createClient, ApiError } from "@zj/api-client";
@@ -123,6 +124,7 @@ export function Viewer({
       tabIndex={0}
       aria-label="资料查看器"
     >
+      {manifest && !error && <ShareButton productId={productId} materialId={materialId} />}
       <div className="viewer-heading">
         <Link href={returnTo}>← 返回上一页</Link>
         {!returnTo.startsWith("/products/" + encodeURIComponent(productId)) && (

@@ -2,7 +2,7 @@ import { test, expect, urls, json, publicProductId } from "./support";
 import { randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
 
-test("administrator safely removes with conflict protection, views retained history, restores and explicitly republishes", async ({ page, request }) => {
+test("administrator removes only a never-published draft, preserves conflict/history protection, restores and explicitly publishes", async ({ page, request }) => {
   const name = "【浏览器移除】" + Date.now();
   const created = (await json(request, "/admin/products", "POST", { name, categoryId: "ai", templateId: "ai", templateVersion: 1, owner: "虚构验证人员", model: "REMOVE-UI-" + randomUUID(), productType: "SOFTWARE", ownership: "SELF_DEVELOPED" }, randomUUID())).body.data;
   const bytes = await readFile("tests/fixtures/validation/sample-v1.pdf");
@@ -13,8 +13,7 @@ test("administrator safely removes with conflict protection, views retained hist
   const item = { id: "one", title: "本地测试", text: "虚构正文" };
   const content = { ...created.content, tagline: "虚构验证", summary: "仅本地测试", problemValues: [item], features: [item], scenarios: [item], technical: { inputs: "文档", outputs: "草稿", humanReview: "人工" }, materials: [{ materialId: "removal-fixture", versionId: randomUUID(), name: "【留档】移除验证资料", kind: "brochure", category: "promotional", subCategory: "deck", versionLabel: "V1.0", preview: { kind: "pdf", assetId: upload.assetId, pageCount: 2 } }] };
   let saved = (await json(request, `/admin/products/${created.productId}/draft`, "PATCH", { expectedDraftVersion: 1, content })).body.data;
-  const published = (await json(request, `/admin/products/${created.productId}/publish`, "POST", { expectedDraftVersion: saved.draftVersion, expectedPublicationVersion: 0, publicContentConfirmed: true }, randomUUID())).body.data;
-  const publicId = await publicProductId(request, name, published.releaseId);
+  let publicId = created.productId; // No public route exists before first publication.
   await page.goto(urls.admin);
   await page.getByLabel("搜索产品", { exact: true }).fill(name);
   await page.getByRole("button", { name: "查询", exact: true }).click();
@@ -60,12 +59,13 @@ test("administrator safely removes with conflict protection, views retained hist
   await expect(row).toHaveCount(0);
   expect((await request.get(urls.api + `/api/v1/catalog/products/${publicId}`)).status()).toBe(404);
   await page.getByLabel("移除状态", { exact: true }).selectOption("");
-  await expect(row.getByText("已下架", { exact: true })).toBeVisible();
+  await expect(row.getByText("草稿", { exact: true })).toBeVisible();
   await row.getByRole("button", { name: "编辑", exact: true }).click();
   await page.getByRole("button", { name: "发布", exact: true }).click();
   const publish = page.getByRole("dialog", { name: "确认发布", exact: true }); await publish.getByRole("checkbox").check();
   await publish.getByRole("button", { name: "确认发布", exact: true }).click();
   await expect(page.getByText(/发布成功/)).toBeVisible();
+  publicId = await publicProductId(request,name);
   expect((await request.get(urls.api + `/api/v1/catalog/products/${publicId}`)).status()).toBe(200);
   await page.screenshot({ path: "work/round04/product-restored-republished.png", fullPage: true });
 });

@@ -1396,6 +1396,130 @@ paths:
                 format: binary
         '404':
           description: 内置默认 Banner 素材缺失。
+  /api/v1/catalog/share-settings:
+    get:
+      operationId: getPublicShareSettings
+      summary: 获取对外展示的首页 分享设置 配置。
+      tags:
+        - catalog
+      security: []
+      x-required-role: public
+      responses:
+        '200':
+          description: 分享设置 配置。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/ShareSettingsResponse
+        '400':
+          description: 请求无效。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 未登录。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 权限不足。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 配置版本冲突。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/admin/share-settings:
+    get:
+      operationId: getAdminShareSettings
+      summary: 获取首页 分享设置 配置。
+      tags:
+        - admin
+      security:
+        - AdminBearer: []
+      x-required-role: ADMIN
+      responses:
+        '200':
+          description: 分享设置 配置。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/ShareSettingsResponse
+        '400':
+          description: 请求无效。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 未登录。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 权限不足。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 配置版本冲突。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+    put:
+      operationId: updateAdminShareSettings
+      summary: 管理员替换或移除首页 分享设置。
+      tags:
+        - admin
+      security:
+        - AdminBearer: []
+      x-required-role: ADMIN
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./domain.schema.json#/$defs/ShareSettingsWrite
+      responses:
+        '200':
+          description: 分享设置 配置。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/ShareSettingsResponse
+        '400':
+          description: 请求无效。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 未登录。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 权限不足。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 配置版本冲突。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
   /api/v1/catalog/site-contact:
     get:
       operationId: getPublicSiteContact
@@ -1862,6 +1986,95 @@ paths:
             application/json:
               schema:
                 $ref: ./response.schema.json#/$defs/AdminDraftResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '410':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '413':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '429':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/admin/products/{productId}/share-target:
+    get:
+      operationId: getAdminShareTarget
+      summary: 验证当前发布产品或资料并返回公开分享标识。
+      tags:
+        - admin
+      security:
+        - AdminBearer: []
+      x-required-role: CONTENT_MANAGER, ADMIN
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: materialId
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 100
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/ShareTargetResponse
         '400':
           description: 规范错误，详见补充说明；只在对应条件下返回。
           content:
@@ -3663,6 +3876,14 @@ paths:
             application/json:
               schema:
                 $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/admin/logout:
+    post:
+      operationId: logoutAdminBrowser
+      summary: 清理当前浏览器只读媒体 Cookie，不撤销其他设备会话。
+      security: []
+      responses:
+        '204':
+          description: 浏览器媒体 Cookie 已清除。
   /api/v1/admin/media-session:
     post:
       operationId: createAdminMediaSession

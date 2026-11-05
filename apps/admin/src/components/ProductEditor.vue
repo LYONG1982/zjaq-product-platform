@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { normalizeProductName, productNameError, productNameUnits } from "@zj/contracts";
 import { computed, ref, onMounted, onBeforeUnmount } from "vue";
 import type {
   AdminDraft,
@@ -8,7 +9,8 @@ import type {
   Domain,
 } from "@zj/contracts";
 import { api, copy, requestKey, errorInfo, stateName } from "../api";
-import { uploadFile } from "../upload";
+import ShareDialog from "./ShareDialog.vue";
+import ProductImages from "./ProductImages.vue";
 import Modal from "./Modal.vue";
 import MaterialDrawer from "./MaterialDrawer.vue";
 import MaterialHistory from "./MaterialHistory.vue";
@@ -30,6 +32,9 @@ const current = ref(copy(props.draft)),
   preview = ref<AdminDraft | null>(null),
   materialIndex = ref<number | null>(null),
   materialOpen = ref(false),
+  sharing = ref<{ materialId?: string; technical?: boolean } | null>(null),
+  materialMode = ref<"pdf" | "video">("pdf"),
+  imagesPending = ref(false), imagesBusy = ref(false),
   historyOpen = ref(false),
   publishOpen = ref(false),
   publicConfirmed = ref(false),
@@ -41,7 +46,7 @@ const current = ref(copy(props.draft)),
 let pendingLeave: (() => void) | null = null;
 const publishKey = requestKey(),
   unpublishKey = requestKey(),
-  dirty = computed(() => JSON.stringify(content.value) !== saved.value),
+  dirty = computed(() => imagesPending.value || JSON.stringify(content.value) !== saved.value),
   template = computed(() =>
     props.templates.find(
       (t) =>
@@ -59,8 +64,7 @@ const modules = [
   ["problems", "问题与价值"],
   ["features", "核心功能"],
   ["scenarios", "应用场景"],
-  ["technical", "参数与边界"],
-  ["media", "产品素材"],
+  ["media", "产品介绍图片"],
   ["materials", "当前资料"],
 ];
 const groups = [
@@ -74,7 +78,7 @@ const missing = computed(() => {
     ...([ ["model", "产品型号"], ["productType", "产品类型"], ["ownership", "产品属性"] ] as const)
       .filter(([key]) => !content.value[key]?.trim())
       .map(([key, message]) => ({ path: "/" + key, message })),
-    ...(template.value?.publishRequired ?? [])
+    ...(template.value?.publishRequired ?? []).filter(key => key !== "technical" && key !== "boundaries")
       .filter((k) => {
         const v = c[k];
         return typeof v === "string"
@@ -100,11 +104,7 @@ const missing = computed(() => {
             } as Record<string, string>
           )[k] ?? k,
       })),
-    ...(template.value?.fields ?? [])
-      .filter(
-        (f) => f.requiredOnPublish && !content.value.technical[f.key]?.trim(),
-      )
-      .map((f) => ({ path: "/technical/" + f.key, message: f.label })),
+
   ];
 });
 const fieldLabels: Record<string, string> = {
@@ -173,7 +173,12 @@ function locate(path: string) {
     ?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 async function save() {
+  if (imagesPending.value) { error.value = "请等待图片上传完成，或移除失败图片后再保存"; return false; }
   if (busy.value) return false;
+  if (content.value.name !== current.value.content.name) {
+    content.value.name = normalizeProductName(content.value.name);
+    if (productNameError(content.value.name)) { error.value = productNameError(content.value.name); return false; }
+  }
   if (!dirty.value) return true;
   busy.value = true;
   clearError();
@@ -270,7 +275,7 @@ async function unpublish() {
   }
 }
 function requestLeave(fn: () => void) {
-  if (busy.value) return;
+  if (busy.value || imagesBusy.value) return;
   if (dirty.value) {
     pendingLeave = fn;
     leaveOpen.value = true;
@@ -328,50 +333,6 @@ function putMaterial(m: Domain["MaterialRef"]) {
   else content.value.materials[materialIndex.value] = m;
   materialOpen.value = false;
   notice.value = "资料已加入本次编辑，请保存草稿。";
-}
-const mediaStatus = ref(""),
-  mediaAlt = ref(""),
-  mediaRole = ref<"cover" | "screenshot" | "diagram">("screenshot");
-let mediaFile: File | null = null;
-async function addMedia(file: File | null) {
-  if (!file) return;
-  mediaFile = file;
-  if (!mediaAlt.value.trim()) {
-    error.value = "请先填写素材替代文字";
-    return;
-  }
-  busy.value = true;
-  clearError();
-  try {
-    const a = await uploadFile(
-      current.value.productId,
-      file,
-      "media",
-      (t) => (mediaStatus.value = t),
-    );
-    if (mediaRole.value === "cover")
-      content.value.media.forEach((m) => {
-        if (m.role === "cover") m.role = "screenshot";
-      });
-    content.value.media.push({
-      mediaId: crypto.randomUUID(),
-      assetId: a.assetId,
-      role: mediaRole.value,
-      alt: mediaAlt.value,
-    });
-    mediaFile = null;
-    mediaAlt.value = "";
-    notice.value = "素材已加入本次编辑，尚未发布。";
-  } catch (e) {
-    showError(e);
-  } finally {
-    busy.value = false;
-  }
-}
-function mediaSelected(e: Event) {
-  const input = e.target as HTMLInputElement;
-  void addMedia(input.files?.[0] ?? null);
-  input.value = "";
 }
 </script>
 <template>
@@ -457,7 +418,7 @@ function mediaSelected(e: Event) {
           <h2>基本信息</h2>
           <div class="form-grid">
             <label class="field"
-              >产品名称<input v-model="content.name" maxlength="80" /></label
+              >产品名称<input aria-label="产品名称" v-model="content.name" @input="!($event as InputEvent).isComposing && (content.name = normalizeProductName(($event.target as HTMLInputElement).value))" @compositionend="content.name = normalizeProductName(($event.target as HTMLInputElement).value)" maxlength="80" /><small>{{ productNameUnits(normalizeProductName(content.name).trim()) }} / 15 个全角显示单位；中文计 1，英文、数字及英文括号计 0.5。历史长标题可保留，修改时需符合限制。</small></label
             ><label class="field"
               >产品资料负责人<input v-model="content.owner" maxlength="80" /></label
             ><label class="field"
@@ -543,63 +504,20 @@ function mediaSelected(e: Event) {
             添加{{ group.title }}条目
           </button>
         </section>
-        <section id="edit-technical" class="edit-section">
-          <h2>参数与边界</h2>
-          <label v-for="f in template?.fields" :key="f.key" class="field"
-            >{{ f.label
-            }}<span class="field-requirement">{{
-              f.requiredOnPublish ? "发布必填" : "可选"
-            }}</span
-            ><textarea
-              v-model="content.technical[f.key]"
-              :maxlength="f.maxLength"
-              rows="3"
-            />
-            <details v-if="f.help">
-              <summary>填写提示</summary>
-              <small>{{ f.help }}</small>
-            </details></label
-          >
-        </section>
         <section id="edit-media" class="edit-section">
-          <h2>产品素材（可选）</h2>
-          <p class="helper">没有图片时使用简洁图形标识；不影响最低发布条件。</p>
-          <div
-            v-for="(m, i) in content.media"
-            :key="m.mediaId"
-            class="material-line"
-          >
-            <span>{{ m.role === "cover" ? "封面" : "素材" }} · {{ m.alt }}</span
-            ><button @click="content.media.splice(i, 1)">从草稿移除素材</button>
-          </div>
-          <label class="field"
-            >新素材替代文字<input v-model="mediaAlt" maxlength="300" /></label
-          ><label class="field"
-            >新素材用途<select v-model="mediaRole">
-              <option value="screenshot">截图</option>
-              <option value="cover">封面</option>
-              <option value="diagram">示意图</option>
-            </select></label
-          ><label class="field"
-            >素材图片（≤500 MiB，解码后最多 2000 万像素）<input
-              type="file"
-              accept=".png,.jpg,.jpeg,.webp"
-              @change="mediaSelected"
-          /></label>
-          <p class="helper" role="status">{{ mediaStatus }}</p>
-          <button v-if="mediaFile && !busy" @click="addMedia(mediaFile)">
-            重试素材上传
-          </button>
+          <h2>产品介绍图片（可选）</h2>
+          <ProductImages v-model="content.media" :key="current.productId + '-' + current.draftVersion" :product-id="current.productId" @pending="imagesPending = $event" @busy="imagesBusy = $event" />
         </section>
         <section id="edit-materials" class="edit-section">
           <div class="section-toolbar">
             <h2>当前资料</h2>
             <button
               :disabled="content.materials.length >= 20"
-              @click="editMaterial(null)"
+              @click="materialMode = 'pdf'; editMaterial(null)"
             >
-              上传资料
+              上传 PDF 资料
             </button>
+            <button :disabled="content.materials.length >= 20" @click="materialMode = 'video'; editMaterial(null)">上传视频</button>
             <button v-if="!current.deletedAt" @click="historyOpen = true">查看历史版本</button>
           </div>
           <p class="helper">
@@ -620,7 +538,7 @@ function mediaSelected(e: Event) {
               </p>
             </div>
             <div>
-              <button @click="editMaterial(i)">编辑资料</button
+              <button :disabled="current.publicationState !== 'PUBLISHED' || !!current.deletedAt" @click="sharing = { materialId: m.materialId, technical: m.category === 'technical' }">分享资料</button><button @click="editMaterial(i)">编辑资料</button
               ><button @click="content.materials.splice(i, 1)">
                 从草稿移除
               </button>
@@ -629,6 +547,7 @@ function mediaSelected(e: Event) {
         </section>
       </fieldset>
     </div>
+    <button :disabled="current.publicationState !== 'PUBLISHED' || !!current.deletedAt" :title="current.publicationState !== 'PUBLISHED' ? '草稿与已下架产品不可分享' : '分享当前发布版本'" @click="sharing = {}">分享产品</button>
     <div v-if="!current.deletedAt && current.publicationState !== 'DRAFT'" class="danger-zone">
       <div>
         <strong>下架产品</strong>
@@ -643,9 +562,11 @@ function mediaSelected(e: Event) {
       </button>
     </div></template
   >
+  <ShareDialog v-if="sharing" :product-id="current.productId" :material-id="sharing.materialId" :technical="sharing.technical" @close="sharing = null" />
   <MaterialDrawer
     v-if="materialOpen"
     :product-id="current.productId"
+    :mode="materialMode"
     :initial="
       materialIndex === null ? undefined : content.materials[materialIndex]
     "

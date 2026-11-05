@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@zj/contracts": "workspace:*",
-    "pdfjs-dist": "6.4.299"
+    "pdfjs-dist": "6.4.299",
+    "qrcode": "1.5.4"
   }
 }

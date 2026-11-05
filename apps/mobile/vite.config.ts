@@ -1,3 +1,4 @@
+import { createRequire } from "node:module";
 import { loopbackDevGuard } from "../../scripts/dev-server-guard";
 import { defineConfig } from "vite";
 import uniModule from "@dcloudio/vite-plugin-uni";
@@ -6,7 +7,10 @@ const uni: typeof uniModule =
   typeof uniModule === "function"
     ? uniModule
     : (uniModule as unknown as { default: typeof uniModule }).default;
+const workspaceRequire = createRequire(new URL("../../packages/api-client/package.json", import.meta.url));
 export default defineConfig({
+  // Uni preserves symlink paths; resolve this CJS browser package at its real pnpm location.
+  resolve: { alias: { qrcode: workspaceRequire.resolve("qrcode/lib/browser.js") } },
   plugins: [
     loopbackDevGuard(),
     uni(),

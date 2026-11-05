@@ -105,6 +105,9 @@
         },
         "previewPath": {
           "type": "string"
+        },
+        "shareRequiresSales": {
+          "type": "boolean"
         }
       },
       "required": [
@@ -2566,6 +2569,98 @@
       "required": [
         "data",
         "page",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "ShareSettings": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "baseUrl": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 500
+        },
+        "target": {
+          "enum": [
+            "h5",
+            "portal"
+          ]
+        },
+        "size": {
+          "enum": [
+            256,
+            512,
+            1024
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "baseUrl",
+        "target",
+        "size"
+      ],
+      "additionalProperties": false
+    },
+    "ShareSettingsResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/ShareSettings"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "ShareTarget": {
+      "type": "object",
+      "properties": {
+        "publicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "materialId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "requiresSales": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "publicId",
+        "materialId",
+        "requiresSales"
+      ],
+      "additionalProperties": false
+    },
+    "ShareTargetResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/ShareTarget"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
         "requestId"
       ],
       "additionalProperties": false

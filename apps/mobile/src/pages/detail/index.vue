@@ -2,8 +2,9 @@
 import { computed, ref } from "vue";
 import { onLoad, onShow } from "@dcloudio/uni-app";
 import type { Responses } from "@zj/contracts";
-import { api } from "../../api";
+import { api, resourceUrl } from "../../api";
 // #ifdef H5
+import SharePanel from "../../components/SharePanel.vue";
 import SeriesHero from "../../components/SeriesHero.vue";
 // #endif
 import { seriesStyle } from "../../series-display";
@@ -42,12 +43,11 @@ isH5 = true;
 const displayGroups = computed(() => isH5 ? [...visibleGroups.value].sort((a,b) => ['problemValues','features','scenarios'].indexOf(a.key) - ['problemValues','features','scenarios'].indexOf(b.key)) : visibleGroups.value);
 function heading(key: string, fallback: string) {
   if (!isH5) return fallback;
-  const keys = [summaryParagraphs.value.length || hasText(product.value?.audiences) ? 'intro' : '', ...displayGroups.value.map(g => g.key), 'materials', ...(technicalEntries.value.length ? ['technical'] : [])].filter(Boolean);
+  const keys = [summaryParagraphs.value.length || hasText(product.value?.audiences) ? 'intro' : '', ...displayGroups.value.map(g => g.key), 'materials'].filter(Boolean);
   const labels: Record<string,string> = { intro: '产品介绍', problemValues: '解决什么问题', features: '核心能力', scenarios: '适用场景', materials: '当前资料', technical: '技术与使用说明' };
   return String(keys.indexOf(key) + 1).padStart(2, '0') + '  ' + (labels[key] ?? fallback);
 }
-const summaryParagraphs = computed(() => (product.value?.summary ?? "").split(/\r\n|\r|\n/).filter(line => line.trim().length > 0));
-import { technicalLabels as labels } from "@zj/api-client";
+const summaryParagraphs = computed(() => (product.value?.summary ?? "").split(/\r\n|\r|\n/).map(line => line.trim()).filter(Boolean));
 function hasText(value: string | null | undefined): boolean {
   return typeof value === "string" && value.trim().length > 0;
 }
@@ -66,11 +66,10 @@ const visibleGroups = computed(() => {
 function hasGroup(key: (typeof groups)[number][0]): boolean {
   return visibleGroups.value.some((group) => group.key === key);
 }
-const technicalEntries = computed(() =>
-  Object.entries(product.value?.technical ?? {}).filter(([, value]) =>
-    hasText(value),
-  ),
-);
+function previewImage(index: number) {
+  const urls = (product.value?.media ?? []).map(item => resourceUrl(item.path));
+  if (urls.length) uni.previewImage({ urls, current: index });
+}
 
 async function load() {
   if (!id) {
@@ -138,12 +137,12 @@ function preview(materialId: string) {
       <view v-for="group in displayGroups" :key="group.key" :id="'section-' + group.key" class="v2-detail-section"><text class="section-title">{{ heading(group.key, group.label) }}</text>
         <template v-for="item in group.items" :key="item.id"><button role="button" tabindex="0" v-if="group.key === 'features'" class="v2-feature-card capability-card" :aria-label="item.title || item.text" @click="showCapability(item)"><text v-if="hasText(item.title)" class="feature-title">{{ item.title }}</text><text v-if="hasText(item.text)" class="paragraph">{{ item.text }}</text></button><view v-else class="v2-feature-card"><text v-if="hasText(item.title)" class="feature-title">{{ item.title }}</text><text v-if="hasText(item.text)" class="paragraph">{{ item.text }}</text></view></template>
       </view>
-      <view v-if="product.media.length" class="v2-detail-section media-list"><text class="section-title">产品展示</text><view v-for="m in product.media" :key="m.mediaId"><ProductVisual :path="m.path" :alt="hasText(m.alt) ? m.alt : product.name" large /><text v-if="hasText(m.alt)" class="paragraph">{{ m.alt }}</text></view></view>
+      <view v-if="product.media.length" class="v2-detail-section media-list"><text class="section-title">产品介绍图片</text><view v-for="(m, index) in product.media" :key="m.mediaId"><button class="intro-picture" :aria-label="'全屏查看图片 ' + (index + 1)" @click="previewImage(index)"><image :src="resourceUrl(m.path)" :alt="hasText(m.alt) ? m.alt : product.name" mode="widthFix" /></button><text v-if="hasText(m.alt)" class="paragraph">{{ m.alt }}</text></view></view>
       <view id="section-materials" class="v2-detail-section"><text class="section-title">{{ heading('materials', '产品资料') }}</text>
         <button role="button" tabindex="0" v-for="m in product.materials" :key="m.materialId" class="material-card v2-detail-material" @click="preview(m.materialId)"><view class="v2-material-top"><text class="v2-format">{{ m.previewKind === 'pdf' ? 'PDF' : m.previewKind === 'video' ? '视频' : '图集' }}</text><text>{{ m.versionLabel }}{{ m.previewKind === 'video' ? '' : ' · ' + m.pageCount + ' 页' }}</text></view><text class="feature-title">{{ m.name }}</text><text class="v2-material-date">{{ m.publishedAt.slice(0, 10) }}</text><text class="preview-link">预览资料 ↗</text></button>
         <text v-if="!product.materials.length" class="paragraph">暂无可预览资料</text>
       </view>
-      <view v-if="technicalEntries.length" class="v2-detail-section"><text class="section-title">{{ heading('technical', '技术与使用说明') }}</text><view v-for="[k,v] in technicalEntries" :key="k" class="v2-technical-row"><text class="paragraph">{{ labels[k] ?? k }}：{{ v }}</text></view></view>
+      <SharePanel :product-id="product.productId" />
       <ContactBlock />
     </template>
   </view>
@@ -196,27 +195,7 @@ function preview(materialId: string) {
             }}</text></view
           ></template></view
         ></template
-      ><view v-if="product.media.length" class="media-list"
-        ><text class="section-title">产品展示</text
-        ><view v-for="m in product.media" :key="m.mediaId"
-          ><ProductVisual
-            :path="m.path"
-            :alt="hasText(m.alt) ? m.alt : product.name"
-            large /><text v-if="hasText(m.alt)">{{
-            m.alt
-          }}</text></view
-        ></view
-      ><view v-if="technicalEntries.length" class="detail-section"
-        ><text class="section-title">技术与使用说明</text
-        ><view class="feature-card"
-          ><view
-            v-for="[k, v] in technicalEntries"
-            :key="k"
-            class="technical-row"
-            ><text class="feature-title">{{ labels[k] ?? k }}</text
-            ><text class="paragraph">{{ v }}</text></view
-          ></view
-        ></view
+      ><view v-if="product.media.length" class="media-list"><text class="section-title">产品介绍图片</text><view v-for="(m, index) in product.media" :key="m.mediaId"><button class="intro-picture" :aria-label="'全屏查看图片 ' + (index + 1)" @click="previewImage(index)"><image :src="resourceUrl(m.path)" :alt="m.alt || product.name" mode="widthFix" /></button><text>{{ m.alt }}</text></view></view>
       ><view id="section-materials" class="detail-section"
         ><text class="section-title">产品资料</text
         ><button role="button" tabindex="0"
@@ -242,6 +221,9 @@ function preview(materialId: string) {
 <!-- #endif -->
 </template>
 <style scoped>
+.intro-picture { display:block; width:100%; padding:0; background:transparent; line-height:0; border:0; }
+.intro-picture image { display:block; width:100%; height:auto; }
+.intro-picture::after { border:0; }
 
 .detail-page {
   --detail-accent: var(--zj-color-brand-hover);
@@ -364,7 +346,8 @@ function preview(materialId: string) {
   line-height: 1.4;
 }
 .summary {
-  margin: 14px 0;
+  margin: 0 0 .75em;
+  line-height: 1.8;
   text-indent: 2em;
 }
 .section-nav {

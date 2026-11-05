@@ -8,7 +8,7 @@ export async function proxySales(request: Request, path: string[], compatibility
   if (!session) return Response.json({ error: { code: "UNAUTHENTICATED", message: "请重新登录销售工作台" } }, { status: 401, headers: output });
   const suffix = (compatibilityCatalog ? "catalog/" : "") + path.map(encodeURIComponent).join("/");
   // Categories do not include private fields. The endpoint still requires a live sales role.
-  const categories = suffix === "catalog/categories";
+  const categories = suffix === "catalog/categories" || suffix === "catalog/share-settings";
   if (categories) {
     const me = await fetch(apiBase() + "/sales/me", { headers: { Authorization: "Bearer " + session.token }, cache: "no-store", redirect: "error", signal: AbortSignal.timeout(15000) }).catch(() => null);
     if (!me?.ok) return Response.json({ error: { message: me && [401, 403].includes(me.status) ? "请重新登录销售工作台" : "身份服务暂不可用，请稍后重试" } }, { status: me && [401, 403].includes(me.status) ? me.status : 503, headers: output });

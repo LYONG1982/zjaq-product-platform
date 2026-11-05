@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import Modal from "./Modal.vue";
 import { signIn, isLocalMock } from "../api";
+defineProps<{ loggedOut?: boolean }>();
 const emit = defineEmits<{ signedIn: [] }>(),
   username = ref(""),
   password = ref(""),
@@ -22,12 +23,12 @@ async function submit() {
 }
 </script>
 <template>
-  <Modal title="重新登录" @close="() => {}"
+  <Modal :title="loggedOut ? '登录后台' : '重新登录'" @close="() => {}"
     ><p>
       {{
         isLocalMock
-          ? "当前本地模拟身份不可用，请由管理员恢复后重试。"
-          : "登录已失效。未提交的正文仍保留在当前页面。"
+          ? "本地验证环境，点击按钮后使用模拟身份进入。"
+          : loggedOut ? "已退出当前浏览器会话，请重新登录。" : "登录已失效。未提交的正文仍保留在当前页面。"
       }}
     </p>
     <form id="signin" class="management-form" @submit.prevent="submit">
@@ -49,7 +50,7 @@ async function submit() {
     </form>
     <template #footer
       ><button form="signin" type="submit" class="primary" :disabled="busy">
-        {{ busy ? "正在验证…" : isLocalMock ? "重新连接" : "登录并继续" }}
+        {{ busy ? "正在验证…" : isLocalMock ? "进入本地验证" : "登录并继续" }}
       </button></template
     ></Modal
   >

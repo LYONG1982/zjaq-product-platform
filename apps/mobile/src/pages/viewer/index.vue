@@ -1,4 +1,7 @@
 <script setup lang="ts">
+// #ifdef H5
+import SharePanel from "../../components/SharePanel.vue";
+// #endif
 import { ref, nextTick } from "vue";
 import { onLoad, onShow, onUnload } from "@dcloudio/uni-app";
 import type { Responses } from "@zj/contracts";
@@ -202,6 +205,7 @@ onUnload(() => {
 <!-- #ifdef H5 -->
   <view class="h5-v2 v2-viewer">
     <view class="v2-viewer-header"><button role="button" tabindex="0" @click="backToSource(source)" aria-label="返回上一页">← 资料预览</button><text class="v2-demo">本地演示</text></view>
+    <SharePanel v-if="manifest && !error" :product-id="productId" :material-id="materialId" />
     <view class="v2-viewer-title"><text>{{ manifest?.name ?? '资料预览' }}</text><text class="version">{{ manifest ? (manifest.previewKind === 'pdf' ? 'PDF' : manifest.previewKind === 'video' ? '视频' : '图集') + ' / ' + manifest.versionLabel + (manifest.previewKind === 'video' ? '' : ' / 共 ' + manifest.pageCount + ' 页') : '' }}</text></view>
     <view v-if="error" class="v2-viewer-error" role="alert"><text>{{ error }}</text><button role="button" tabindex="0" @click="open">重新打开</button></view>
     <view v-show="!error">

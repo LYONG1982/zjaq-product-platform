@@ -478,5 +478,53 @@
     "request": "ProductRemoval",
     "response": "Object",
     "role": "ADMIN"
+  },
+  {
+    "method": "get",
+    "path": "/api/v1/catalog/share-settings",
+    "operationId": "getPublicShareSettings",
+    "description": "首页联系方式配置。",
+    "admin": false,
+    "request": null,
+    "response": "Object",
+    "role": "public"
+  },
+  {
+    "method": "get",
+    "path": "/api/v1/admin/share-settings",
+    "operationId": "getAdminShareSettings",
+    "description": "首页联系方式配置。",
+    "admin": true,
+    "request": null,
+    "response": "Object",
+    "role": "ADMIN"
+  },
+  {
+    "method": "put",
+    "path": "/api/v1/admin/share-settings",
+    "operationId": "updateAdminShareSettings",
+    "description": "首页联系方式配置。",
+    "admin": true,
+    "request": "ShareSettingsWrite",
+    "response": "Object",
+    "role": "ADMIN"
+  },
+  {
+    "method": "post",
+    "path": "/api/v1/admin/logout",
+    "operationId": "logoutAdminBrowser",
+    "description": "清理当前浏览器只读媒体会话。",
+    "admin": false,
+    "request": null,
+    "response": "NoContent"
+  },
+  {
+    "method": "get",
+    "path": "/api/v1/admin/products/{productId}/share-target",
+    "operationId": "getAdminShareTarget",
+    "description": "验证当前发布的分享目标。",
+    "admin": true,
+    "request": null,
+    "response": "ShareTarget"
   }
 ]

@@ -14,79 +14,51 @@ import { validateBackup } from "../../services/api/src/backup-validation";
 
 const createBody = (model: string) => ({ name: "【隔离测试】安全移除", categoryId: "ai", templateId: "ai", templateVersion: 1, owner: "虚构测试人", model, productType: "SOFTWARE", ownership: "SELF_DEVELOPED" });
 
-test("safe product removal is admin-only, versioned, idempotent, preserves history and blocks public/sales Range until explicit republish", async () => {
+test("only never-published drafts can be removed; history, role checks and legacy restoration remain intact", async () => {
   const store = new MockStore(undefined, true), server = makeMockServer({ APP_ENV: "test", ENABLE_MOCK_ROLES: "true" }, store);
   server.listen(0, "127.0.0.1"); await once(server, "listening"); const address = server.address(); assert.ok(address && typeof address === "object");
   const base = `http://127.0.0.1:${address.port}/api/v1`;
-  const call = async (path: string, method = "GET", body?: unknown, role = "local-admin", key?: string, more: Record<string,string> = {}) => fetch(base + path, { method, headers: { ...(role ? { Authorization: "Bearer " + role } : {}), ...(body === undefined ? {} : { "Content-Type": "application/json" }), ...(key ? { "Idempotency-Key": key } : {}), ...more }, ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
+  const call = (path: string, method = "GET", body?: unknown, role = "local-admin", key = randomUUID()) => fetch(base + path, { method, headers: { ...(role ? { Authorization: "Bearer " + role } : {}), "Content-Type":"application/json", "Idempotency-Key":key }, ...(body === undefined ? {} : { body:JSON.stringify(body) }) });
   try {
-    const model = "TEST-REMOVE-" + randomUUID(), created = (await (await call("/admin/products", "POST", createBody(model), "local-admin", randomUUID())).json()).data;
-    const id = created.productId, bytes = await readFile("tests/fixtures/validation/sample-v1.pdf");
-    const uploadBody = { productId: id, purpose: "preview", fileName: "safe.pdf", contentType: "application/pdf", size: bytes.length }, uploadKey = randomUUID();
-    const intent = (await (await call("/admin/uploads", "POST", uploadBody, "local-admin", uploadKey)).json()).data;
-    assert.equal((await fetch(base.replace(/\/api\/v1$/, "") + intent.uploadPath, { method: "PUT", headers: { Authorization: "Bearer local-admin", "Content-Type": "application/octet-stream" }, body: bytes })).status, 200);
-    const asset = (await (await call("/admin/uploads/complete", "POST", { uploadId: intent.uploadId })).json()).data; assert.equal(asset.status, "READY");
-    const item = { id: "one", title: "仅本地测试", text: "虚构正文" };
-    const content = { ...created.content, tagline: "虚构测试", summary: "虚构测试正文", problemValues: [item], features: [item], scenarios: [item], technical: { inputs: "文档", outputs: "草稿", humanReview: "人工" }, materials: [{ materialId: "fixture", versionId: "fixture-v1", name: "虚构资料", kind: "brochure", category: "promotional", subCategory: "deck", versionLabel: "V1.0", preview: { kind: "pdf", assetId: asset.assetId, pageCount: 2 } }] };
-    const saved = (await (await call(`/admin/products/${id}/draft`, "PATCH", { expectedDraftVersion: 1, content })).json()).data;
-    const publishBody = { expectedDraftVersion: saved.draftVersion, expectedPublicationVersion: 0, publicContentConfirmed: true }, publishKey = randomUUID();
-    const published = (await (await call(`/admin/products/${id}/publish`, "POST", publishBody, "local-admin", publishKey)).json()).data;
-    const publicId = store.product(id).publicId!, manifest = store.manifest(publicId, "fixture"), publicPart = manifest.parts[0].path;
-    const relativePart = publicPart.replace(/^\/api\/v1/, "");
-    assert.equal((await call(relativePart, "GET", undefined, "", undefined, { Range: "bytes=0-3" })).status, 206);
-    const mediaSession = await call("/admin/media-session", "POST", undefined, "local-mock"); assert.equal(mediaSession.status, 204);
-    const contentCookie = mediaSession.headers.get("set-cookie")!.split(";")[0];
-    const pending = (await (await call("/admin/uploads", "POST", { ...uploadBody, fileName: "pending.pdf" }, "local-admin", randomUUID())).json()).data;
-    const snapshot = structuredClone(store.releases.get(published.releaseId)), history = structuredClone([...store.materialHistory]), assetsBefore = structuredClone([...store.assets.uploads]);
-    const removeBody = { expectedDraftVersion: saved.draftVersion, expectedPublicationVersion: published.publicationVersion, reason: "测试结束，保留留档", confirmed: true }, key = randomUUID();
-    assert.equal((await call(`/admin/products/${id}/remove`, "POST", removeBody, "", key)).status, 401);
-    for (const role of ["local-mock", "local-sales"]) assert.equal((await call(`/admin/products/${id}/remove`, "POST", removeBody, role, key)).status, 403);
-    assert.equal((await call(`/admin/products/${id}/remove`, "POST", { ...removeBody, reason: "  " }, "local-admin", randomUUID())).status, 422);
-    assert.equal((await call(`/admin/products/${id}/remove`, "POST", { ...removeBody, expectedDraftVersion: 999 }, "local-admin", randomUUID())).status, 409);
-    const removedResponse = await call(`/admin/products/${id}/remove`, "POST", removeBody, "local-admin", key); assert.equal(removedResponse.status, 200);
-    const removed = (await removedResponse.json()).data;
-    assert.equal(removed.publicationState, "OFFLINE"); assert.ok(removed.deletedAt); assert.equal(removed.deletedBy, "mock-admin"); assert.equal(removed.deletionReason, removeBody.reason);
-    assert.equal(store.product(id).activeReleaseId, null); assert.equal(store.product(id).lastReleaseId, published.releaseId); assert.equal(store.product(id).publicId, publicId);
-    assert.deepEqual(store.releases.get(published.releaseId), snapshot); assert.deepEqual([...store.materialHistory], history); assert.deepEqual([...store.assets.uploads], assetsBefore);
-    const events = store.events.length; assert.deepEqual((await (await call(`/admin/products/${id}/remove`, "POST", removeBody, "local-admin", key)).json()).data, removed); assert.equal(store.events.length, events);
-    assert.equal((await call(`/admin/products/${id}/remove`, "POST", { ...removeBody, reason: "另一个原因" }, "local-admin", key)).status, 409);
-    assert.equal((await (await call("/admin/products?limit=100")).json()).data.some((p: any) => p.productId === id), false);
-    const removedList = (await (await call("/admin/products?removed=true")).json()).data; assert.equal(removedList[0].productId, id);
-    assert.equal((await call("/admin/products?removed=true", "GET", undefined, "local-mock")).status, 403);
-    assert.equal((await call(`/admin/products/${id}/draft`, "GET", undefined, "local-mock")).status, 404);
-    assert.equal((await call(`/admin/products/${id}/material-versions`)).status, 200);
-    const adminAsset = `/admin/products/${id}/assets/${asset.assetId}/content`;
-    assert.equal((await call(adminAsset)).status, 200); assert.equal((await call(adminAsset, "GET", undefined, "local-mock")).status, 404);
-    assert.equal((await call(adminAsset, "GET", undefined, "", undefined, { Cookie: contentCookie, Range: "bytes=0-3" })).status, 404);
-    const rejectedPut = await fetch(base.replace(/\/api\/v1$/, "") + pending.uploadPath, { method: "PUT", headers: { Authorization: "Bearer local-admin", "Content-Type": "application/octet-stream" }, body: bytes });
-    assert.equal(rejectedPut.status, 409); assert.equal((await rejectedPut.json()).error.code, "PRODUCT_REMOVED");
-    assert.equal((await call(`/admin/products/${id}/draft`, "PATCH", { expectedDraftVersion: removed.draftVersion, content })).status, 409);
-    assert.equal((await call(`/admin/products/${id}/publish`, "POST", publishBody, "local-admin", publishKey)).status, 409);
-    assert.equal((await call("/admin/uploads", "POST", uploadBody, "local-admin", uploadKey)).status, 409);
-    assert.equal((await call("/admin/uploads/complete", "POST", { uploadId: intent.uploadId })).status, 409);
-    for (const role of ["", "local-sales"]) {
-      const prefix = role ? "/sales" : "";
-      assert.equal((await call(`${prefix}/catalog/products/${publicId}`, "GET", undefined, role)).status, 404);
-      for (const range of ["bytes=0-3", "bytes=999999999-"]) assert.equal((await call(prefix + relativePart, "GET", undefined, role, undefined, { Range: range })).status, 404);
-    }
-    assert.equal((await call("/admin/products", "POST", createBody(model), "local-admin", randomUUID())).status, 409);
-    const restoreBody = { expectedDraftVersion: removed.draftVersion, expectedPublicationVersion: removed.publicationVersion, reason: "测试恢复，不自动上架", confirmed: true }, restoreKey = randomUUID();
-    assert.equal((await call(`/admin/products/${id}/restore`, "POST", removeBody, "local-admin", randomUUID())).status, 409);
-    const restored = (await (await call(`/admin/products/${id}/restore`, "POST", restoreBody, "local-admin", restoreKey)).json()).data;
-    assert.equal(restored.deletedAt, null); assert.equal(restored.publicationState, "OFFLINE"); assert.equal(store.product(id).activeReleaseId, null);
-    assert.equal((await call(`/catalog/products/${publicId}`, "GET", undefined, "")).status, 404);
-    assert.deepEqual((await (await call(`/admin/products/${id}/restore`, "POST", restoreBody, "local-admin", restoreKey)).json()).data, restored);
-    const republished = await call(`/admin/products/${id}/publish`, "POST", { expectedDraftVersion: restored.draftVersion, expectedPublicationVersion: restored.publicationVersion, publicContentConfirmed: true }, "local-admin", randomUUID()); assert.equal(republished.status, 200);
-    assert.equal((await call(`/catalog/products/${publicId}`, "GET", undefined, "")).status, 200);
-    assert.equal((await call(relativePart, "GET", undefined, "", undefined, { Range: "bytes=0-3" })).status, 409);
-    const current = store.draft(id), again = { expectedDraftVersion: current.draftVersion, expectedPublicationVersion: current.publicationVersion, reason: "再次移除，验证旧恢复回放不会复活", confirmed: true };
-    const removedAgain = await call(`/admin/products/${id}/remove`, "POST", again, "local-admin", randomUUID()); assert.equal(removedAgain.status, 200);
-    const afterSecondRemoval = structuredClone(store.product(id)), eventCount = store.events.length;
-    assert.equal((await call(`/admin/products/${id}/restore`, "POST", restoreBody, "local-admin", restoreKey)).status, 200);
-    assert.deepEqual(store.product(id), afterSecondRemoval); assert.equal(store.events.length, eventCount);
-    assert.equal((await call(`/catalog/products/${publicId}`, "GET", undefined, "")).status, 404);
-    assert.equal(store.events.find(e => e.action === "REMOVE_PRODUCT")?.reason, removeBody.reason); assert.equal(store.events.find(e => e.action === "RESTORE_PRODUCT")?.reason, restoreBody.reason);
-  } finally { server.closeAllConnections(); await new Promise<void>(resolve => server.close(() => resolve())); await rm(store.assets.directory, { recursive: true, force: true }); }
+    const created = (await (await call("/admin/products", "POST", createBody("REMOVE-" + randomUUID()))).json()).data, id = created.productId;
+    const bytes = await readFile("tests/fixtures/validation/sample-v1.pdf");
+    const intent = (await (await call("/admin/uploads", "POST", { productId:id, purpose:"preview", fileName:"sample.pdf", contentType:"application/pdf", size:bytes.length })).json()).data;
+    await fetch(base.replace(/\/api\/v1$/, "") + intent.uploadPath, { method:"PUT", headers:{Authorization:"Bearer local-admin","Content-Type":"application/octet-stream"},body:bytes });
+    const asset = (await (await call("/admin/uploads/complete", "POST", {uploadId:intent.uploadId})).json()).data;
+    const content = { ...created.content, tagline:"虚构验证", summary:"虚构内容", problemValues:[{id:"problem",title:"虚构问题",text:"虚构说明"}], features:[{id:"feature",title:"虚构功能",text:"虚构说明"}], scenarios:[{id:"scenario",title:"虚构场景",text:"虚构说明"}], materials:[{materialId:"fixture",versionId:randomUUID(),name:"测试 PDF",kind:"brochure",category:"promotional",subCategory:"onepager",versionLabel:"V01.0",preview:{kind:"pdf",assetId:asset.assetId,pageCount:asset.pageCount}}] };
+    const saved = (await (await call(`/admin/products/${id}/draft`, "PATCH", {expectedDraftVersion:1,content})).json()).data;
+    const before = structuredClone(store.product(id)), history = structuredClone([...store.materialHistory]), assets = structuredClone([...store.assets.uploads]);
+    const body = {expectedDraftVersion:saved.draftVersion,expectedPublicationVersion:0,reason:"测试结束保留留档",confirmed:true}, key = randomUUID();
+    assert.equal((await call(`/admin/products/${id}/remove`,"POST",body,"",key)).status,401);
+    for(const role of ["local-mock","local-sales"]) assert.equal((await call(`/admin/products/${id}/remove`,"POST",body,role,key)).status,403);
+    assert.equal((await call(`/admin/products/${id}/remove`,"POST",{...body,reason:" "})).status,422);
+    assert.equal((await call(`/admin/products/${id}/remove`,"POST",{...body,expectedDraftVersion:999})).status,409);
+    const response = await call(`/admin/products/${id}/remove`,"POST",body,"local-admin",key); assert.equal(response.status,200);
+    const removed=(await response.json()).data; assert.equal(removed.publicationState,"DRAFT");assert.ok(removed.deletedAt);
+    assert.deepEqual(store.product(id).draft,before.draft);assert.deepEqual([...store.materialHistory],history);assert.deepEqual([...store.assets.uploads],assets);assert.equal(store.product(id).publicId,before.publicId);
+    const eventCount=store.events.length;assert.deepEqual((await (await call(`/admin/products/${id}/remove`,"POST",body,"local-admin",key)).json()).data,removed);assert.equal(store.events.length,eventCount);
+    assert.equal((await (await call("/admin/products?removed=true")).json()).data.some((row:any)=>row.productId===id),true);
+    assert.equal((await call("/admin/products?removed=true","GET",undefined,"local-mock")).status,403);
+    assert.equal((await call(`/admin/products/${id}/draft`,"GET",undefined,"local-mock")).status,404);
+    assert.equal((await call(`/admin/products/${id}/draft`,"PATCH",{expectedDraftVersion:removed.draftVersion,content})).status,409);
+    assert.equal((await call(`/admin/products/${id}/assets/${asset.assetId}/content`)).status,200);
+    const restoreBody={...body,expectedDraftVersion:removed.draftVersion,reason:"恢复草稿"}, restoreKey=randomUUID();
+    const restored=(await (await call(`/admin/products/${id}/restore`,"POST",restoreBody,"local-admin",restoreKey)).json()).data;
+    assert.equal(restored.publicationState,"DRAFT");assert.equal(restored.deletedAt,null);
+    assert.deepEqual((await (await call(`/admin/products/${id}/restore`,"POST",restoreBody,"local-admin",restoreKey)).json()).data,restored);
+    const publishedResponse=await call(`/admin/products/${id}/publish`,"POST",{expectedDraftVersion:restored.draftVersion,expectedPublicationVersion:0,publicContentConfirmed:true});assert.equal(publishedResponse.status,200);
+    const published=(await publishedResponse.json()).data;
+    const release=structuredClone(store.releases.get(published.releaseId));
+    assert.equal((await call(`/admin/products/${id}/remove`,"POST",{...body,expectedDraftVersion:restored.draftVersion,expectedPublicationVersion:published.publicationVersion})).status,409);
+    const off=(await (await call(`/admin/products/${id}/unpublish`,"POST",{expectedPublicationVersion:published.publicationVersion,reason:"下架验证"})).json()).data;
+    assert.equal((await call(`/admin/products/${id}/remove`,"POST",{...body,expectedDraftVersion:restored.draftVersion,expectedPublicationVersion:off.publicationVersion})).status,409);
+    // Import an old tombstone explicitly: new removal policy never creates it.
+    const legacy=store.product(id);legacy.deletedAt=new Date().toISOString();legacy.deletedBy="mock-admin";legacy.deletionReason="历史留档";legacy.draftVersion++;
+    const legacyRestored=(await (await call(`/admin/products/${id}/restore`,"POST",{...body,expectedDraftVersion:legacy.draftVersion,expectedPublicationVersion:legacy.publicationVersion})).json()).data;
+    assert.equal(legacyRestored.publicationState,"OFFLINE");assert.equal(store.product(id).activeReleaseId,null);assert.deepEqual(store.releases.get(published.releaseId),release);
+    assert.equal((await call(`/catalog/products/${before.publicId}`,"GET",undefined,"")).status,404);
+    assert.equal(store.events.find(e=>e.action==="REMOVE_PRODUCT")?.reason,body.reason);
+  } finally {server.closeAllConnections();await new Promise<void>(resolve=>server.close(()=>resolve()));await rm(store.assets.directory,{recursive:true,force:true});}
 });
 
 class Harness implements Repository {

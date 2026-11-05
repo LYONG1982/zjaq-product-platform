@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { normalizeProductName, productNameError, productNameUnits } from "@zj/contracts";
 import { computed, ref } from "vue";
 import type { AdminDraft, Category, Template, Domain } from "@zj/contracts";
 import { api, requestKey, errorInfo } from "../api";
@@ -54,6 +55,8 @@ async function create() {
     error.value = "请填写产品名称、产品资料负责人、型号，并选择产品类型和属性。";
     return;
   }
+  name.value = normalizeProductName(name.value);
+  if (productNameError(name.value)) { error.value = productNameError(name.value); return; }
   busy.value = true;
   try {
     const check = await api.products({ q: name.value.trim(), limit: 100 });
@@ -130,11 +133,10 @@ async function create() {
           编号将在创建后生成
         </p>
         <label class="field"
-          >正式名称<input
-            v-model="name"
+          >正式名称<input aria-label="正式名称"
+            v-model="name" @input="allowDuplicate = false; !($event as InputEvent).isComposing && (name = normalizeProductName(($event.target as HTMLInputElement).value))" @compositionend="name = normalizeProductName(($event.target as HTMLInputElement).value)"
             maxlength="80"
-            @input="allowDuplicate = false"
-            autocomplete="off" /></label
+            autocomplete="off" /><small>{{ productNameUnits(normalizeProductName(name).trim()) }} / 15 个全角显示单位；中文计 1，英文、数字及英文括号计 0.5。</small></label
         ><label class="field"
           >产品资料负责人<input
             v-model="owner"

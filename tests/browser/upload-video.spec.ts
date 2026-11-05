@@ -5,6 +5,7 @@ import { prepareVideoFixtures, sparsePdf } from "../helpers/upload-fixtures";
 import { rm, mkdtemp } from "node:fs/promises";
 import { tmpdir } from "node:os";
 let videoFixtures: string;
+test.beforeEach(async ({page}) => { await page.unrouteAll({behavior:"wait"}); });
 test.beforeAll(async () => { videoFixtures = await prepareVideoFixtures(); });
 test.afterAll(async () => { if (videoFixtures) await rm(videoFixtures,{recursive:true,force:true}); });
 async function playsVideo(video: import("@playwright/test").Locator) {
@@ -13,15 +14,15 @@ async function playsVideo(video: import("@playwright/test").Locator) {
   await expect.poll(() => video.evaluate((element: HTMLVideoElement) => element.currentTime)).toBeGreaterThan(0.1);
 }
 
-test("one upload entry recognises video, admin preview streams with HttpOnly media cookie, H5 and sales play latest video", async ({ page, request }) => {
+test("separate video entry retains streaming, admin preview streams with HttpOnly media cookie, H5 and sales play latest video", async ({ page, request }) => {
   const name="【验证数据】视频闭环-"+randomUUID().slice(0,6);
   const created=(await json(request,"/admin/products","POST",{name,categoryId:"miding",templateId:"software",templateVersion:1,owner:"本地验证",model:"VIDEO-"+randomUUID(),productType:"SOFTWARE",ownership:"SELF_DEVELOPED"},randomUUID())).body.data;
   const content={...created.content,tagline:"本地视频验证",summary:"虚构蓝色视频素材",problemValues:[{id:"p",title:"验证",text:"本地测试"}],features:[{id:"f",title:"验证",text:"本地测试"}],scenarios:[{id:"s",title:"验证",text:"本地测试"}],technical:{deployment:"仅本地"}};
   expect((await json(request,"/admin/products/"+created.productId+"/draft","PATCH",{expectedDraftVersion:created.draftVersion,content})).status).toBe(200);
   const requests:string[]=[];page.on("request",r=>requests.push(r.url()));
   await page.goto(urls.admin);await page.getByLabel("搜索产品",{exact:true}).fill(name);await page.getByRole("button",{name:"查询",exact:true}).click();await page.getByRole("row").filter({hasText:name}).getByRole("button",{name:"编辑",exact:true}).click();
-  await page.getByRole("button",{name:"上传资料",exact:true}).click();const dialog=page.getByRole("dialog",{name:"上传资料",exact:true});
-  await dialog.locator('input[type="file"]').setInputFiles(path.join(videoFixtures,"video-sample.mp4"));
+  await page.getByRole("button",{name:"上传视频",exact:true}).click();const dialog=page.getByRole("dialog",{name:"上传视频",exact:true});
+  await dialog.getByLabel("选择资料文件",{exact:true}).setInputFiles(path.join(videoFixtures,"video-sample.mp4"));
   await dialog.getByRole("button",{name:"上传",exact:true}).click();
   await expect(dialog.getByText("当前预览类型：视频")).toBeVisible({timeout:25000});await expect(dialog.getByLabel("资料名称",{exact:true})).toHaveValue("video-sample");
   await dialog.getByRole("combobox",{name:"资料一级分类",exact:true}).selectOption("promotional");await dialog.getByRole("combobox",{name:"资料二级分类",exact:true}).selectOption("video");
@@ -49,13 +50,13 @@ test("browser streams a 500 MiB PDF and refuses 501 MiB locally before upload re
     const name="【验证数据】500MiB-"+randomUUID().slice(0,6);
     const created=(await json(request,"/admin/products","POST",{name,categoryId:"miding",templateId:"software",templateVersion:1,owner:"本地验证",model:"BIG-"+randomUUID(),productType:"SOFTWARE",ownership:"SELF_DEVELOPED"},randomUUID())).body.data;
     await page.goto(urls.admin);await page.getByLabel("搜索产品",{exact:true}).fill(name);await page.getByRole("button",{name:"查询",exact:true}).click();await page.getByRole("row").filter({hasText:name}).getByRole("button",{name:"编辑",exact:true}).click();
-    await page.getByRole("button",{name:"上传资料",exact:true}).click();const dialog=page.getByRole("dialog",{name:"上传资料",exact:true});
-    const large=path.join(root,"500MiB.pdf");await sparsePdf(large,500*1024*1024);await dialog.locator('input[type="file"]').setInputFiles(large);
+    await page.getByRole("button",{name:"上传 PDF 资料",exact:true}).click();const dialog=page.getByRole("dialog",{name:"上传 PDF 资料",exact:true});
+    const large=path.join(root,"500MiB.pdf");await sparsePdf(large,500*1024*1024);await dialog.getByLabel("选择资料文件",{exact:true}).setInputFiles(large);
     await dialog.getByRole("button",{name:"上传",exact:true}).click();await expect(dialog.getByText("PDF 已就绪 · 1 页")).toBeVisible({timeout:60000});
     await dialog.getByRole("combobox",{name:"资料一级分类",exact:true}).selectOption("promotional");await dialog.getByRole("combobox",{name:"资料二级分类",exact:true}).selectOption("onepager");
     await dialog.getByRole("button",{name:"完成",exact:true}).click();await page.getByRole("button",{name:"保存草稿",exact:true}).click();await expect(page.getByText(/草稿已保存/)).toBeVisible();
     const saved=(await json(request,"/admin/products/"+created.productId+"/draft")).body.data;expect(saved.content.materials[0].preview.kind).toBe("pdf");
-    await page.getByRole("button",{name:"上传资料",exact:true}).click();const next=page.getByRole("dialog",{name:"上传资料",exact:true});let requests=0;page.on("request",r=>{if(r.method()==="POST"&&r.url().endsWith("/admin/uploads"))requests++;});
-    const tooLarge=path.join(root,"501MiB.pdf");await sparsePdf(tooLarge,501*1024*1024);await next.locator('input[type="file"]').setInputFiles(tooLarge);await expect(next.getByRole("alert")).toContainText("单个文件不能超过 500 MiB");expect(requests).toBe(0);
+    await page.getByRole("button",{name:"上传 PDF 资料",exact:true}).click();const next=page.getByRole("dialog",{name:"上传 PDF 资料",exact:true});let requests=0;page.on("request",r=>{if(r.method()==="POST"&&r.url().endsWith("/admin/uploads"))requests++;});
+    const tooLarge=path.join(root,"501MiB.pdf");await sparsePdf(tooLarge,501*1024*1024);await next.getByLabel("选择资料文件",{exact:true}).setInputFiles(tooLarge);await expect(next.getByRole("alert")).toContainText("单个文件不能超过 500 MiB");expect(requests).toBe(0);
   } finally {await rm(root,{recursive:true,force:true});}
 });

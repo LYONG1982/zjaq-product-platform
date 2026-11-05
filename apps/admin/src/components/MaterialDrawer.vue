@@ -6,7 +6,8 @@ import AssetViewer from "./AssetViewer.vue";
 import { api, copy } from "../api";
 import { uploadFile } from "../upload";
 import { nextMaterialVersion, validMaterialVersion } from "../versions";
-const props = defineProps<{ productId: string; initial?: Domain["MaterialRef"] }>();
+const props = defineProps<{ productId: string; initial?: Domain["MaterialRef"]; mode?: "pdf" | "video" }>();
+const uploadMode = props.initial?.preview.kind === "video" ? "video" : props.initial ? "pdf" : props.mode ?? "pdf";
 const emit = defineEmits<{ save: [material: Domain["MaterialRef"]]; cancel: [] }>();
 const name = ref(props.initial?.name ?? ""),
   kind = ref<Domain["MaterialRef"]["kind"]>(props.initial?.kind ?? "brochure"),
@@ -91,7 +92,7 @@ function filenameWithoutExtension(fileName: string) {
   const dot = fileName.lastIndexOf(".");
   return (dot > 0 ? fileName.slice(0, dot) : fileName).trim().slice(0, 80);
 }
-function choose(event: Event) {
+function choose(event: Event, asSource = false) {
   const input = event.target as HTMLInputElement, selected = Array.from(input.files ?? []);
   input.value = "";
   if (!selected.length || busy.value) return;
@@ -105,17 +106,17 @@ function choose(event: Event) {
     if (file.size > 500 * 1024 * 1024) { error.value = "单个文件不能超过 500 MiB（524,288,000 字节）"; return; }
     if (!file.size) { error.value = "文件为空，请选择有内容的资料文件。"; return; }
     const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
-    const fileKind: FileKind | undefined = ext === "pdf" ? "pdf" : ["png", "jpg", "jpeg", "webp"].includes(ext) ? "images"
-      : ["mp4", "mov", "webm"].includes(ext) ? "video" : ["pptx", "docx"].includes(ext) ? "source" : undefined;
-    if (!fileKind) { error.value = "不支持这些文件格式：" + file.name + "。支持 PDF、PNG/JPG/JPEG/WebP 图片、PPTX/DOCX 源文件及 MP4/MOV/WebM 视频。"; return; }
+    const fileKind: FileKind | undefined = asSource ? (ext === "pdf" ? "source" : undefined)
+      : uploadMode === "video" ? (["mp4", "mov", "webm"].includes(ext) ? "video" : undefined) : ext === "pdf" ? "pdf" : undefined;
+    if (!fileKind) { error.value = asSource || uploadMode === "pdf" ? "新文档仅支持 PDF；产品介绍图片请使用独立图片模块。" : "格式不支持：视频支持 MP4、MOV、WebM；推荐重新导出 MP4（H.264 视频 + AAC 音频）。修改扩展名不能转换格式。"; return; }
     groups[fileKind].push(file);
   }
   if ([groups.pdf.length > 0, groups.images.length > 0, groups.video.length > 0].filter(Boolean).length > 1) {
-    error.value = "一次只能选择一种预览格式，不能混合 PDF、图片和视频。PPTX/DOCX 可与其中一种预览格式一起选择。"; return;
+    error.value = "一次只能选择一种预览格式，不能混合 PDF、图片和视频。原件请使用独立的可选 PDF 入口。"; return;
   }
   if (groups.pdf.length > 1 || groups.video.length > 1 || groups.source.length > 1) {
     error.value = groups.pdf.length > 1 ? "每份资料只能关联一个 PDF 预览件，请分开处理。"
-      : groups.video.length > 1 ? "每份资料只能关联一个视频，请分开处理。" : "每份资料只能关联一个 PPTX/DOCX 后台源件，请一次选择一个。"; return;
+      : groups.video.length > 1 ? "每份资料只能关联一个视频，请分开处理。" : "每份资料只能关联一个 PDF 后台原件，请一次选择一个。"; return;
   }
   if ((groups.pdf.length || groups.images.length || groups.video.length) && pending.value.some(f => f.purpose === "preview")) {
     error.value = "请先上传或删除待处理的预览文件，再继续选择。"; return;
@@ -224,7 +225,7 @@ function material(): Domain["MaterialRef"] | null {
   if (!ids.value.length) return null;
   const preview: Domain["PreviewRef"] = previewKind.value === "pdf" ? { kind: "pdf", ...pdf.value! }
     : previewKind.value === "video" ? { kind: "video", ...video.value! } : { kind: "images", pages: copy(pages.value) };
-  return { materialId, versionId, name: name.value.trim(), kind: kind.value,
+  return { materialId, versionId, name: name.value.trim(), kind: props.initial?.kind ?? (category.value === "technical" ? "technical" : subCategory.value === "deck" ? "presentation" : "brochure"),
     category: category.value as NonNullable<Domain["MaterialRef"]["category"]>,
     subCategory: subCategory.value as NonNullable<Domain["MaterialRef"]["subCategory"]>,
     versionLabel: version.value.trim(), applicableVersion: applicable.value, sourceAssetId: source.value, preview };
@@ -238,7 +239,7 @@ const completionHint = computed(() => {
   if (busy.value) return "请等待文件上传和检查完成。";
   if (pending.value.length) return "请上传或删除列表中尚未完成的文件。";
   if (staged.value.length) return "请先应用已上传文件，或删除本次替换文件。";
-  if (!ids.value.length) return source.value ? "源文件仅供后台保存，请继续上传 PDF、图片或视频预览件。" : "请先选择并上传通过检查的预览文件。";
+  if (!ids.value.length) return source.value ? "原件仅供后台保存，请继续上传对应的预览件。" : "请先选择并上传通过检查的预览文件。";
   if (historyLoading.value) return "正在读取历史版本…";
   if (historyError.value) return "请先重试读取历史版本。";
   if (!name.value.trim()) return "请填写资料名称。";
@@ -257,17 +258,23 @@ function save() {
   if (props.initial) value.versionId = crypto.randomUUID();
   emit("save", value);
 }
+const copyNotice = ref("");
+async function copyProblem() {
+  try { await navigator.clipboard.writeText(error.value); copyNotice.value = "问题详情已复制"; }
+  catch { copyNotice.value = "复制失败，请手动复制上方错误信息"; }
+}
 </script>
 <template>
-  <Modal :title="initial ? '编辑资料' : '上传资料'" wide scroll-body :busy="busy" @close="confirmDiscard = true">
+  <Modal :title="initial ? '编辑资料' : (uploadMode === 'video' ? '上传视频' : '上传 PDF 资料')" wide scroll-body :busy="busy" @close="confirmDiscard = true">
     <div class="material-upload">
       <p class="journey-note">完成后加入本次编辑，保存草稿并发布更新后生效。</p>
       <section class="upload-section" aria-label="上传文件">
         <div class="upload-heading"><h3><span>1</span>上传文件</h3><small>每个文件 ≤500 MiB</small></div>
         <div class="file-picker">
-          <div><strong>{{ files.length ? '继续选择资料文件' : '请先上传资料文件' }}</strong><p>支持 PDF、图片、视频；Office 文件可作为后台源件。</p></div>
-          <label :class="['choose-file', { disabled: busy }]"><span>{{ files.length ? '继续选择文件' : '选择文件' }}</span><input type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.pptx,.docx,.mp4,.mov,.webm" aria-label="选择资料文件（PDF、图片、视频或源文件）" multiple :disabled="busy || historyLoading || !!historyError" @change="choose" /></label>
+          <div><strong>{{ files.length ? '继续选择资料文件' : '请先上传资料文件' }}</strong><p>{{ uploadMode === "video" ? "推荐 MP4（H.264 + AAC 或无音轨），单个视频 ≤500 MiB；兼容 MOV / WebM。" : "PDF 预览件必填，原件可选，无需重复上传同一文件。" }}</p></div>
+          <label :class="['choose-file', { disabled: busy }]"><span>{{ files.length ? '继续选择文件' : '选择文件' }}</span><input type="file" :accept="uploadMode === 'video' ? '.mp4,.mov,.webm' : '.pdf'" aria-label="选择资料文件" multiple :disabled="busy || historyLoading || !!historyError" @change="choose($event)" /></label>
         </div>
+        <label v-if="uploadMode === 'pdf'" class="choose-file"><span>添加原件（可选，仅 PDF）</span><input type="file" accept=".pdf" aria-label="添加可选 PDF 原件" :disabled="busy" @change="choose($event, true)" /></label>
         <ul v-if="files.length" class="upload-files" aria-label="资料文件列表">
           <li v-for="file in files" :key="file.id" :data-state="file.state">
             <div class="file-description"><strong>{{ file.name }}</strong><small>{{ file.purpose === 'source' ? '后台源件' : '预览件' }} · {{ sizeLabel(file.size) }}</small><span v-if="file.error" class="file-error">{{ file.error }}</span></div>
@@ -278,9 +285,9 @@ function save() {
         <div v-if="batch.length" class="upload-progress" role="progressbar" aria-label="文件上传进度" :aria-valuemin="0" :aria-valuemax="100" :aria-valuenow="determinate ? percent : undefined" :aria-valuetext="status"><span :class="{ indeterminate: !determinate }" :style="{ width: determinate ? percent + '%' : '32%' }" /></div>
         <div class="upload-actions"><p class="upload-status" role="status">{{ status }}<span v-if="busy && determinate && !files.some(f => f.state === 'checking')"> {{ percent }}%</span></p><button v-if="pending.length && !busy" type="button" class="primary" @click="uploadSelected">{{ files.some(f => f.state === 'failed') ? '重试上传' : '上传' }}</button><button v-else-if="staged.length && !busy" type="button" class="primary" @click="applyStaged">应用已上传文件</button></div>
         <p v-if="ids.length" class="ready-description">当前预览类型：{{ previewKind === 'pdf' ? 'PDF' : previewKind === 'video' ? '视频' : '有序图片' }}<template v-if="previewKind === 'pdf' && pdf"> · PDF 已就绪 · {{ pdf.pageCount }} 页</template><button type="button" :disabled="busy" @click="showPreview = true">检查预览件</button></p>
-        <p v-if="source && !ids.length" class="source-notice">源文件已上传。请再上传 PDF、图片或视频预览件，才能完成资料。</p>
+        <p v-if="source && !ids.length" class="source-notice">源文件已上传。请再上传对应的预览件，才能完成资料。</p>
         <p v-if="files.length" class="remove-note">删除只移除本次选择或关联，不影响已发布资料与历史文件。</p>
-        <details class="format-help"><summary>支持格式与预览说明</summary><p>PDF、PNG/JPG/JPEG/WebP 图片、MP4/MOV/WebM 视频可预览；PPTX/DOCX 仅后台保存，不自动转换，需另配预览件。一次可选一种预览格式，可同时附一份源文件。图片最多 200 页。视频使用 H.264 + AAC（MP4/MOV）或 VP8/VP9 + Opus（WebM）；终端不兼容时会给出提示。</p></details>
+        <details class="format-help"><summary>支持格式与预览说明</summary><p>新文档仅支持 PDF；历史 Office 与图片资料仍保留。视频支持 MP4/MOV 的 H.264 + AAC/MP3 或无音频，WebM 的 VP8/VP9 + Opus/Vorbis。系统不自动转码。默认版本为 V01.0。</p></details>
         <div v-if="previewKind === 'images' && pages.length" class="image-order"><div v-for="(page, i) in pages" :key="page.assetId"><span>第 {{ i + 1 }} 页</span><input v-model="page.alt" :aria-label="'第 ' + (i + 1) + ' 页替代文字'" maxlength="300" :disabled="busy" /><button type="button" :disabled="busy || i === 0" :aria-label="'将第 ' + (i + 1) + ' 页上移'" @click="move(i, -1)">前移</button><button type="button" :disabled="busy || i === pages.length - 1" :aria-label="'将第 ' + (i + 1) + ' 页下移'" @click="move(i, 1)">后移</button><button type="button" :disabled="busy" :aria-label="'移除第 ' + (i + 1) + ' 页'" @click="removePage(i)">移除</button></div></div>
       </section>
       <section class="material-information" aria-label="资料信息"><div class="upload-heading"><h3><span>2</span>资料信息</h3><small v-if="!hasSuccessfulFile">文件上传成功后填写</small></div>
@@ -289,14 +296,14 @@ function save() {
         <fieldset class="material-form" :disabled="!hasSuccessfulFile || busy || historyLoading || !!historyError"><div class="form-grid">
           <label class="field">资料名称<input v-model="name" maxlength="80" @input="nameEdited = true" /></label>
           <label class="field">版本标签<input v-model="version" aria-label="版本标签" maxlength="40" /><small>默认 V01.0，可编辑</small></label>
-          <label class="field">资料类型<select v-model="kind"><option value="brochure">产品介绍</option><option value="presentation">宣讲资料</option><option value="technical">技术资料</option><option value="other">其他</option></select></label>
+
           <label class="field">资料一级分类<select v-model="category" @change="categoryChanged"><option value="">请选择一级分类</option><option value="promotional">宣传资料</option><option value="technical">技术资料</option></select></label>
           <label class="field">资料二级分类<select v-model="subCategory" :disabled="!category"><option value="">请选择二级分类</option><option v-for="[value, label] in subCategoryOptions" :key="value" :value="value">{{ label }}</option></select></label>
           <label class="field">适用型号／版本（可选）<input v-model="applicable" maxlength="100" /></label>
         </div></fieldset>
         <p v-if="initial && (!initial.category || !initial.subCategory)" class="helper">这份旧资料尚未分类，请人工确认资料用途并选择一级、二级分类。</p>
       </section>
-      <p v-if="error" class="error-inline" role="alert">{{ error }}</p>
+      <div v-if="error" class="error-inline upload-problem" role="alert"><strong>未能完成本次操作</strong><p>{{ error }}</p><button type="button" @click="copyProblem">复制问题详情</button></div><p v-if="error && copyNotice" role="status">{{ copyNotice }}</p>
     </div>
     <template #footer><p v-if="completionHint" class="completion-hint">{{ completionHint }}</p><button type="button" :disabled="busy" @click="confirmDiscard = true">取消</button><button type="button" class="primary" :disabled="!canComplete" @click="save">完成</button></template>
   </Modal>
@@ -305,6 +312,8 @@ function save() {
 </template>
 <style scoped>
 .material-upload { font-size: 14px; }
+.upload-problem p, .file-error { white-space: pre-line; overflow-wrap: anywhere; }
+.upload-problem p { margin: 8px 0; line-height: 1.7; }
 .journey-note { color: var(--zj-color-text-secondary); font-size: 13px; margin: 0 0 20px; line-height: 1.6; }
 .upload-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; }
 .upload-heading h3 { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 15px; }

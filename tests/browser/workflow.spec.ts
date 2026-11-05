@@ -1,6 +1,6 @@
 import { test, expect, urls, json, publicProductId } from "./support";
 import { loginSales } from "./support";
-test.beforeEach(async ({ page }) => { await loginSales(page); });
+test.beforeEach(async ({ page }) => { await page.unrouteAll({behavior:"wait"}); await loginSales(page); });
 import { randomUUID } from "node:crypto";
 import path from "node:path";
 test("wizard cancellation creates no product", async ({ page, request }) => {
@@ -22,7 +22,7 @@ test("UI creates, edits, uploads, previews, publishes, updates and unpublishes o
   request,
 }) => {
   await page.setViewportSize({ width: 1440, height: 1024 });
-  const name = "【验证数据】浏览器闭环软件-" + randomUUID().slice(0, 8);
+  const name = "(测试)浏览器闭环软件-" + randomUUID().slice(0, 6);
   const model = "LOCAL-" + randomUUID();
   await page.goto(urls.admin);
   await page.getByRole("button", { name: "新增产品", exact: true }).click();
@@ -36,7 +36,7 @@ test("UI creates, edits, uploads, previews, publishes, updates and unpublishes o
   await page.getByRole("combobox", { name: "产品属性", exact: true }).selectOption("SELF_DEVELOPED");
   await page.getByRole("button", { name: "创建并开始制作" }).click();
   await expect(
-    page.getByRole("heading", { name: new RegExp(name) }),
+    page.getByRole("heading", { name, exact:false }),
   ).toBeVisible();
   const id = (
     await json(request, "/admin/products?q=" + encodeURIComponent(name))
@@ -51,13 +51,13 @@ test("UI creates, edits, uploads, previews, publishes, updates and unpublishes o
     await page.getByLabel(group + "标题 1").fill("测试" + group);
     await page.getByLabel(group + "说明 1").fill("仅供本地流程验证");
   }
-  await page.getByLabel("部署说明", { exact: false }).fill("虚构本地部署条件");
+  await expect(page.getByLabel("部署说明", { exact: false })).toHaveCount(0);
   await page.getByRole("button", { name: "保存草稿", exact: true }).click();
   await expect(page.getByText(/草稿已保存/)).toBeVisible();
-  await page.getByRole("button", { name: "上传资料", exact: true }).click();
-  const dialog = page.getByRole("dialog", { name: "上传资料", exact: true });
+  await page.getByRole("button", { name: "上传 PDF 资料", exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: "上传 PDF 资料", exact: true });
   await dialog
-    .locator('input[type="file"]')
+    .getByLabel("选择资料文件",{exact:true})
     .setInputFiles(path.resolve("tests/fixtures/validation/sample-v1.pdf"));
   await dialog.getByRole("button", { name: "上传", exact: true }).click();
   await expect(dialog.getByText("PDF 已就绪 · 2 页")).toBeVisible({
@@ -88,6 +88,7 @@ test("UI creates, edits, uploads, previews, publishes, updates and unpublishes o
   await history.getByRole("button", { name: "关闭", exact: true }).click();
   await page.getByRole("button", { name: "预览", exact: true }).click();
   await expect(page.getByText(/草稿预览，未对外发布/)).toBeVisible();
+  expect((await page.getByRole("button",{name:"返回编辑",exact:true}).boundingBox())!.width).toBe(144);
   await page.getByRole("button", { name: "移动宽度" }).click();
   await page.screenshot({
     path: "work/round04/preview-mobile.png",
@@ -174,7 +175,7 @@ test("UI creates, edits, uploads, previews, publishes, updates and unpublishes o
   await h5.goto(urls.h5 + "/#/pages/products/index");
   await h5.locator("uni-input input").fill(name);
   await h5.locator("uni-input input").press("Enter");
-  await expect(h5.getByText(name.slice(0, 15) + "…", { exact: true })).toBeVisible();
+  await expect(h5.getByText(name, { exact: true })).toBeVisible();
   expect(
     await h5.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
   ).toBe(true);
@@ -273,38 +274,11 @@ test("image ordering and missing-field publish errors work through the editor", 
     .filter({ hasText: id })
     .getByRole("button", { name: "编辑", exact: true })
     .click();
-  await page.getByRole("button", { name: "上传资料", exact: true }).click();
-  const dialog = page.getByRole("dialog", { name: "上传资料", exact: true });
-  await dialog
-    .locator('input[type="file"]')
-    .setInputFiles(
-      [1, 2, 3].map((i) =>
-        path.resolve(`tests/fixtures/validation/page-${i}.png`),
-      ),
-    );
-  await dialog.getByRole("button", { name: "上传", exact: true }).click();
-  await expect(dialog.getByLabel("第 3 页替代文字")).toBeVisible({
-    timeout: 20000,
-  });
-  await dialog
-    .getByRole("button", { name: "将第 1 页下移", exact: true })
-    .click();
-  await expect(dialog.getByLabel("第 1 页替代文字")).toHaveValue("资料第 2 页");
-  await dialog.getByRole("button", { name: "检查预览件" }).click();
-  const viewer = page.getByRole("dialog", { name: "资料文件预览" });
-  await expect(viewer.getByRole("img")).toBeVisible();
-  await viewer.getByRole("button", { name: "下一页", exact: true }).click();
-  await expect(viewer.getByText("第 2 / 3 页")).toBeVisible();
-  await viewer.getByRole("button", { name: "关闭资料文件预览" }).click();
-  await dialog.getByLabel("资料名称", { exact: true }).fill("【验证资料】图片顺序");
-  await dialog.getByRole("combobox", { name: "资料一级分类", exact: true }).selectOption("promotional");
-  await dialog.getByRole("combobox", { name: "资料二级分类", exact: true }).selectOption("onepager");
-  await dialog.getByRole("button", { name: "完成", exact: true }).click();
-  await page.getByRole("button", { name: "保存草稿", exact: true }).click();
-  await expect(page.getByText(/草稿已保存/)).toBeVisible();
-  const data = (await json(request, "/admin/products/" + id + "/draft")).body
-    .data;
-  expect(data.content.materials[0].preview.pages[0].alt).toBe("资料第 2 页");
+  await page.getByLabel("添加产品介绍图片", {exact:true}).setInputFiles([3,1,2].map(i=>path.resolve(`tests/fixtures/validation/page-${i}.png`)));
+  await expect(page.getByText("上传完成，保存草稿后生效",{exact:true})).toHaveCount(3);
+  await page.getByRole("button",{name:"保存草稿",exact:true}).click();await expect(page.getByText(/草稿已保存/)).toBeVisible();
+  const data=(await json(request,"/admin/products/"+id+"/draft")).body.data;
+  expect(data.content.media.map((m:{alt:string})=>m.alt)).toEqual(["page-3","page-1","page-2"]);
   await page.getByRole("button", { name: "发布", exact: true }).click();
   const confirm = page.getByRole("dialog", { name: "确认发布" });
   await confirm.getByRole("checkbox").check();

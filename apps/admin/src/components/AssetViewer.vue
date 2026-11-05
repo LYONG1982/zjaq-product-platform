@@ -13,13 +13,14 @@ const props = defineProps<{
   assetIds: string[];
   kind: "pdf" | "images" | "video";
   alts?: string[];
+  initialPage?: number;
 }>();
 const canvas = ref<HTMLCanvasElement>(),
   videoSrc = ref(""),
   src = ref(""),
   error = ref(""),
   loading = ref(true),
-  page = ref(1),
+  page = ref(props.initialPage ?? 1),
   total = ref(props.assetIds.length),
   scale = ref(1);
 let pdf: PDFDocumentProxy | undefined,

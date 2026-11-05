@@ -75,7 +75,7 @@ async function reloadBanner() {
 }
 const selectedCategory = computed(() => categories.value.find(c => c.id === category.value));
 const homeSeries = computed(() =>
-  [...seriesIds.map(id => categories.value.find(category => category.id === id)).filter((category): category is Responses["PublicCategory"] => !!category), ...categories.value.filter(category => !seriesIds.some(id => id === category.id))],
+  [...seriesIds.map(id => categories.value.find(category => category.id === id) ?? { id, name: seriesName(id, id), sortOrder: seriesIds.indexOf(id), productCount: 0 }), ...categories.value.filter(category => !seriesIds.some(id => id === category.id))],
 );
 let sequence = 0,
   lastQuery = "",
@@ -172,13 +172,7 @@ async function reload(append = false, restore = false) {
     if (seq === sequence) loading.value = false;
   }
 }
-function displayName(name: string) {
-  // #ifdef H5
-  return name;
-  // #endif
-  const chars = Array.from(name);
-  return chars.length > 15 ? chars.slice(0, 15).join("") + "…" : name;
-}
+function displayName(name: string) { return name; }
 function search() {
   if (props.kind === "home") openCatalog(q.value.trim());
   else void reload();
@@ -263,13 +257,9 @@ defineExpose({
 <template>
   <!-- #ifdef H5 -->
   <view :class="['h5-v2', 'v2-catalog', 'v2-kind-' + kind, { 'v2-filtered': kind === 'products' && category }]">
-    <view v-if="kind === 'home'" class="v2-brand-row">
-      <image class="brand-logo" src="/static/h5/brand/zhongji-security-logo.png" mode="aspectFit" alt="中技安全" role="img" aria-label="中技安全" />
-      <text class="v2-demo">本地演示</text>
-    </view>
-    <view v-else class="v2-page-header">
-      <button role="button" tabindex="0" v-if="kind === 'products' && category" class="v2-page-title" @click="choose('')">← 产品一览</button>
-      <text v-else class="v2-page-title">{{ kind === 'products' ? '产品一览' : '资料中心' }}</text>
+
+    <view v-if="kind !== 'home'" class="v2-page-header">
+      <text class="v2-page-title">{{ kind === 'products' ? '产品一览' : '资料中心' }}</text>
       <text class="v2-demo">本地演示</text>
     </view>
     <view class="v2-content">
@@ -289,9 +279,9 @@ defineExpose({
         <button role="button" tabindex="0" v-if="q" class="clear-query" aria-label="清空搜索" @click="q = ''; search()">×</button>
         <button role="button" tabindex="0" class="v2-search-submit" aria-label="搜索" @click="search">↗</button>
       </view>
-      <view v-if="kind !== 'home' && !(kind === 'products' && category)" class="v2-filters" role="group" aria-label="系列筛选">
-        <button role="button" tabindex="0" :class="{ selected: !category }" @click="choose('')">全部</button>
-        <button role="button" tabindex="0" v-for="c in categories" :key="c.id" :class="{ selected: category === c.id }" @click="choose(c.id)">{{ seriesName(c.id, c.name) }}</button>
+      <view v-if="kind !== 'home'" class="v2-filters" role="group" aria-label="系列筛选">
+        <button role="button" tabindex="0" :aria-pressed="!category" :class="{ selected: !category }" @click="choose('')">全部</button>
+        <button role="button" tabindex="0" v-for="c in homeSeries" :key="c.id" :aria-pressed="category === c.id" :class="{ selected: category === c.id }" @click="choose(c.id)">{{ seriesName(c.id, c.name) }}</button>
       </view>
       <view v-if="kind === 'home'" class="v2-series-grid">
         <button role="button" tabindex="0" v-for="c in homeSeries" :key="c.id" class="series-card v2-series-card" :style="seriesStyle(c.id)" :aria-label="`${seriesName(c.id, c.name)}，${c.productCount} 款产品，查看系列`" @click="choose(c.id)">
@@ -332,7 +322,7 @@ defineExpose({
   <!-- #ifndef H5 -->
 
   <view class="mobile-body">
-    <view class="brand-row">
+    <view v-if="kind !== 'home'" class="brand-row">
       <!-- #ifdef H5 -->
       <image class="brand-logo" src="/static/h5/brand/zhongji-security-logo.png" mode="aspectFit" alt="中技安全" role="img" aria-label="中技安全" />
       <!-- #endif -->
@@ -389,7 +379,7 @@ defineExpose({
           >
             全部</button
           ><button
-            v-for="c in categories"
+            v-for="c in homeSeries"
             :key="c.id"
             role="button" tabindex="0" @keydown="onKeyboard($event, () => choose(c.id))"
             :class="{ selected: category === c.id }"
@@ -520,6 +510,7 @@ defineExpose({
   <!-- #endif -->
 </template>
 <style scoped>
+.published-title { display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden; }
 .home-banner { width: 100%; height: 112px; overflow: hidden; border-radius: 10px; margin: 12px 0; }
 .home-banner image { width: 100%; height: 100%; }
 .home-introduction { padding: 18px; margin: 18px 0; border-radius: 12px; background: #eef5ff; color: #13569e; line-height: 1.6; overflow-wrap: anywhere; }
@@ -624,7 +615,10 @@ defineExpose({
   font-size: 22px;
 }
 .category-wrap {
-  position: relative;
+  position: sticky;
+  top: 0;
+  z-index: 12;
+  background: #f5f7fb;
   margin: 0 -16px 16px;
   padding: 0 0 0 16px;
 }

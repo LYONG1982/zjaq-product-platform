@@ -9,17 +9,29 @@ const base =
 export const isLocalMock = ["127.0.0.1", "localhost"].includes(
   new URL(base).hostname,
 );
-let accessToken: string | undefined = isLocalMock
+const logoutFlag = "zj-admin-signed-out";
+let authGeneration = 0;
+let accessToken: string | undefined = isLocalMock && sessionStorage.getItem(logoutFlag) !== "1"
   ? (import.meta.env.VITE_MOCK_TOKEN ?? "local-mock")
   : undefined;
 const transport: Transport = async (...args) => {
+  const generation = authGeneration;
   const result = await fetchTransport(...args);
+  if (generation !== authGeneration) throw new Error("当前会话已结束，请重新登录");
   if (result.status === 401)
     window.dispatchEvent(new Event("zj-session-expired"));
   return result;
 };
 export const api = createClient(base, transport, () => accessToken);
+export function signOut() {
+  authGeneration += 1;
+  accessToken = undefined;
+  sessionStorage.setItem(logoutFlag, "1");
+  void fetch(base + "/admin/logout", { method: "POST", credentials: "include", signal: AbortSignal.timeout(10000) }).catch(() => {});
+}
+export const wasSignedOut = () => sessionStorage.getItem(logoutFlag) === "1";
 export async function signIn(username: string, password: string) {
+  if (isLocalMock) accessToken = import.meta.env.VITE_MOCK_TOKEN ?? "local-mock";
   if (!isLocalMock) {
     const env = import.meta.env.VITE_CLOUDBASE_ENV_ID,
       origin = import.meta.env.VITE_CLOUDBASE_AUTH_ORIGIN;
@@ -39,6 +51,7 @@ export async function signIn(username: string, password: string) {
   }
   try {
     await api.me();
+    sessionStorage.removeItem(logoutFlag);
   } catch (e) {
     if (!isLocalMock) accessToken = undefined;
     throw e;

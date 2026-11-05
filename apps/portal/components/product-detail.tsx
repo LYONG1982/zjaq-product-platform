@@ -1,10 +1,10 @@
 import type { Responses } from "@zj/contracts";
+import { ShareButton } from "./share-button";
 import Link from "next/link";
 import { MaterialRow } from "./cards";
-import { ProductVisual } from "./product-visual";
 import { safeReturnTo, withSource } from "./navigation-context";
 import { mediaUrl } from "./public-api";
-import { technicalLabels } from "@zj/api-client";
+import { ProductImages } from "./product-images";
 
 export function ProductDetail({
   product: p,
@@ -17,7 +17,6 @@ export function ProductDetail({
     "/products/" + encodeURIComponent(p.productId),
     safeReturnTo(source),
   );
-  const cover = p.media.find((m) => m.role === "cover");
   const groups = [
     ["problemValues", "问题与价值"],
     ["features", "核心能力"],
@@ -25,16 +24,17 @@ export function ProductDetail({
   ] as const;
   return (
     <>
-      <Link href={safeReturnTo(source)} className="text-link">
+      <Link href={safeReturnTo(source)} className="product-back-button">
         ← 返回上一页
       </Link>
-      <section className={"detail-hero" + (!cover ? " without-cover" : "")}>
+      <ShareButton productId={p.productId} />
+      <section className="detail-hero without-cover">
         <div>
           <span className="category-label">{p.category.name}</span>
           <h1>{p.name}</h1>
           {p.model && <p>产品型号：{p.model}</p>}
           {p.tagline.trim() && <h2>{p.tagline}</h2>}
-          {p.summary.trim() && <div className="product-summary">{p.summary.replace(/\r\n?/g, "\n").split(/\n+/).filter((paragraph) => paragraph.trim()).map((paragraph, index) => <p key={index}>{paragraph}</p>)}</div>}
+          {p.summary.trim() && <div className="product-summary">{p.summary.replace(/\r\n?/g, "\n").split(/\n+/).map(paragraph => paragraph.trim()).filter(Boolean).map((paragraph, index) => <p key={index}>{paragraph}</p>)}</div>}
           {p.audiences?.trim() && (
             <p className="audiences">适用对象：{p.audiences}</p>
           )}
@@ -42,9 +42,6 @@ export function ProductDetail({
             查看资料 ↓
           </a>
         </div>
-        {cover && (
-          <ProductVisual src={mediaUrl(cover.path)} alt={cover.alt} large />
-        )}
       </section>
       <nav className="detail-nav" aria-label="产品章节">
         {groups
@@ -72,34 +69,7 @@ export function ProductDetail({
             </section>
           ),
       )}
-      {p.media.filter((m) => m.role !== "cover").length > 0 && (
-        <section className="detail-section">
-          <h2>产品展示</h2>
-          <div className="media-grid">
-            {p.media
-              .filter((m) => m.role !== "cover")
-              .map((m) => (
-                <figure key={m.mediaId}>
-                  <ProductVisual src={mediaUrl(m.path)} alt={m.alt} large />
-                  <figcaption>{m.alt}</figcaption>
-                </figure>
-              ))}
-          </div>
-        </section>
-      )}
-      {Object.keys(p.technical).length > 0 && (
-        <section className="detail-section">
-          <h2>技术与使用说明</h2>
-          <dl className="technical-grid">
-            {Object.entries(p.technical).map(([key, value]) => (
-              <div key={key}>
-                <dt>{technicalLabels[key] ?? key}</dt>
-                <dd>{value}</dd>
-              </div>
-            ))}
-          </dl>
-        </section>
-      )}
+      {p.media.length > 0 && <section className="detail-section"><h2>产品介绍图片</h2><ProductImages images={p.media.map(m => ({ src: mediaUrl(m.path), alt: m.alt, id: m.mediaId }))} /></section>}
       <section className="detail-section" id="materials">
         <h2>产品资料</h2>
         <div className="material-list">

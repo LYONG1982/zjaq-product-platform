@@ -27,43 +27,43 @@ const formats: Record<
     mime: "application/pdf",
     type: "pdf",
     limit: MAX_ASSET_BYTES,
-    purposes: ["preview"],
+    purposes: ["preview", "source"],
   },
   png: {
     mime: "image/png",
     type: "png",
     limit: MAX_ASSET_BYTES,
-    purposes: ["preview", "media"],
+    purposes: ["media"],
   },
   jpg: {
     mime: "image/jpeg",
     type: "jpeg",
     limit: MAX_ASSET_BYTES,
-    purposes: ["preview", "media"],
+    purposes: ["media"],
   },
   jpeg: {
     mime: "image/jpeg",
     type: "jpeg",
     limit: MAX_ASSET_BYTES,
-    purposes: ["preview", "media"],
+    purposes: ["media"],
   },
   webp: {
     mime: "image/webp",
     type: "webp",
     limit: MAX_ASSET_BYTES,
-    purposes: ["preview", "media"],
+    purposes: ["media"],
   },
   docx: {
     mime: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     type: "docx",
     limit: MAX_ASSET_BYTES,
-    purposes: ["source"],
+    purposes: [],
   },
   pptx: {
     mime: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
     type: "pptx",
     limit: MAX_ASSET_BYTES,
-    purposes: ["source"],
+    purposes: [],
   },
   mp4: { mime: "video/mp4", type: "mp4", limit: MAX_ASSET_BYTES, purposes: ["preview"] },
   mov: { mime: "video/quicktime", type: "mov", limit: MAX_ASSET_BYTES, purposes: ["preview"] },
@@ -107,6 +107,7 @@ export class AssetStore {
       "VALIDATION_FAILED",
       "不支持该文件类型或用途",
     );
+    requireValue(intent.purpose !== "media" || intent.size <= 2_000_000, 413, "FILE_TOO_LARGE", "产品介绍图片单张不能超过 2 MB（2,000,000 字节）");
     requireValue(
       intent.size <= format.limit,
       413,
@@ -281,7 +282,12 @@ export class AssetStore {
                 else if (error) reject(error);
                 else resolve(data);
               } catch {
-                reject(new Error("文件无法解析、缺少受信任解析工具或超过 120 秒处理限制"));
+                const video = ["mp4", "mov", "webm"].includes(u.type);
+                reject(new Error(video
+                  ? error?.killed
+                    ? "[VIDEO_PROBE_TIMEOUT] 服务端视频检查超过处理时限，请稍候重试或联系管理员"
+                    : "[FILE_CHECK_UNAVAILABLE] 服务端视频检查未正常完成，请管理员检查解析进程和运行依赖"
+                  : "文件无法解析、缺少受信任解析工具或超过 120 秒处理限制"));
               }
             },
           );

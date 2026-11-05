@@ -14,3 +14,4 @@ export type ApiErrorBody = Domain["Error"];
 export type Page = { nextCursor: string | null; hasMore: boolean };
 export type ListResponse<T> = { data: T[]; page: Page; requestId: string };
 export type ObjectResponse<T> = { data: T; requestId: string };
+export { normalizeProductName, productNameUnits, productNameError } from "./product-name";

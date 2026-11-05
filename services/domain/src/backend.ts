@@ -26,6 +26,7 @@ export type Backend = {
   writeUser: Method<"writeUser">;
   draft: Method<"draft">;
   preview: Method<"preview">;
+  shareTarget: Method<"shareTarget">;
   materialVersions: Method<"materialVersions">;
   create: Method<"create">;
   save: Method<"save">;
@@ -50,6 +51,8 @@ export type Backend = {
   salesSourceAsset: Method<"salesSourceAsset">;
   siteBanner(): Awaitable<Responses["SiteBanner"]>;
   writeSiteBanner(body: unknown, requestId: string): Awaitable<Responses["SiteBanner"]>;
+  shareSettings(): Awaitable<Responses["ShareSettings"]>;
+  writeShareSettings(body: unknown, requestId: string): Awaitable<Responses["ShareSettings"]>;
   siteContact(): Awaitable<Responses["SiteContact"]>;
   writeSiteContact(body: unknown, requestId: string): Awaitable<Responses["SiteContact"]>;
   submitFeedback(body: unknown, ip: string): Awaitable<void>;

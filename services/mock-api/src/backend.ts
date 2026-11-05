@@ -1,3 +1,4 @@
+import { emptyShareSettings, validateShareSettings } from "../../domain/src/share-settings";
 import type { Backend } from "../../domain/src/backend";
 import { filters } from "../../domain/src/backend";
 import { requireValue } from "./errors";
@@ -15,6 +16,7 @@ export function mockBackend(store: MockStore, env: NodeJS.ProcessEnv): Backend {
   const bind = <K extends keyof MockStore>(key: K) =>
     (store[key] as Function).bind(store);
   let banner = emptySiteBanner();
+  let sharing = emptyShareSettings();
   let contact = emptySiteContact();
   let analytics = emptyAnalyticsSettings();
   const analyticsRows = new Map<string, StoredAnalyticsEvent>();
@@ -60,6 +62,7 @@ export function mockBackend(store: MockStore, env: NodeJS.ProcessEnv): Backend {
     writeUser: bind("writeUser"),
     draft: bind("draft"),
     preview: bind("preview"),
+    shareTarget: bind("shareTarget"),
     materialVersions: bind("materialVersions"),
     create: bind("create"),
     save: bind("save"),
@@ -92,6 +95,16 @@ export function mockBackend(store: MockStore, env: NodeJS.ProcessEnv): Backend {
     listFeedback() {
       requireValue(actorContext.getStore()?.role === "ADMIN", 403, "FORBIDDEN", "仅管理员可查看反馈");
       return structuredClone(feedback).reverse();
+    },
+    shareSettings: () => structuredClone(sharing),
+    async writeShareSettings(body, requestId) {
+      const actor = actorContext.getStore();
+      requireValue(actor?.role === "ADMIN", 403, "FORBIDDEN", "仅管理员可维护分享设置");
+      const data = validateShareSettings(body, env);
+      requireValue(data.expectedVersion === sharing.version, 409, "VERSION_CONFLICT", "分享设置已变化，请重新读取");
+      sharing = { version: sharing.version + 1, baseUrl: data.baseUrl, target: data.target, size: data.size };
+      store.events.push({ eventId: randomUUID(), actorId: actor.userId, actorName: actor.displayName, action: "UPDATE_SHARE_SETTINGS", targetId: "share-settings", requestId, createdAt: new Date().toISOString(), draftVersion: null, publicationVersion: null, releaseSequence: null });
+      return structuredClone(sharing);
     },
     async writeSiteContact(body, requestId) {
       const actor = actorContext.getStore();

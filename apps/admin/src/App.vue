@@ -8,7 +8,8 @@ import type {
   Responses,
 } from "@zj/contracts";
 import Modal from "./components/Modal.vue";
-import { api, stateName, requestKey } from "./api";
+import { api, stateName, requestKey, signOut, wasSignedOut } from "./api";
+import ShareSettings from "./components/ShareSettings.vue";
 import SignIn from "./components/SignIn.vue";
 import Management from "./components/Management.vue";
 import SiteBannerSettings from "./components/SiteBannerSettings.vue";
@@ -17,7 +18,9 @@ import AnalyticsPanel from "./components/AnalyticsPanel.vue";
 import FeedbackList from "./components/FeedbackList.vue";
 import ProductWizard from "./components/ProductWizard.vue";
 import ProductEditor from "./components/ProductEditor.vue";
-const authNeeded = ref(false);
+const loggedOut = ref(wasSignedOut());
+const authNeeded = ref(loggedOut.value);
+let sessionEpoch = 0;
 const expired = () => {
   authNeeded.value = true;
 };
@@ -85,6 +88,7 @@ function resetFilters() {
   void load();
 }
 async function bootstrap() {
+  const epoch = sessionEpoch;
   loading.value = true;
   try {
     const [me, c, t] = await Promise.all([
@@ -92,28 +96,35 @@ async function bootstrap() {
       api.categories(),
       api.templates({ includeDisabled: true }),
     ]);
+    if (epoch !== sessionEpoch) return;
     displayName.value = me.data.displayName;
     isAdmin.value = me.data.role === "ADMIN";
     categories.value = c.data;
     templates.value = t.data;
     await load();
   } catch (e) {
+    if (epoch !== sessionEpoch) return;
     error.value = e instanceof Error ? e.message : "服务连接失败";
     loading.value = false;
   }
 }
 async function edit(id: string) {
+  const epoch = sessionEpoch;
   loading.value = true;
   error.value = "";
   try {
-    editing.value = (await api.draft(id)).data;
+    const draft = (await api.draft(id)).data;
+    if (epoch !== sessionEpoch) return;
+    editing.value = draft;
   } catch (e) {
+    if (epoch !== sessionEpoch) return;
     error.value = e instanceof Error ? e.message : "读取失败";
   } finally {
-    loading.value = false;
+    if (epoch === sessionEpoch) loading.value = false;
   }
 }
 async function loadAudit(append = false) {
+  const epoch = sessionEpoch;
   loading.value = true;
   error.value = "";
   try {
@@ -122,12 +133,14 @@ async function loadAudit(append = false) {
       action: auditAction.value || undefined,
       cursor: append ? (auditNext.value ?? undefined) : undefined,
     });
+    if (epoch !== sessionEpoch) return;
     events.value = append ? [...events.value, ...r.data] : r.data;
     auditNext.value = r.page.nextCursor;
   } catch (e) {
+    if (epoch !== sessionEpoch) return;
     error.value = e instanceof Error ? e.message : "读取失败";
   } finally {
-    loading.value = false;
+    if (epoch === sessionEpoch) loading.value = false;
   }
 }
 function navigate(target: string) {
@@ -139,6 +152,22 @@ function navigate(target: string) {
   };
   if (editing.value && editor.value) editor.value.requestLeave(go);
   else go();
+}
+function logout() {
+  const leave = () => {
+    signOut(); sessionEpoch += 1; seq += 1;
+    editing.value = null; wizard.value = false; removalRow.value = null;
+    rows.value = []; events.value = []; categories.value = []; templates.value = [];
+    displayName.value = ""; isAdmin.value = false; next.value = null; auditNext.value = null;
+    q.value = ""; category.value = ""; state.value = ""; owner.value = ""; removed.value = "";
+    auditProduct.value = ""; auditAction.value = ""; error.value = ""; removalNotice.value = "";
+    section.value = "products"; loading.value = false; loggedOut.value = true; authNeeded.value = true;
+  };
+  if (editing.value && editor.value) editor.value.requestLeave(leave); else leave();
+}
+function chooseCategory(id: string, event: MouseEvent) {
+  category.value = id; void load();
+  (event.currentTarget as HTMLElement).scrollIntoView({ block: "nearest", inline: "nearest" });
 }
 function created(d: AdminDraft) {
   wizard.value = false;
@@ -176,13 +205,14 @@ const actionName = (s: string) =>
     CREATE_USER: "新增账号",
     UPDATE_USER: "修改账号",
     UPDATE_SITE_BANNER: "更新首页 Banner",
+    UPDATE_SHARE_SETTINGS: "更新分享设置",
     UPDATE_SITE_CONTACT: "更新联系方式",
     UPDATE_ANALYTICS_SETTINGS: "更新统计设置",
   })[s] ?? s;
-onMounted(bootstrap);
+onMounted(() => { if (!loggedOut.value) void bootstrap(); });
 </script>
 <template>
-  <div class="admin-shell">
+  <div v-if="!loggedOut" class="admin-shell">
     <aside class="sidebar">
       <div class="brand">
         <span class="logo">中技</span>
@@ -221,13 +251,7 @@ onMounted(bootstrap);
           <span aria-hidden="true">⚙</span>系统设置
         </button>
       </nav>
-      <div class="sidebar-foot">
-        <span class="status-dot" />本地演示
-        <details>
-          <summary>使用说明</summary>
-          <p>仅供本机验证。服务重启可能清空会话，请勿录入真实敏感资料。</p>
-        </details>
-      </div>
+      <div class="sidebar-foot"><button class="logout-button" @click="logout">退出登录</button></div>
     </aside>
     <div class="main-shell">
       <header>
@@ -283,14 +307,6 @@ onMounted(bootstrap);
                 }}
               </h1>
             </div>
-            <button
-              v-if="section === 'products'"
-              class="primary"
-              :disabled="loading || !categories.length"
-              @click="wizard = true"
-            >
-              新增产品
-            </button>
           </div>
           <div v-if="error" class="error-panel" role="alert">
             <strong>操作未完成</strong>
@@ -299,32 +315,18 @@ onMounted(bootstrap);
           </div>
           <section v-if="section === 'products'" class="table-card spaced">
             <p v-if="removalNotice" class="success-banner" role="status">{{ removalNotice }}</p>
-            <form class="toolbar" @submit.prevent="load()">
-              <label class="search-control"
-                ><span aria-hidden="true">⌕</span
-                ><input
-                  v-model="q"
-                  aria-label="搜索产品"
-                  placeholder="搜索产品名称或别名"
-                  maxlength="100" /></label
-              ><select
-                v-model="category"
-                aria-label="产品分类"
-                @change="load()"
-              >
-                <option value="">全部分类</option>
-                <option v-for="c in categories" :key="c.id" :value="c.id">
-                  {{ c.shortName }}
-                </option></select
-              ><select v-model="state" aria-label="发布状态" @change="load()">
-                <option value="">全部状态</option>
-                <option value="DRAFT">草稿</option>
-                <option value="PUBLISHED">已发布</option>
-                <option value="OFFLINE">已下架</option></select
-              ><input v-model="owner" aria-label="产品资料负责人筛选" placeholder="产品资料负责人" maxlength="100" />
-              <select v-if="isAdmin" v-model="removed" aria-label="移除状态" @change="load()"><option value="">正常产品</option><option value="true">已移除</option></select>
-              <button class="primary" type="submit">查询</button>
-              <button type="button" @click="resetFilters">重置</button>
+            <nav class="series-tabs" aria-label="产品系列">
+              <button :aria-current="!category ? 'true' : undefined" @click="chooseCategory('', $event)">全部</button>
+              <button v-for="c in categories" :key="c.id" :aria-current="category === c.id ? 'true' : undefined" @click="chooseCategory(c.id, $event)">{{ c.shortName }}</button>
+            </nav>
+            <form class="product-filters" @submit.prevent="load()">
+              <label class="field">发布状态<select v-model="state" aria-label="发布状态" @change="load()"><option value="">全部状态</option><option value="DRAFT">草稿</option><option value="PUBLISHED">已发布</option><option value="OFFLINE">已下架</option></select></label>
+              <label v-if="isAdmin" class="field">记录范围<select v-model="removed" aria-label="移除状态" @change="load()"><option value="">正常产品</option><option value="true">已移除</option></select></label>
+              <button type="button" class="primary" :disabled="loading || !categories.length" @click="wizard = true">新增产品</button>
+              <button v-if="isAdmin" type="button" @click="removed = removed === 'true' ? '' : 'true'; load()">{{ removed === 'true' ? '返回正常产品' : '查看已移除' }}</button>
+              <label class="field">产品名称<input v-model="q" aria-label="搜索产品" placeholder="搜索产品名称或别名" maxlength="100" /></label>
+              <label class="field">负责人<input v-model="owner" aria-label="产品资料负责人筛选" placeholder="产品资料负责人" maxlength="100" /></label>
+              <button class="primary" type="submit">查询</button><button type="button" @click="resetFilters">重置</button>
             </form>
             <div class="table-heading">
               <strong>产品主档</strong><span>已加载 {{ rows.length }} 款</span>
@@ -357,8 +359,7 @@ onMounted(bootstrap);
                     <td class="product-code">{{ r.productId }}</td>
                     <td class="product-name">
                       <small v-if="r.deletedAt">已移除 · {{ r.deletionReason }}</small>
-                      {{ r.name
-                      }}<small v-if="r.hasUnpublishedChanges"
+                      <span class="product-name-lines" :title="r.name">{{ r.name }}</span><small v-if="r.hasUnpublishedChanges"
                         >有未发布修改</small
                       >
                     </td>
@@ -388,7 +389,7 @@ onMounted(bootstrap);
                       >
                         {{ r.deletedAt ? "查看留档" : "编辑" }}
                       </button>
-                      <button v-if="isAdmin" class="text-button" :disabled="loading" @click="openRemoval(r, r.deletedAt ? 'restore' : 'remove')">{{ r.deletedAt ? "恢复产品" : "移除产品" }}</button>
+                      <button v-if="isAdmin && (r.deletedAt || (r.publicationState === 'DRAFT' && r.publicationVersion === 0))" class="text-button" :class="{ danger: !r.deletedAt }" :disabled="loading" @click="openRemoval(r, r.deletedAt ? 'restore' : 'remove')">{{ r.deletedAt ? "恢复产品" : "移除产品" }}</button>
                     </td>
                   </tr>
                 </tbody>
@@ -441,6 +442,7 @@ onMounted(bootstrap);
             </section>
           </template>
           <template v-else-if="section === 'settings'">
+            <ShareSettings :can-manage="isAdmin" />
             <AnalyticsPanel v-if="isAdmin" mode="settings" />
             <SiteBannerSettings :can-manage="isAdmin" />
             <SiteContactSettings :can-manage="isAdmin" />
@@ -523,16 +525,17 @@ onMounted(bootstrap);
   </div>
   <Modal v-if="removalRow" :title="removalMode === 'remove' ? '确认移除产品' : '确认恢复产品'" :busy="removalBusy" @close="removalRow = null">
     <p><strong>{{ removalRow.name }}</strong> · {{ removalRow.productId }}</p>
-    <p>{{ removalMode === 'remove' ? '移除后产品从默认管理列表、销售及公开目录隐藏；已发布产品同步下架。编码、型号、UUID、历史资料和原文件全部保留。' : '恢复后回到管理列表，不会自动上架；请核对内容后另行确认发布。' }}</p>
+    <p>{{ removalMode === 'remove' ? '仅从未发布的草稿可以移除，移除后从默认管理列表隐藏。编码、型号、UUID、历史资料和原文件全部保留。' : '恢复后回到管理列表，不会自动上架；请核对内容后另行确认发布。' }}</p>
     <label class="field">{{ removalMode === 'remove' ? '移除原因（必填）' : '恢复原因（必填）' }}<textarea v-model="removalReason" :aria-label="removalMode === 'remove' ? '移除原因（必填）' : '恢复原因（必填）'" maxlength="300" rows="3" /></label>
     <label class="check-line"><input v-model="removalConfirmed" type="checkbox" />我已确认产品及本次操作影响</label>
     <p v-if="removalError" class="error-inline" role="alert">{{ removalError }}</p>
     <template #footer><button :disabled="removalBusy" @click="removalRow = null">取消</button><button :class="removalMode === 'remove' ? 'danger' : 'primary'" :disabled="removalBusy || !removalConfirmed || !removalReason.trim()" @click="submitRemoval">{{ removalBusy ? '正在处理…' : removalMode === 'remove' ? '确认移除' : '确认恢复' }}</button></template>
   </Modal>
   <SignIn
+    :logged-out="loggedOut"
     v-if="authNeeded"
     @signed-in="
-      authNeeded = false;
+      authNeeded = false; loggedOut = false;
       bootstrap();
     "
   />

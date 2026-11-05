@@ -1008,6 +1008,42 @@
         "confirmed"
       ],
       "additionalProperties": false
+    },
+    "ShareSettingsWrite": {
+      "type": "object",
+      "properties": {
+        "expectedVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "baseUrl": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 500
+        },
+        "target": {
+          "enum": [
+            "h5",
+            "portal"
+          ]
+        },
+        "size": {
+          "enum": [
+            256,
+            512,
+            1024
+          ]
+        }
+      },
+      "required": [
+        "expectedVersion",
+        "baseUrl",
+        "target",
+        "size"
+      ],
+      "additionalProperties": false
     }
   }
 }

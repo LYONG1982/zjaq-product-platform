@@ -21,7 +21,7 @@ export function safeReturnTo(
     )
       return fallback;
     const q = new URLSearchParams();
-    for (const name of ["q", "categoryId", "cursor"]) {
+    for (const name of ["q", "categoryId", "cursor", "ownership", "updatedFrom", "updatedTo"]) {
       const v = u.searchParams.get(name);
       if (v) q.set(name, v.slice(0, 512));
     }

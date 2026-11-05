@@ -1,3 +1,4 @@
+import { legacyUpload } from "../helpers/legacy-upload";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createReadStream } from "node:fs";
@@ -29,7 +30,9 @@ class Repo implements Repository {
   async transaction<T>(fn:(tx:Transaction)=>Promise<T>){return fn(this);}
 }
 async function putFile(store: AssetStore, file: string, mime: string, path: string) {
-  const intent = store.create({productId:"TEST",fileName:file,contentType:mime,size:(await stat(path)).size,purpose:"preview"});
+  const data = {productId:"TEST",fileName:file,contentType:mime,size:(await stat(path)).size,purpose:"preview" as const};
+  if (mime.startsWith("image/")) assert.throws(() => store.create(data), { code: "VALIDATION_FAILED" });
+  const intent = mime.startsWith("image/") ? legacyUpload(store, data) : store.create(data);
   const req = createReadStream(path) as unknown as IncomingMessage;
   req.headers = {"content-type":"application/octet-stream", "content-length":String((await stat(path)).size)};
   await store.put(intent.uploadId, req);

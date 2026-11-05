@@ -1,3 +1,4 @@
+import { emptyShareSettings, validateShareSettings } from "../../domain/src/share-settings";
 import { createHash, randomUUID } from "node:crypto";
 import { rm } from "node:fs/promises";
 import type { Domain, Responses, ProductRecord } from "@zj/contracts";
@@ -170,6 +171,25 @@ export class CloudBackend implements Backend {
     const rows = await this.repo.list<Responses["FeedbackItem"]>("feedback");
     return rows.sort((a, b) => b.createdAt.localeCompare(a.createdAt) || a.feedbackId.localeCompare(b.feedbackId));
   }
+  async shareSettings() {
+    return (await this.repo.get<Responses["ShareSettings"]>("control", "share-settings")) ?? emptyShareSettings();
+  }
+  async writeShareSettings(body: unknown, requestId: string) {
+    const identity = actorContext.getStore();
+    requireValue(identity?.role === "ADMIN", 403, "FORBIDDEN", "仅管理员可维护分享设置");
+    const data = await validateShareSettings(body);
+    return this.repo.transaction(async (tx) => {
+      const actor = await identityFor(tx, identity.subjectId);
+      requireValue(actor.role === "ADMIN", 403, "FORBIDDEN", "仅管理员可维护分享设置");
+      const current = (await tx.get<Responses["ShareSettings"]>("control", "share-settings")) ?? emptyShareSettings();
+      requireValue(current.version === data.expectedVersion, 409, "VERSION_CONFLICT", "分享设置已被修改，请重新读取");
+      const next = { version: current.version + 1, baseUrl: data.baseUrl, target: data.target, size: data.size };
+      await advance(tx); await tx.set("control", "share-settings", next);
+      const eventId = randomUUID();
+      await tx.set("audit", eventId, { eventId, actorId: actor.userId, actorName: actor.displayName, action: "UPDATE_SHARE_SETTINGS", targetId: "share-settings", requestId, createdAt: new Date().toISOString(), draftVersion: null, publicationVersion: null, releaseSequence: null });
+      return next;
+    });
+  }
   async siteContact() {
     return (await this.repo.get<Responses["SiteContact"]>("control", "site-contact")) ?? emptySiteContact();
   }
@@ -320,6 +340,7 @@ export class CloudBackend implements Backend {
   draft(id: string) {
     return this.read([id], (e) => e.draft(id));
   }
+  shareTarget(id: string, materialId?: string) { return this.read([id], e => e.shareTarget(id, materialId)); }
   preview(id: string, version: number) {
     return this.read([id], (e) => e.preview(id, version));
   }

@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import type { AdminDraft, Template } from "@zj/contracts";
+import { api } from "../api";
 import AssetViewer from "./AssetViewer.vue";
 import Modal from "./Modal.vue";
 const props = defineProps<{
@@ -16,6 +17,14 @@ const c = computed(() => props.draft.content),
   selected = computed(() =>
     material.value === null ? null : c.value.materials[material.value],
   );
+const thumbnails = ref<Record<string,string>>({});
+let alive = true;
+onMounted(async () => {
+  await Promise.all(c.value.media.map(async item => {
+    try { const blob = await api.asset(props.draft.productId, item.assetId); if (alive) thumbnails.value[item.mediaId] = URL.createObjectURL(blob); } catch { /* The viewer provides retry and error details. */ }
+  }));
+});
+onBeforeUnmount(() => { alive = false; Object.values(thumbnails.value).forEach(url => URL.revokeObjectURL(url)); });
 </script>
 <template>
   <section class="preview-shell">
@@ -24,7 +33,7 @@ const c = computed(() => props.draft.content),
       <div>
         <button :aria-pressed="!mobile" @click="mobile = false">PC 宽度</button
         ><button :aria-pressed="mobile" @click="mobile = true">移动宽度</button
-        ><button @click="emit('back')">返回编辑</button
+        ><button class="draft-back-button" @click="emit('back')">返回编辑</button
         ><button
           class="primary"
           :disabled="publishing"
@@ -39,14 +48,14 @@ const c = computed(() => props.draft.content),
       <h1>{{ c.name }}</h1>
       <p v-if="c.tagline" class="preview-tagline">{{ c.tagline }}</p>
       <div v-if="!c.media.length" class="neutral-cover">暂无产品图片</div>
-      <div v-else class="media-buttons">
+      <div v-else class="draft-image-stack">
         <button v-for="(m, i) in c.media" :key="m.mediaId" @click="media = i">
-          查看素材：{{ m.alt }}
+          <img v-if="thumbnails[m.mediaId]" :src="thumbnails[m.mediaId]" :alt="m.alt" /><span>{{ m.alt || '查看图片' }}</span>
         </button>
       </div>
       <section v-if="c.summary">
         <h2>产品简介</h2>
-        <p>{{ c.summary }}</p>
+        <p v-for="(paragraph, index) in c.summary.split(/\r?\n/).map(p => p.trim()).filter(Boolean)" :key="index" class="draft-summary">{{ paragraph }}</p>
       </section>
       <section v-if="c.audiences">
         <h2>适用对象</h2>
@@ -65,23 +74,6 @@ const c = computed(() => props.draft.content),
           <h3>{{ item.title }}</h3>
           <p>{{ item.text }}</p>
         </div>
-      </section>
-      <section v-if="Object.values(c.technical).some((v) => v.trim())">
-        <h2>参数与条件</h2>
-        <dl>
-          <template
-            v-for="f in template?.fields.filter((f) =>
-              c.technical[f.key]?.trim(),
-            )"
-            :key="f.key"
-            ><dt>{{ f.label }}</dt>
-            <dd>{{ c.technical[f.key] }}</dd></template
-          >
-        </dl>
-      </section>
-      <section v-if="c.boundaries">
-        <h2>能力边界</h2>
-        <p>{{ c.boundaries }}</p>
       </section>
       <section>
         <h2>当前草稿资料</h2>
@@ -122,7 +114,8 @@ const c = computed(() => props.draft.content),
     ><AssetViewer
       :product-id="draft.productId"
       kind="images"
-      :asset-ids="[c.media[media].assetId]"
-      :alts="[c.media[media].alt]"
+      :asset-ids="c.media.map(item => item.assetId)"
+      :initial-page="media + 1"
+      :alts="c.media.map(item => item.alt)"
   /></Modal>
 </template>

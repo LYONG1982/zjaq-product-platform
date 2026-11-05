@@ -51,6 +51,7 @@ export interface Domain {
   AnalyticsSettingsWrite: AnalyticsSettingsWrite;
   AnalyticsViewSubmit: AnalyticsViewSubmit;
   ProductRemoval: ProductRemoval;
+  ShareSettingsWrite: ShareSettingsWrite;
 }
 /**
  * This interface was referenced by `Domain`'s JSON-Schema
@@ -324,4 +325,14 @@ export interface ProductRemoval {
   expectedPublicationVersion: number;
   reason: string;
   confirmed: true;
+}
+/**
+ * This interface was referenced by `Domain`'s JSON-Schema
+ * via the `definition` "ShareSettingsWrite".
+ */
+export interface ShareSettingsWrite {
+  expectedVersion: number;
+  baseUrl: string | null;
+  target: 'h5' | 'portal';
+  size: 256 | 512 | 1024;
 }

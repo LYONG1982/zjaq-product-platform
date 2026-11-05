@@ -1,3 +1,4 @@
+import { normalizeProductName, productNameError } from "@zj/contracts";
 import { randomUUID, createHash } from "node:crypto";
 import type {
   AdminDraft,
@@ -376,7 +377,9 @@ export class DomainEngine {
   create(body: unknown, key: string | undefined, requestId: string) {
     return this.once("POST /admin/products", key, body, () => {
       const b = validateBody<CreateProduct>("CreateProduct", body);
+      b.name = normalizeProductName(b.name);
       invalidFields(validateCreation(b, this.categories));
+      requireValue(!productNameError(b.name), 422, "VALIDATION_FAILED", productNameError(b.name));
       requireValue(b.model.trim(), 422, "VALIDATION_FAILED", "请填写产品型号");
       requireValue(!this.modelOwners.has(normalizedModel(b.model)) && ![...this.products.values()].some((p) => p.draft.model && normalizedModel(p.draft.model) === normalizedModel(b.model)), 409, "MODEL_CONFLICT", "产品型号已存在");
       const prefix = productCodePrefix(b.categoryId, b.productType, b.ownership);
@@ -554,6 +557,8 @@ export class DomainEngine {
           message: e instanceof Error ? e.message : "素材不可用",
         });
       }
+    if (c.media.length > 6 && c.media.some(m => !p.draft.media.some(old => old.mediaId === m.mediaId && old.assetId === m.assetId)))
+      errors.push({ path: "/media", message: "产品介绍图片最多 6 张；历史图片可以保留或移除" });
     if (c.media.filter((m) => m.role === "cover").length > 1)
       errors.push({ path: "/media", message: "只能设置一张封面" });
     invalidFields(errors);
@@ -569,6 +574,10 @@ export class DomainEngine {
       "DRAFT_CONFLICT",
       "其他窗口已修改此产品，请核对后再保存",
     );
+    if (b.content.name !== p.draft.name) {
+      b.content.name = normalizeProductName(b.content.name);
+      requireValue(!productNameError(b.content.name), 422, "VALIDATION_FAILED", productNameError(b.content.name));
+    }
     this.validateContent(id, b.content);
     const active = p.activeReleaseId ? this.releases.get(p.activeReleaseId) : undefined;
     const revocations = new Set(p.publicMaterialRevocations ?? []);
@@ -591,6 +600,14 @@ export class DomainEngine {
       this.materialVersionOwners.set(id + "/" + m.versionId, m.materialId);
     }
     return this.draft(id);
+  }
+  shareTarget(id: string, materialId?: string): Responses["ShareTarget"] {
+    this.assertProductReadable(id);
+    const product = this.product(id), release = this.current(id);
+    requireValue(product.publicId, 404, "RESOURCE_UNAVAILABLE", "产品尚无公开分享标识");
+    const material = materialId ? release.content.materials.find(item => item.materialId === materialId) : undefined;
+    requireValue(!materialId || material, 404, "RESOURCE_UNAVAILABLE", "该资料尚未发布或已撤回");
+    return { publicId: product.publicId, materialId: materialId ?? null, requiresSales: material ? !this.isPublicMaterial(release, material) : false };
   }
   preview(id: string, version: number) {
     const d = this.draft(id);
@@ -727,11 +744,9 @@ export class DomainEngine {
       this.assertProductWritable(id);
       requireValue(product.draftVersion === data.expectedDraftVersion, 409, "DRAFT_CONFLICT", "草稿已变化，请刷新后重新确认移除");
       requireValue(product.publicationVersion === data.expectedPublicationVersion, 409, "PUBLICATION_CONFLICT", "发布状态已变化，请刷新后重新确认移除");
-      const wasPublished = product.publicationState === "PUBLISHED";
-      if (wasPublished) { product.publicationState = "OFFLINE"; product.activeReleaseId = null; product.publicationVersion++; }
+      requireValue(product.publicationState === "DRAFT" && product.releaseSequence === 0 && !product.lastReleaseId && product.lastPublishedDraftVersion === null, 409, "INVALID_STATE", "仅从未发布的草稿可以移除；已发布或曾发布的产品请使用下架");
       product.deletedAt = new Date().toISOString(); product.deletedBy = this.actor().userId; product.deletionReason = data.reason.trim(); product.draftVersion++;
       this.commit("REMOVE_PRODUCT", product, requestId, undefined, product.deletionReason);
-      if (wasPublished) this.metadata.get(id)!.unpublishedAt = product.deletedAt;
       return this.draft(id);
     });
   }
@@ -823,6 +838,7 @@ export class DomainEngine {
       kind: m.kind,
       versionLabel: m.versionLabel,
       applicableVersion: m.applicableVersion ?? null,
+      shareRequiresSales: !this.isPublicMaterial(r, m),
       previewKind: m.preview.kind,
       pageCount:
         m.preview.kind === "pdf" ? m.preview.pageCount : m.preview.kind === "video" ? 1 : m.preview.pages.length,

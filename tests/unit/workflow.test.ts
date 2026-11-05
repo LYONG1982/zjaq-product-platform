@@ -1,3 +1,4 @@
+import { legacyUpload } from "../helpers/legacy-upload";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { once } from "node:events";
@@ -61,7 +62,8 @@ async function setup(store = new MockStore()) {
     contentType = "application/pdf",
   ) => {
     const bytes = await fixture(file),
-      intent = await req(
+      imported = purpose === "source" && /\.(docx|pptx)$/.test(file) || purpose === "preview" && contentType.startsWith("image/");
+    let intent = await req(
         "/admin/uploads",
         "POST",
         {
@@ -73,6 +75,10 @@ async function setup(store = new MockStore()) {
         },
         randomUUID(),
       );
+    if (imported) {
+      assert.equal(intent.status, 422, "new legacy-format uploads must be rejected");
+      intent = { status: 200, body: { data: legacyUpload(store.assets, { productId:id, fileName:file, purpose:purpose as Domain["UploadIntent"]["purpose"], contentType, size:bytes.length }) } } as typeof intent;
+    }
     assert.equal(intent.status, 200, JSON.stringify(intent.body));
     const put = await fetch(base + intent.body.data.uploadPath, {
       method: "PUT",
@@ -736,7 +742,7 @@ test("file signature, length, type, ownership, metadata cleaning, material ident
     await t.close();
   }
 });
-test("Office source validation and image preview keep source bytes out of public manifests", async () => {
+test("historical Office sources and image previews retain parsing and private byte isolation", async () => {
   const t = await setup();
   try {
     const id = (await t.create()).body.data.productId,
@@ -747,22 +753,10 @@ test("Office source validation and image preview keep source bytes out of public
         "source",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       );
-    const bad = await fixture("malformed-source.docx"),
-      intent = (
-        await t.req(
-          "/admin/uploads",
-          "POST",
-          {
-            productId: id,
-            purpose: "source",
-            fileName: "bad.docx",
-            contentType:
-              "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            size: bad.length,
-          },
-          randomUUID(),
-        )
-      ).body.data;
+    const bad = await fixture("malformed-source.docx");
+    const historical = { productId: id, purpose: "source" as const, fileName: "bad.docx", contentType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document", size: bad.length };
+    assert.equal((await t.req("/admin/uploads", "POST", historical, randomUUID())).status, 422);
+    const intent = legacyUpload(t.store.assets, historical);
     await fetch(t.base + intent.uploadPath, {
       method: "PUT",
       headers: {

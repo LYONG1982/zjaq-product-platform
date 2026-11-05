@@ -88,7 +88,7 @@ export function validateTemplateContent(
   }
   if (mode === "publish-fields") {
     const record = content as unknown as Record<string, unknown>;
-    for (const key of template.publishRequired) {
+    for (const key of template.publishRequired.filter(key => key !== "technical" && key !== "boundaries")) {
       const value = record[key];
       if (
         value === undefined ||
@@ -97,12 +97,7 @@ export function validateTemplateContent(
       )
         errors.push({ path: "/" + key, message: "发布必填项尚未完成" });
     }
-    for (const field of template.fields)
-      if (field.requiredOnPublish && !content.technical[field.key]?.trim())
-        errors.push({
-          path: "/technical/" + field.key,
-          message: field.label + "尚未填写",
-        });
+
   }
   return errors;
 }

@@ -10,11 +10,6 @@ export function ProductCard({
   item: Responses["PublicProductSummary"];
   source?: string;
 }) {
-  const nameCharacters = Array.from(item.name);
-  const shortName =
-    nameCharacters.length > 15
-      ? nameCharacters.slice(0, 15).join("") + "…"
-      : item.name;
   return (
     <Link
       className="product-card"
@@ -32,7 +27,7 @@ export function ProductCard({
           />
           <div>
             <h3 aria-label={item.name} title={item.name}>
-              {shortName}
+              {item.name}
             </h3>
             <span className="category-label">{item.categoryName}</span>
           </div>

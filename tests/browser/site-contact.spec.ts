@@ -22,7 +22,7 @@ test("contact settings update H5 with QR placeholders and editable phone", async
   await expect(settings.getByRole("status")).toHaveText("联系方式已保存。");
   const mobile = await page.context().newPage(); await mobile.setViewportSize({ width: 390, height: 844 }); await mobile.goto(urls.h5);
   const contact = mobile.locator(".contact-block");
-  await expect(contact.getByText("联系方式", { exact: true })).toBeVisible();
+  await expect(contact.getByText("与我们联系", { exact: true })).toBeVisible();
   await expect(contact.getByText("400-000-0000")).toBeVisible();
   await expect(contact.getByText("暂未配置", { exact: true })).toHaveCount(1);
   await expect(contact.getByRole("button", { name: "拨打" })).toBeEnabled();

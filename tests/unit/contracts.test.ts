@@ -121,14 +121,15 @@ test("classification and exact template versions are validated at creation", () 
   ])
     assert.ok(validateCreation(bad).length);
 });
-test("draft can be incomplete; publish-field checks remain strict", () => {
+test("draft can be incomplete; retired technical requirements do not block publication", () => {
   const content = structuredClone(seedProducts[0].draft);
   assert.deepEqual(validateTemplateContent(content), []);
   assert.ok(
-    validateTemplateContent(content, "publish-fields").some(
-      (e) => e.path === "/technical/deployment",
+    !validateTemplateContent(content, "publish-fields").some(
+      (e) => e.path.startsWith("/technical") || e.path === "/boundaries",
     ),
   );
+  assert.ok(validateTemplateContent(content, "publish-fields").some(e => e.path === "/materials"));
   assert.ok(
     validateTemplateContent({
       ...content,

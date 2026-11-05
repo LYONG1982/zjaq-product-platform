@@ -1,12 +1,14 @@
 import { api } from "./api";
 import type { Domain } from "@zj/contracts";
+import { ApiError } from "@zj/api-client";
+import { uploadFailure, type UploadStage } from "./upload-errors";
 const attempts = new WeakMap<File, Map<string, string>>();
 export type UploadProgress = {
   stage: "preparing" | "uploading" | "checking" | "ready";
   loaded: number;
   total: number | null;
 };
-export async function uploadFile(
+async function transferUpload(
   productId: string,
   file: File,
   purpose: Domain["UploadIntent"]["purpose"],
@@ -25,7 +27,8 @@ export async function uploadFile(
   };
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "",
     contentType = types[ext] || file.type || "application/octet-stream";
-  if (file.size > 500 * 1024 * 1024) throw new Error("单个文件不能超过 500 MiB（524,288,000 字节）");
+  if (purpose === "media" && file.size > 2_000_000) throw new ApiError(413, "IMAGE_TOO_LARGE", "产品介绍图片单张不能超过 2 MB（2,000,000 字节）");
+  if (file.size > 500 * 1024 * 1024) throw new ApiError(413, "FILE_TOO_LARGE", "单个文件不能超过 500 MiB（524,288,000 字节）");
   let map = attempts.get(file);
   if (!map) {
     map = new Map();
@@ -41,28 +44,53 @@ export async function uploadFile(
       map.get(scope)!,
     )
   ).data;
-  let current = (await api.uploadStatus(intent.uploadId)).data;
+  let response = await api.uploadStatus(intent.uploadId);
+  let current = response.data;
   if (current.status === "UPLOADING") {
     status("正在上传 " + file.name + "…");
     progress?.({ stage: "uploading", loaded: 0, total: file.size || null });
     try {
-      current = (await api.putBytes(intent.uploadId, file, (sent, total) => {
+      response = await api.putBytes(intent.uploadId, file, (sent, total) => {
         status("正在上传 " + file.name + (total > 0 ? " · " + Math.min(100, Math.round(sent / total * 100)) + "%（" + (sent / 1024 / 1024).toFixed(1) + " / " + (total / 1024 / 1024).toFixed(1) + " MiB）" : "…"));
         progress?.({ stage: "uploading", loaded: sent, total: total > 0 ? total : null });
-      })).data;
+      });
+      current = response.data;
     } catch (e) {
-      current = (await api.uploadStatus(intent.uploadId)).data;
+      // A second network failure must not hide the original HTTP/upload cause.
+      try { response = await api.uploadStatus(intent.uploadId); current = response.data; }
+      catch { throw e; }
       if (current.status === "UPLOADING") throw e;
     }
   }
   if (current.status === "CHECKING") {
     status("正在检查文件字节与格式…");
     progress?.({ stage: "checking", loaded: file.size, total: file.size || null });
-    current = (await api.completeUpload(intent.uploadId)).data;
+    response = await api.completeUpload(intent.uploadId);
+    current = response.data;
   }
-  if (current.status !== "READY")
-    throw new Error(current.error || "文件未通过检查");
+  if (current.status !== "READY") {
+    // A terminal rejected upload must get a fresh intent on explicit retry.
+    if (current.status === "REJECTED") map.delete(scope);
+    const match = current.error?.match(/^\[([A-Z0-9_]+)\]\s*(.*)$/s);
+    throw new ApiError(422, match?.[1] ?? "FILE_CHECK_FAILED", match?.[2] ?? current.error ?? "文件未通过检查", response.requestId);
+  }
   status("检查完成，可用于本次草稿");
   progress?.({ stage: "ready", loaded: file.size, total: file.size || null });
   return current;
+}
+
+export async function uploadFile(
+  productId: string,
+  file: File,
+  purpose: Domain["UploadIntent"]["purpose"],
+  status: (text: string) => void,
+  progress?: (value: UploadProgress) => void,
+) {
+  let stage: UploadStage = "preparing";
+  try {
+    return await transferUpload(productId, file, purpose, status, value => {
+      if (value.stage !== "ready") stage = value.stage;
+      progress?.(value);
+    });
+  } catch (error) { throw uploadFailure(error, stage); }
 }
