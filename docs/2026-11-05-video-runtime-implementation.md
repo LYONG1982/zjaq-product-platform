@@ -12,7 +12,7 @@
 
 ## 源码位置与保护
 
-本轮实施位置：`work/h5-footer-qr-20261105`，分支 `codex/h5-footer-qr-20261105`；基线 HEAD 和检查时的远端 main 均为 `df15a1c2a98abaf62a77a00807c37aab72dd4b6e`。视频与此前二维码增量均未提交、未推送、未部署。
+本轮实施位置：`work/h5-footer-qr-20261105`，分支 `codex/h5-footer-qr-20261105`；基线 HEAD 和检查时的远端 main 均为 `df15a1c2a98abaf62a77a00807c37aab72dd4b6e`。随后用户授权“发布更新 Github”，视频与此前二维码增量已作为源码提交推送；未部署到远端服务器。详见 [GitHub 交付记录](2026-11-05-qr-video-github-delivery.md)。
 
 10 个既有二维码修改/文档文件的 SHA-256 全部一致；原始干净来源工作区的 653 个跟踪文件全部一致。证据：`work/video-runtime/source-preservation.json`。没有写入旧 UAT API；浏览器使用新建的临时 API 子进程和存储，测试结束清理其自身目录。
 

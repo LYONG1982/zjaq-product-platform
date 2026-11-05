@@ -2,7 +2,7 @@
 
 附件需求迭代源码版。销售 PC 为登录后的内部工作台，小程序/H5 为访客宣传端，管理 PC 维护产品、资料与历史版本。源码包含 500 MiB 文件和视频、五段编码与型号、独立公开 UUID、销售流式下载、站点配置、统计/反馈以及安全移除与恢复。GitHub 源码交付不等于部署或微信送审。
 
-2026-11-05 更新：二测后台样式、图片/分享、小程序导航与品牌补齐、视频上传具体错误提示已交付 main。详见 [本次源码交付](docs/2026-11-05-github-source-delivery.md) 与 [剩余验收清单](docs/2026-11-05-remaining-acceptance-checklist.md)。保留上传流程、V01.0、历史字段和既有本地 UAT 数据。
+2026-11-05 更新：H5 底部联系二维码的后台上传/预览/保存体验，以及视频工具启动自检、上传前检查和部署诊断命令已更新到 GitHub main。详见 [二维码与视频源码交付](docs/2026-11-05-qr-video-github-delivery.md)、[视频部署修复手册](docs/video-runtime-operations.md)。此前二测与其他待验收项见 [二测源码交付](docs/2026-11-05-github-source-delivery.md) 和 [剩余验收清单](docs/2026-11-05-remaining-acceptance-checklist.md)。远端服务器修复和 Windows 原网站验收仍待完成。
 
 | 入口 | 默认开发地址 |
 | --- | --- |
