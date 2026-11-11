@@ -1,0 +1,27 @@
+# 生产部署用 Docker 构建上下文忽略规则（api / portal 共用仓库根目录）
+.git
+.gitignore
+node_modules
+**/node_modules
+work
+**/dist
+**/.next
+.next*
+**/public/pdf
+plans
+implementation-reports
+design
+delivery
+.screenshots
+.playwright
+test-results
+playwright-report
+coverage
+deploy/certs
+deploy/backups
+*.log
+debug.log
+test-results.json
+.env
+.env.*
+!.env.example
