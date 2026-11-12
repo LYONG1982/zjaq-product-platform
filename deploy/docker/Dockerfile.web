@@ -1,0 +1,19 @@
+# 静态站点镜像：管理后台（Vue3/Vite）+ H5（uni-app）
+# 构建上下文由 deploy/scripts/build-images.sh 生成到 work/docker/web-context：
+#   admin/  h5/  nginx/
+# wx 域名同时承载 H5 静态页与 /api 反代；小程序本身不进入镜像。
+FROM nginx:1.27-alpine
+
+# nginx:1.27-alpine 自带 mime.types 没有 .mjs 映射，PDF.js worker 以 ES module 加载时
+# 会被 application/octet-stream 的 MIME 校验拒绝。映射必须插入 types {} 块内，
+# 不能追加到文件末尾（否则 nginx 会把 application/javascript 当成新指令报 emerg）。
+RUN sed -i 's|^types {|types {\n    application/javascript                mjs;|' /etc/nginx/mime.types \
+    && grep -qE 'application/javascript[[:space:]]+mjs;' /etc/nginx/mime.types
+
+RUN rm -f /etc/nginx/conf.d/default.conf
+
+COPY nginx/default.conf.template /etc/nginx/templates/default.conf.template
+COPY admin /usr/share/nginx/html/admin
+COPY h5 /usr/share/nginx/html/h5
+
+EXPOSE 80 443

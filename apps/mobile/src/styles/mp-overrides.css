@@ -1,0 +1,58 @@
+/* 小程序端覆盖：原生导航栏/tabBar 与 WebView 能力差异，仅 #ifndef H5 引入。 */
+page {
+  background: #f4f7fc;
+}
+/* 原生 tabBar 已占据底部，去掉 H5 悬浮导航的 96px 预留。 */
+.h5-v2.v2-catalog {
+  padding-bottom: calc(24px + env(safe-area-inset-bottom));
+}
+/* 详情/预览页没有原生 tabBar，仅保留安全区。 */
+.h5-v2.v2-detail,
+.h5-v2.v2-viewer {
+  padding-bottom: calc(24px + env(safe-area-inset-bottom));
+}
+/* 不支持 aspect-ratio 的基础库环境：按设计稿 1796/876 比例给出固定高度。
+   小程序 <image> 在 height:auto 时不会按图片原始比例撑开，必须显式指定高度。 */
+.h5-v2.v2-catalog .v2-banner {
+  aspect-ratio: auto;
+  height: calc((100vw - 32px) / 2.05);
+}
+.h5-v2.v2-catalog .v2-banner image {
+  width: 100%;
+  height: 100%;
+}
+/* 小程序无鼠标，避免按下态残留。 */
+.h5-v2 button {
+  cursor: default;
+}
+/* 小程序 button 默认行高会顶偏文字；纯文字控件统一弹性居中，保持与 H5 一致。 */
+.h5-v2.v2-catalog .v2-filters button,
+.h5-v2 .v2-search button,
+.h5-v2 .v2-section-head button,
+.h5-v2 .v2-banner-error button,
+.h5-v2 .v2-empty button,
+.h5-v2 .v2-load-more,
+.h5-v2 .v2-detail-header button,
+.h5-v2 .v2-viewer-header button,
+.h5-v2 .v2-native-pdf button,
+.h5-v2 .section-nav button,
+.h5-v2 .v2-view-controls button,
+.h5-v2 .v2-zoom-controls button,
+.h5-v2 .v2-owner-product,
+.h5-v2 .preview-link,
+.h5-v2 .preview-button,
+.h5-v2 .product-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+.h5-v2.v2-catalog .v2-filters button {
+  height: 36px;
+  padding: 0 14px;
+}
+/* 与 H5 一致：所属产品入口靠左，不参与按钮文字居中。 */
+.h5-v2 .v2-owner-product {
+  justify-content: flex-start;
+  text-align: left;
+}

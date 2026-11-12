@@ -1,0 +1,38 @@
+# API 运行时镜像：Node 22 + tsx 直接运行 TypeScript 源码
+# 构建上下文必须是仓库根目录：
+#   docker build -f deploy/docker/Dockerfile.api -t zjaq/api:<tag> .
+FROM node:22-bookworm-slim
+
+ENV NODE_ENV=production \
+    NEXT_TELEMETRY_DISABLED=1 \
+    PNPM_HOME=/usr/local/pnpm \
+    PATH=/usr/local/pnpm:$PATH
+
+# 构建期换用阿里云 Debian 源：目标机访问 deb.debian.org 极慢（ffmpeg 依赖 89 分钟仍未装完）。
+# bookworm 默认 deb822 格式，配置可能在 /etc/apt/sources.list.d/*.sources，两处都覆盖；文件缺失时忽略。
+RUN sed -i 's|deb.debian.org|mirrors.aliyun.com|g' /etc/apt/sources.list /etc/apt/sources.list.d/*.sources 2>/dev/null || true
+
+# ffmpeg 提供 ffprobe（视频上传校验）；tini 负责转发信号，保证优雅退出
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends ca-certificates ffmpeg tini \
+ && rm -rf /var/lib/apt/lists/* \
+ && npm install -g pnpm@11.13.1 \
+ && npm cache clean --force
+
+WORKDIR /app
+
+COPY . .
+
+RUN pnpm install --frozen-lockfile \
+ && mkdir -p /app/work/storage \
+ && chown -R node:node /app/work
+
+USER node
+
+EXPOSE 3100
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
+  CMD node -e "fetch('http://127.0.0.1:' + (process.env.API_PORT || 3100) + '/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+
+ENTRYPOINT ["/usr/bin/tini", "--"]
+CMD ["node", "--import", "tsx", "services/api/src/main.ts"]
