@@ -11,6 +11,8 @@ work/
 .DS_Store
 playwright-report/
 test-results/
+deploy/certs/
+deploy/backups/
 
 .next-*/
 apps/portal/public/pdf/

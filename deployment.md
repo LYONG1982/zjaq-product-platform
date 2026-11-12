@@ -1,10 +1,44 @@
-# 本轮源码运行说明（2026-10-29）
+# 本轮源码运行说明（2026-11-06）
 
-销售 PC 现要求登录，H5/小程序仅展示当前已发布宣传资料。默认开发端口及配置见 README.md；隔离验收使用 API 3303、PC 3300、后台 3301、H5 3302，不应重启或重置其他用户会话。根 `.env` 不自动传给各应用，启动命令需显式注入所需配置，前端 `VITE_*` / `NEXT_PUBLIC_*` 不得包含秘密。
+## 本地/局域网运行（MySQL）
 
-正式 API 启动前会只读核验编码计数器、型号保留与公开 UUID 索引。缺失时拒绝启动，不回退 Mock；先审核可恢复备份和维护计划，工具见 `docs/product-index-reconciliation.md`、`docs/public-uuid-migration.md`。500 MiB 与视频运行依赖、私有 HTTPS 流和缓存见 `docs/large-upload-and-video.md`。
+前置：Node >= 22、本机 MySQL 5.7 及以上，且已创建数据库与应用账号：
 
-正式 PC 需 `PORTAL_SESSION_SECRET`、反代时的精确 `PORTAL_PUBLIC_ORIGIN`；后台媒体需独立 `ADMIN_MEDIA_SESSION_SECRET`。真实身份、私有对象、代理 IP、日志 TTL、网关超时/上传体积、微信业务域名及真机均需目标环境独立核实。本轮没有执行这些云部署或微信提审步骤。
+```sql
+CREATE DATABASE zjaq DEFAULT CHARACTER SET utf8mb4;
+CREATE USER 'zj_app'@'127.0.0.1' IDENTIFIED BY '<password>';
+GRANT ALL PRIVILEGES ON zjaq.* TO 'zj_app'@'127.0.0.1';
+```
+
+首次准备（PowerShell 示例）：
+
+```powershell
+$env:DATA_PROVIDER="mysql"
+$env:MYSQL_HOST="127.0.0.1"; $env:MYSQL_PORT="3306"
+$env:MYSQL_USER="zj_app"; $env:MYSQL_PASSWORD="<password>"; $env:MYSQL_DATABASE="zjaq"
+pnpm db:migrate     # 建表：documents / auth_users / auth_sessions
+$env:ADMIN_USERNAME="admin"; $env:ADMIN_PASSWORD="<至少 8 位>"
+pnpm db:init        # 写入分类、控制记录与首个管理员；不导入示例产品
+node --import tsx services/api/src/user-cli.ts --username sales1 --password "<至少 8 位>" --role SALES --name "销售一"
+```
+
+启动四端（自动探测本机局域网 IPv4，可用 `DEMO_LAN_HOST` 覆盖）：
+
+```sh
+pnpm demo:lan
+```
+
+脚本 `scripts/demo-lan.mjs` 读取 `MYSQL_*`，设置 `DATA_PROVIDER=mysql`、`API_BIND_HOST=0.0.0.0`、`ZJ_DEV_LAN=true`，并按探测地址生成 `ALLOWED_ORIGINS` / `ALLOWED_HOSTS` 白名单。四入口：门户 3200、后台 3201、H5 3202、API 健康 3100/health。后台使用 `db:init` 创建的管理员账号登录；销售门户使用同库中的 SALES 账号登录。其他设备无法访问时，在 Windows 防火墙放行 TCP 3100、3200、3201、3202。
+
+数据持久化于 MySQL；上传文件位于 `work/storage`，可用 `ZJ_STORAGE_DIR` 覆盖。API 启动时执行数据库迁移与产品索引只读核验，未执行 `db:init` 时以 `NOT_INITIALIZED` 拒绝启动，不回退任何内存实现。
+
+视频上传需要 `ffprobe`。若它不在 PATH，启动前设置绝对路径 `FFPROBE_PATH`，再用 `pnpm check:video-runtime` 确认 `ready: true`；`/health` 的 `capabilities.video` 只在缓存有效期内显示 `ready`，过期后为 `stale` 属正常。服务必须用 Node >= 22 启动，`demo:lan` 会拒绝低版本并固定子进程 PATH。
+
+销售 PC 登录经由 API `/auth/login` 换取 Bearer 令牌，再由门户校验角色是否为 SALES；H5/小程序仅展示当前已发布宣传资料。根 `.env` 不自动传给各应用，启动命令需显式注入所需配置，前端 `VITE_*` / `NEXT_PUBLIC_*` 不得包含秘密。
+
+正式 API 启动前会只读核验编码计数器、型号保留与公开 UUID 索引。缺失时拒绝启动；先审核可恢复备份和维护计划，工具见 `docs/product-index-reconciliation.md`、`docs/public-uuid-migration.md`。500 MiB 与视频运行依赖、私有 HTTPS 流和缓存见 `docs/large-upload-and-video.md`。
+
+生产环境需 `PORTAL_SESSION_SECRET`、反代时的精确 `PORTAL_PUBLIC_ORIGIN`；后台媒体需独立 `ADMIN_MEDIA_SESSION_SECRET`。代理 IP、日志 TTL、网关超时/上传体积、微信业务域名及真机均需目标环境独立核实。本轮没有执行外网部署或微信提审步骤。
 
 以下为历史运行快照，端口、会话和“仍在运行”的描述只对应当时记录，不代表当前运行状态：
 
@@ -74,31 +108,28 @@ node scripts/preview-static.mjs work/round03/build/h5 3402
 
 PDF.js worker、cmaps、字体与 wasm 由 `preview:assets` 从固定依赖复制，自托管；H5 构建后再复制到实际输出目录。静态服务器支持 `.mjs` 与 `.wasm` 正确 MIME，且仅允许发布目录内文件。原始附件、工作目录和源码不进入静态产物。
 
-## 后续真实配置（本轮未执行）
+## MySQL 配置项
 
-真实入口 `pnpm start:api` 要求 `DATA_PROVIDER=cloudbase`，缺配置或环境未初始化即失败，不回退 Mock。
+真实入口 `pnpm start:api` / `pnpm dev:api` 要求 `DATA_PROVIDER=mysql`，缺配置或数据库未初始化即失败，不回退 Mock。
 
 | 配置 | 用途 |
 | --- | --- |
-| CLOUDBASE_ENV_ID | 经用户核实的精确环境 ID |
-| CLOUDBASE_COLLECTION_PREFIX | 默认为 zj_，不得指向无关项目集合 |
-| ADMIN_IDENTITY_PROVIDER | 固定 cloudbase |
-| CLOUDBASE_AUTH_ORIGIN | 同环境官方 HTTPS 身份域名 |
-| ADMIN_BOOTSTRAP_SUBJECT_ID | 首个真实管理员主体，无默认密码 |
+| DATA_PROVIDER | 必须为 mysql |
+| MYSQL_HOST、MYSQL_PORT | 默认 127.0.0.1、3306 |
+| MYSQL_USER、MYSQL_PASSWORD | 应用专用账号，需对目标库有增删改查权限 |
+| MYSQL_DATABASE | 已迁移并执行过 `db:init` 的数据库名 |
+| ZJ_STORAGE_DIR | 私有上传文件目录，默认 `work/storage` |
+| ADMIN_USERNAME、ADMIN_PASSWORD | 仅 `pnpm db:init` 读取，用于创建首个管理员 |
 | ALLOWED_ORIGINS、ALLOWED_HOSTS | 精确的后台/H5 origin 与 API Host；逗号分隔 |
-| API_PORT、API_BIND_HOST | 默认 3101、127.0.0.1；后续托管绑定按实际网络设计 |
-| VITE_CLOUDBASE_ENV_ID、VITE_CLOUDBASE_AUTH_ORIGIN | 后台登录使用的非秘密环境信息 |
-| PORTAL_API_BASE_URL、VITE_API_BASE_URL | 分别为服务端地址与前端可达 HTTPS 地址 |
+| API_PORT、API_BIND_HOST | 默认 3101、127.0.0.1；局域网演示绑定 0.0.0.0 |
+| PORTAL_API_BASE_URL、VITE_API_BASE_URL | 分别为服务端地址与前端可达地址 |
+| PORTAL_SESSION_SECRET、PORTAL_PUBLIC_ORIGIN | 生产销售会话密钥与对外 origin |
 
-凭据只能通过运行环境的秘密管理/IAM 注入。代码调用官方 SDK 默认凭据链，本轮未确认具体云托管运行身份。后台直连官方 `/auth/v1/signin`；访问令牌只存页面内存。API 用同环境 `/auth/v1/token/introspect` 获取主体，再查白名单；客户端角色和本地模拟标记不被真实入口接受。账号禁用后的新请求重新查白名单。
+凭据只能通过运行环境的秘密管理注入，不写入仓库或前端产物。后台与销售门户都调用 API `/auth/login`，令牌只存页面内存/会话 Cookie；角色来自数据库白名单，客户端自报角色不被接受。账号禁用会立即影响后续请求。
 
-需要确认的集合为 control、products、drafts、releases、history、assets、uploads、idempotency、categories、users、subjects、audit、rates，均加配置前缀。产品 ID、主体摘要和幂等摘要使用文档 ID 唯一约束；草稿和不可变 release 分开。集合与私有对象禁止客户端直接读取，通过 API 最小投影。rates 的 expiresAt TTL 索引及私有对象策略尚未在真实环境配置或验证。
+数据表：`documents`（集合名 + 文档 ID 复合主键，JSON 存 LONGTEXT）、`auth_users`（scrypt 密码散列）、`auth_sessions`（令牌仅存 sha256）。集合包括 control、products、drafts、releases、history、assets、uploads、idempotency、categories、users、subjects、audit、feedback、analytics、rates。草稿与不可变 release 分开；集合与私有对象禁止客户端直接读取，通过 API 最小投影。
 
-官方事务上限、服务端 Node SDK、身份端点已查阅：
-- https://docs.cloudbase.net/en/database/transaction
-- https://docs.cloudbase.net/api-reference/server/node-sdk/storage
-- https://docs.cloudbase.net/http-api/auth/auth-token-introspect
-- https://docs.cloudbase.net/http-api/auth/auth-sign-in
+备份/恢复、公开 UUID 迁移与索引核对工具见 `backup-restore.md`、`docs/public-uuid-migration.md`、`docs/product-index-reconciliation.md`；备份文件与 `*.assets` 目录必须放在仓库外的私有路径。
 
 ## 第三轮历史运行限制（已由上方 2026-10-29 说明替代）与后续验收
 
