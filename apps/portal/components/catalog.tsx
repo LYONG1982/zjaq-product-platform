@@ -97,14 +97,18 @@ export async function Catalog({
         ) : (
           <div className="empty-state">
             <h2>
-              {query.q || query.categoryId
-                ? "没有找到相关内容"
-                : "暂无发布内容"}
+              {query.categoryId
+                ? "该系列暂无产品"
+                : query.q
+                  ? "没有找到相关内容"
+                  : "暂无发布内容"}
             </h2>
             <p>
-              {query.q || query.categoryId
-                ? "换个关键词或清除筛选条件。"
-                : "发布后可在这里查阅。"}
+              {query.categoryId
+                ? "该系列下还没有已发布产品。"
+                : query.q
+                  ? "换个关键词或清除筛选条件。"
+                  : "发布后可在这里查阅。"}
             </p>
             <Link className="outline-button" href={"/" + kind}>
               清除筛选

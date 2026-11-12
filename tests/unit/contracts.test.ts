@@ -10,14 +10,14 @@ import {
   operations,
   operation,
   validateQuery,
-} from "../../services/mock-api/src/contract";
+} from "../../services/domain/src/contract";
 import {
   templates,
   validateCreation,
   validateTemplateContent,
   queryTemplates,
 } from "@zj/template-registry";
-import { seedProducts } from "../../services/mock-api/src/seed";
+import { seedProducts } from "../../services/domain/src/seed-products";
 const valid = {
   name: "虚构测试产品",
   categoryId: "miding",
@@ -75,7 +75,7 @@ test("PATCH allOf requires expectedVersion, create request does not", () => {
             allowedTemplateIds: ["software"],
           }
         : {
-            subjectId: "test-only",
+            username: "test-only",
             displayName: "测试",
             role: "ADMIN",
             enabled: true,

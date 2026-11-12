@@ -1,10 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { once } from "node:events";
-import { makeMockServer } from "../../services/mock-api/src/server";
+import { makeTestServer } from "../support/server";
 import { createClient, ApiError } from "../../packages/api-client/src/index";
 test("management API enforces roles, category references, conflict versions and immediate disable", async () => {
-  const server = makeMockServer({ APP_ENV: "test", ENABLE_MOCK_ROLES: "true" });
+  const server = makeTestServer({ APP_ENV: "test", ENABLE_MOCK_ROLES: "true" });
   server.listen(0, "127.0.0.1");
   await once(server, "listening");
   const address = server.address();
@@ -61,7 +61,7 @@ test("management API enforces roles, category references, conflict versions and 
       (u) => u.role === "CONTENT_MANAGER",
     )!;
     await admin.updateUser(u.userId, {
-      subjectId: u.subjectId,
+      username: u.username ?? "mock-content-manager",
       displayName: u.displayName,
       enabled: false,
       role: u.role,
@@ -73,7 +73,7 @@ test("management API enforces roles, category references, conflict versions and 
     )!;
     await assert.rejects(
       admin.updateUser(self.userId, {
-        subjectId: self.subjectId,
+        username: self.username ?? "mock-admin",
         displayName: self.displayName,
         role: "CONTENT_MANAGER",
         enabled: true,
@@ -83,7 +83,8 @@ test("management API enforces roles, category references, conflict versions and 
     );
     const other = (
       await admin.createUser({
-        subjectId: "isolated-admin-subject",
+        username: "isolated-admin",
+        password: "Password123",
         displayName: "第二管理员",
         enabled: true,
         role: "ADMIN",
@@ -91,14 +92,14 @@ test("management API enforces roles, category references, conflict versions and 
     ).data;
     const results = await Promise.allSettled([
       admin.updateUser(self.userId, {
-        subjectId: self.subjectId,
+        username: self.username ?? "mock-admin",
         displayName: self.displayName,
         role: self.role,
         enabled: false,
         expectedVersion: self.version,
       }),
       admin.updateUser(other.userId, {
-        subjectId: other.subjectId,
+        username: other.username ?? "isolated-admin",
         displayName: other.displayName,
         role: other.role,
         enabled: false,
@@ -112,7 +113,7 @@ test("management API enforces roles, category references, conflict versions and 
   }
 });
 test("admin test identity is unavailable unless explicitly enabled", async () => {
-  const s = makeMockServer({ APP_ENV: "test" });
+  const s = makeTestServer({ APP_ENV: "test" });
   s.listen(0, "127.0.0.1");
   await once(s, "listening");
   const a = s.address();

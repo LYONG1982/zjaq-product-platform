@@ -29,12 +29,14 @@ export type PreviewRef =
     };
 
 export interface Domain {
+  LoginRequest: LoginRequest;
   TextItem: TextItem;
   MediaRef: MediaRef;
   PreviewRef: PreviewRef;
   MaterialRef: MaterialRef;
   DraftContent: DraftContent;
   CreateProduct: CreateProduct;
+  RenumberProduct: RenumberProduct;
   SaveDraft: SaveDraft;
   PublishProduct: PublishProduct;
   UnpublishProduct: UnpublishProduct;
@@ -51,7 +53,16 @@ export interface Domain {
   AnalyticsSettingsWrite: AnalyticsSettingsWrite;
   AnalyticsViewSubmit: AnalyticsViewSubmit;
   ProductRemoval: ProductRemoval;
+  RestoreDraft: RestoreDraft;
   ShareSettingsWrite: ShareSettingsWrite;
+}
+/**
+ * This interface was referenced by `Domain`'s JSON-Schema
+ * via the `definition` "LoginRequest".
+ */
+export interface LoginRequest {
+  username: string;
+  password: string;
 }
 /**
  * This interface was referenced by `Domain`'s JSON-Schema
@@ -138,6 +149,19 @@ export interface CreateProduct {
   model: string;
   productType: 'SOFTWARE' | 'HARDWARE';
   ownership: 'SELF_DEVELOPED' | 'PARTNER';
+  sequence?: number;
+}
+/**
+ * This interface was referenced by `Domain`'s JSON-Schema
+ * via the `definition` "RenumberProduct".
+ */
+export interface RenumberProduct {
+  expectedDraftVersion: number;
+  categoryId: string;
+  productType: 'SOFTWARE' | 'HARDWARE';
+  ownership: 'SELF_DEVELOPED' | 'PARTNER';
+  sequence: number;
+  reason: string;
 }
 /**
  * This interface was referenced by `Domain`'s JSON-Schema
@@ -226,7 +250,8 @@ export interface CategoryWrite {
  * via the `definition` "AdminUserWrite".
  */
 export interface AdminUserWrite {
-  subjectId: string;
+  username: string;
+  password?: string;
   displayName: string;
   role: 'CONTENT_MANAGER' | 'ADMIN' | 'SALES';
   enabled: boolean;
@@ -321,6 +346,17 @@ export interface AnalyticsViewSubmit {
  * via the `definition` "ProductRemoval".
  */
 export interface ProductRemoval {
+  expectedDraftVersion: number;
+  expectedPublicationVersion: number;
+  reason: string;
+  confirmation: string;
+  confirmed: true;
+}
+/**
+ * This interface was referenced by `Domain`'s JSON-Schema
+ * via the `definition` "RestoreDraft".
+ */
+export interface RestoreDraft {
   expectedDraftVersion: number;
   expectedPublicationVersion: number;
   reason: string;

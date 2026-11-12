@@ -1,0 +1,107 @@
+# 生产运行编排（仅使用已构建/已导入的镜像，不在服务器上构建）
+# 使用前：cp env/.env.example .env，并在本目录执行
+#   docker compose up -d
+name: zjaq
+
+services:
+  mysql:
+    image: mysql:5.7
+    restart: unless-stopped
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --max_allowed_packet=64M
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?请在 deploy/.env 设置 MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-zjaq}
+      MYSQL_USER: ${MYSQL_USER:-zj_app}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?请在 deploy/.env 设置 MYSQL_PASSWORD}
+      TZ: ${BUSINESS_TIMEZONE:-Asia/Shanghai}
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
+    networks:
+      - zjaq
+
+  api:
+    image: zjaq/api:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      APP_ENV: production
+      DATA_PROVIDER: mysql
+      API_PORT: "3100"
+      API_BIND_HOST: 0.0.0.0
+      MYSQL_HOST: mysql
+      MYSQL_PORT: "3306"
+      MYSQL_USER: ${MYSQL_USER:-zj_app}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?请在 deploy/.env 设置 MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-zjaq}
+      ZJ_STORAGE_DIR: /app/work/storage
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:?请在 deploy/.env 设置 ALLOWED_ORIGINS}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:?请在 deploy/.env 设置 ALLOWED_HOSTS}
+      ADMIN_MEDIA_SESSION_SECRET: ${ADMIN_MEDIA_SESSION_SECRET:?请在 deploy/.env 设置 ADMIN_MEDIA_SESSION_SECRET}
+      TRUSTED_PROXY_ADDRESSES: ${TRUSTED_PROXY_ADDRESSES:-172.28.0.10}
+      FFPROBE_PATH: /usr/bin/ffprobe
+      BUSINESS_TIMEZONE: ${BUSINESS_TIMEZONE:-Asia/Shanghai}
+    volumes:
+      - private-storage:/app/work/storage
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      zjaq:
+        ipv4_address: 172.28.0.11
+
+  portal:
+    image: zjaq/portal:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      PORTAL_API_BASE_URL: http://api:3100/api/v1
+      PORTAL_PUBLIC_ORIGIN: ${PORTAL_PUBLIC_ORIGIN:?请在 deploy/.env 设置 PORTAL_PUBLIC_ORIGIN}
+      PORTAL_SESSION_SECRET: ${PORTAL_SESSION_SECRET:?请在 deploy/.env 设置 PORTAL_SESSION_SECRET}
+      BUSINESS_TIMEZONE: ${BUSINESS_TIMEZONE:-Asia/Shanghai}
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - zjaq
+
+  web:
+    image: zjaq/web:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      PORTAL_DOMAIN: ${PORTAL_DOMAIN:?请在 deploy/.env 设置 PORTAL_DOMAIN}
+      ADMIN_DOMAIN: ${ADMIN_DOMAIN:?请在 deploy/.env 设置 ADMIN_DOMAIN}
+      WX_DOMAIN: ${WX_DOMAIN:?请在 deploy/.env 设置 WX_DOMAIN}
+    ports:
+      # 1Panel OpenResty 作为对外 80/443 入口，web 只允许本机回环访问
+      - "127.0.0.1:8080:443"
+    volumes:
+      - ${TLS_DIR:-./certs}:/etc/nginx/certs:ro
+    depends_on:
+      portal:
+        condition: service_healthy
+      api:
+        condition: service_healthy
+    networks:
+      zjaq:
+        ipv4_address: 172.28.0.10
+
+volumes:
+  mysql-data:
+  private-storage:
+
+networks:
+  zjaq:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16

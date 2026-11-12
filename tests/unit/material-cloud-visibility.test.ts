@@ -4,8 +4,8 @@ import { randomUUID } from "node:crypto";
 import { Readable } from "node:stream";
 import type { IncomingMessage } from "node:http";
 import { readFile } from "node:fs/promises";
-import { CloudBackend } from "../../services/api/src/cloud-backend";
-import { initialize } from "../../services/api/src/initialize";
+import { DomainBackend } from "../../services/api/src/domain-backend";
+import { bootstrapTestRepo } from "../support/bootstrap";
 import type {
   Repository,
   Transaction,
@@ -25,6 +25,10 @@ class TransactionHarness implements Repository {
 
   async set(collection: string, id: string, value: unknown) {
     this.data.set(collection + "/" + id, structuredClone(value));
+  }
+
+  async delete(collection: string, id: string) {
+    this.data.delete(collection + "/" + id);
   }
 
   async list<T>(collection: string) {
@@ -52,7 +56,7 @@ class TransactionHarness implements Repository {
 
 test("CloudBackend revokes promotional materials until a new release", async () => {
   const repo = new TransactionHarness();
-  await initialize(repo, "trusted-admin");
+  await bootstrapTestRepo(repo, "trusted-admin");
   const objects = new Map<string, Buffer>();
   const storage = {
     async upload(path: string, filePath: string) {
@@ -74,7 +78,7 @@ test("CloudBackend revokes promotional materials until a new release", async () 
       return "trusted-admin";
     },
   };
-  let backend = new CloudBackend(repo, identity, storage);
+  let backend = new DomainBackend(repo, identity, storage);
   const actor = await backend.authenticate("Bearer valid-test-only");
 
   await actorContext.run(actor, async () => {
@@ -182,7 +186,7 @@ test("CloudBackend revokes promotional materials until a new release", async () 
       { expectedDraftVersion: saved.draftVersion, content: technical },
       "save-technical-v2",
     );
-    backend = new CloudBackend(repo, identity, storage);
+    backend = new DomainBackend(repo, identity, storage);
     assert.deepEqual(
       (await backend.publicProduct(publicId)).materials,
       [],
@@ -204,7 +208,7 @@ test("CloudBackend revokes promotional materials until a new release", async () 
       { expectedDraftVersion: saved.draftVersion, content: promotionalAgain },
       "save-promotional-v3",
     );
-    backend = new CloudBackend(repo, identity, storage);
+    backend = new DomainBackend(repo, identity, storage);
     assert.deepEqual(
       (await backend.publicProduct(publicId)).materials,
       [],

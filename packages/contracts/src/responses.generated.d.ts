@@ -1,6 +1,8 @@
 /* Generated from contracts. Run pnpm generate; do not edit manually. */
 
 export interface Responses {
+  LoginResponse: LoginResponse;
+  IdentityResponse: IdentityResponse;
   PublicCategory: PublicCategory;
   PublicMedia: PublicMedia;
   PublicMaterial: PublicMaterial;
@@ -79,6 +81,49 @@ export interface Responses {
   ShareSettingsResponse: ShareSettingsResponse;
   ShareTarget: ShareTarget;
   ShareTargetResponse: ShareTargetResponse;
+  RemoveResult: RemoveResult;
+  RemoveResultResponse: RemoveResultResponse;
+}
+/**
+ * This interface was referenced by `Responses`'s JSON-Schema
+ * via the `definition` "LoginResponse".
+ */
+export interface LoginResponse {
+  data: {
+    accessToken: string;
+    expiresAt: string;
+  };
+  requestId: string;
+}
+/**
+ * This interface was referenced by `Responses`'s JSON-Schema
+ * via the `definition` "IdentityResponse".
+ */
+export interface IdentityResponse {
+  data: AdminIdentity | SalesIdentity;
+  requestId: string;
+}
+/**
+ * This interface was referenced by `Responses`'s JSON-Schema
+ * via the `definition` "AdminIdentity".
+ */
+export interface AdminIdentity {
+  userId: string;
+  subjectId: string;
+  displayName: string;
+  role: 'CONTENT_MANAGER' | 'ADMIN';
+  enabled: boolean;
+}
+/**
+ * This interface was referenced by `Responses`'s JSON-Schema
+ * via the `definition` "SalesIdentity".
+ */
+export interface SalesIdentity {
+  userId: string;
+  subjectId: string;
+  displayName: string;
+  role: 'SALES';
+  enabled: boolean;
 }
 /**
  * This interface was referenced by `Responses`'s JSON-Schema
@@ -195,28 +240,6 @@ export interface PreviewManifest {
     mimeType: string;
     path: string;
   }[];
-}
-/**
- * This interface was referenced by `Responses`'s JSON-Schema
- * via the `definition` "AdminIdentity".
- */
-export interface AdminIdentity {
-  userId: string;
-  subjectId: string;
-  displayName: string;
-  role: 'CONTENT_MANAGER' | 'ADMIN';
-  enabled: boolean;
-}
-/**
- * This interface was referenced by `Responses`'s JSON-Schema
- * via the `definition` "SalesIdentity".
- */
-export interface SalesIdentity {
-  userId: string;
-  subjectId: string;
-  displayName: string;
-  role: 'SALES';
-  enabled: boolean;
 }
 /**
  * This interface was referenced by `Responses`'s JSON-Schema
@@ -445,6 +468,7 @@ export interface AuditEvent {
 export interface AdminUser {
   userId: string;
   subjectId: string;
+  username?: string;
   displayName: string;
   role: 'CONTENT_MANAGER' | 'ADMIN' | 'SALES';
   enabled: boolean;
@@ -1052,5 +1076,20 @@ export interface ShareTarget {
  */
 export interface ShareTargetResponse {
   data: ShareTarget;
+  requestId: string;
+}
+/**
+ * This interface was referenced by `Responses`'s JSON-Schema
+ * via the `definition` "RemoveResult".
+ */
+export interface RemoveResult {
+  productId: string;
+}
+/**
+ * This interface was referenced by `Responses`'s JSON-Schema
+ * via the `definition` "RemoveResultResponse".
+ */
+export interface RemoveResultResponse {
+  data: RemoveResult;
   requestId: string;
 }

@@ -1,31 +1,20 @@
 import { isIP } from "node:net";
-export function requireRealConfiguration(env: NodeJS.ProcessEnv) {
-  if (env.DATA_PROVIDER !== "cloudbase")
-    throw new Error("REAL_API_REQUIRES_CLOUDBASE: Mock fallback is forbidden");
-  for (const key of [
-    "CLOUDBASE_ENV_ID",
-    "ADMIN_IDENTITY_PROVIDER",
-    "ADMIN_BOOTSTRAP_SUBJECT_ID",
-    "CLOUDBASE_AUTH_ORIGIN",
-    "ALLOWED_ORIGINS",
-    "ALLOWED_HOSTS",
-  ])
+
+/** MySQL 后端启动前的配置校验；缺失即拒绝启动，不回退任何内存实现。 */
+export function requireMysqlConfiguration(env: NodeJS.ProcessEnv) {
+  if (env.DATA_PROVIDER !== "mysql")
+    throw new Error("REAL_API_REQUIRES_MYSQL: 仅接受 DATA_PROVIDER=mysql");
+  for (const key of ["MYSQL_USER", "MYSQL_DATABASE", "ALLOWED_ORIGINS", "ALLOWED_HOSTS"])
     if (!env[key]?.trim()) throw new Error("MISSING_CONFIGURATION: " + key);
-  if (!/^[a-zA-Z0-9_-]+$/.test(env.CLOUDBASE_ENV_ID!))
-    throw new Error("INVALID_ENVIRONMENT_ID");
   const port = Number(env.API_PORT ?? 3101);
   if (!Number.isInteger(port) || port < 1024 || port > 65535)
     throw new Error("INVALID_PORT");
-  if (env.TRUSTED_PROXY_ADDRESSES && env.TRUSTED_PROXY_ADDRESSES.split(",").some((value) => !isIP(value.trim()))) throw new Error("INVALID_TRUSTED_PROXY_ADDRESS");
-  if (env.ADMIN_IDENTITY_PROVIDER !== "cloudbase")
-    throw new Error("UNSUPPORTED_IDENTITY_PROVIDER");
-}
-export function guardMockEnvironment(env: NodeJS.ProcessEnv) {
-  const appEnv = env.APP_ENV ?? "development";
+  const mysqlPort = Number(env.MYSQL_PORT ?? 3306);
+  if (!Number.isInteger(mysqlPort) || mysqlPort < 1 || mysqlPort > 65535)
+    throw new Error("INVALID_PORT: MYSQL_PORT");
   if (
-    !["development", "test"].includes(appEnv) ||
-    env.NODE_ENV === "production" ||
-    (env.DATA_PROVIDER ?? "mock") !== "mock"
+    env.TRUSTED_PROXY_ADDRESSES &&
+    env.TRUSTED_PROXY_ADDRESSES.split(",").some((value) => !isIP(value.trim()))
   )
-    throw new Error("MOCK_FORBIDDEN: development/test only");
+    throw new Error("INVALID_TRUSTED_PROXY_ADDRESS");
 }

@@ -17,13 +17,15 @@ function allowedHost(value: string | undefined, port: number) {
   return !!match && Number(match[2]) === port;
 }
 export function safeDevRequest(req: IncomingMessage, port: number) {
-  if (!loopback(req.socket.remoteAddress) || !allowedHost(req.headers.host, port)) return false;
+  // 显式开启局域网演示时才放开回环与 Host 限制；默认保持仅本机可用。
+  const lan = process.env.ZJ_DEV_LAN === "true";
+  if (!lan && (!loopback(req.socket.remoteAddress) || !allowedHost(req.headers.host, port))) return false;
   const origin = req.headers.origin;
   if (origin !== undefined) {
     if (typeof origin !== "string") return false;
     try {
       const parsed = new URL(origin);
-      if (parsed.origin !== origin || !["http:", "https:"].includes(parsed.protocol) || !allowedHost(parsed.host, port)) return false;
+      if (parsed.origin !== origin || !["http:", "https:"].includes(parsed.protocol) || (!lan && !allowedHost(parsed.host, port))) return false;
     } catch { return false; }
   }
   const site = req.headers["sec-fetch-site"];

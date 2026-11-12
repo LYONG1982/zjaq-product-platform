@@ -2,10 +2,10 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { once } from "node:events";
 import { rm } from "node:fs/promises";
-import { MockStore } from "../../services/mock-api/src/store";
-import { makeMockServer } from "../../services/mock-api/src/server";
+import { TestStore } from "../support/store";
+import { makeTestServer } from "../support/server";
 test("feedback is validated and rate-limited, and only admins can list it", async () => {
-  const store = new MockStore(undefined, true), server = makeMockServer({ APP_ENV: "test", ENABLE_MOCK_ROLES: "true" }, store);
+  const store = new TestStore(undefined, true), server = makeTestServer({ APP_ENV: "test", ENABLE_MOCK_ROLES: "true" }, store);
   server.listen(0, "127.0.0.1"); await once(server, "listening"); const address = server.address(); assert.ok(address && typeof address === "object");
   const base = `http://127.0.0.1:${address.port}/api/v1`;
   const post = (body: unknown) => fetch(base + "/catalog/feedback", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });

@@ -2,11 +2,11 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { once } from "node:events";
 import { rm } from "node:fs/promises";
-import { MockStore } from "../../services/mock-api/src/store";
-import { makeMockServer } from "../../services/mock-api/src/server";
+import { TestStore } from "../support/store";
+import { makeTestServer } from "../support/server";
 
 test("public material access fails closed for technical, unclassified and revoked items", async () => {
-  const store = new MockStore();
+  const store = new TestStore();
   const product = store.products.get("ZJ-001")!;
   product.publicId = "fd7e9739-fd4f-4d74-bc53-84305f641a9d";
   const promotional = {
@@ -25,7 +25,7 @@ test("public material access fails closed for technical, unclassified and revoke
     id: "release-1", productId: product.productId, sequence: 1,
     content: structuredClone(product.draft), publishedAt: "2026-10-29T00:00:00Z", publishedBy: "mock",
   });
-  const server = makeMockServer({ APP_ENV: "test" }, store);
+  const server = makeTestServer({ APP_ENV: "test" }, store);
   server.listen(0, "127.0.0.1");
   await once(server, "listening");
   const address = server.address();

@@ -2,8 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { once } from "node:events";
 import { readFile, rm } from "node:fs/promises";
-import { MockStore } from "../../services/mock-api/src/store";
-import { makeMockServer } from "../../services/mock-api/src/server";
+import { TestStore } from "../support/store";
+import { makeTestServer } from "../support/server";
 import type { Domain } from "@zj/contracts";
 import { bannerFields, emptySiteBanner, normalizeSiteBanner, validateSiteBanner, visibleSiteBanner } from "../../services/domain/src/site-banner";
 
@@ -58,7 +58,7 @@ test("banner writes reject deleting, moving, changing, overfilling, or invalidat
 });
 
 test("site banner API enforces admin, version, custom image validation, and serves bundled default asset", async () => {
-  const store = new MockStore(undefined, true), server = makeMockServer({ APP_ENV: "test", ENABLE_MOCK_ROLES: "true" }, store);
+  const store = new TestStore(undefined, true), server = makeTestServer({ APP_ENV: "test", ENABLE_MOCK_ROLES: "true" }, store);
   server.listen(0, "127.0.0.1"); await once(server, "listening");
   const address = server.address(); assert.ok(address && typeof address === "object");
   const base = `http://127.0.0.1:${address.port}/api/v1`;

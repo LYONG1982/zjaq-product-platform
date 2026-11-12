@@ -7,72 +7,6 @@ export const subjectKey = (subject: string) =>
 export interface IdentityProvider {
   subject(authorization: string | undefined): Promise<string>;
 }
-export class CloudBaseIdentity implements IdentityProvider {
-  constructor(
-    private envId: string,
-    private origin: string,
-  ) {
-    const u = new URL(origin);
-    requireValue(
-      u.protocol === "https:" &&
-        u.hostname === envId + ".api.tcloudbasegateway.com" &&
-        u.pathname === "/" &&
-        !u.search &&
-        !u.username &&
-        !u.password,
-      500,
-      "CONFIGURATION_ERROR",
-      "身份服务需使用对应环境的官方 HTTPS 地址",
-    );
-  }
-  async subject(header: string | undefined) {
-    requireValue(
-      header &&
-        /^Bearer [A-Za-z0-9._~+\/-]+=*$/.test(header) &&
-        header.length < 8192 &&
-        !header.includes("local-mock") &&
-        !header.includes("local-admin") &&
-        !header.includes("local-sales"),
-      401,
-      "SESSION_EXPIRED",
-      "请重新登录",
-    );
-    let response;
-    try {
-      response = await fetch(
-        this.origin.replace(/\/$/, "") + "/auth/v1/token/introspect",
-        {
-          headers: { Authorization: header },
-          redirect: "error",
-          cache: "no-store",
-          signal: AbortSignal.timeout(10000),
-        },
-      );
-    } catch {
-      throw new AppError(
-        503,
-        "IDENTITY_UNAVAILABLE",
-        "身份服务暂不可用，请重试",
-      );
-    }
-    requireValue(response.ok, 401, "SESSION_EXPIRED", "登录已失效，请重新登录");
-    const data = (await response.json()) as {
-      sub?: string;
-      client_id?: string;
-      token_type?: string;
-    };
-    requireValue(
-      data.token_type === "Bearer" &&
-        data.client_id === this.envId &&
-        typeof data.sub === "string" &&
-        data.sub.length > 0,
-      401,
-      "SESSION_EXPIRED",
-      "登录已失效，请重新登录",
-    );
-    return data.sub;
-  }
-}
 export async function identityFor(
   tx: Transaction,
   subject: string,
@@ -90,7 +24,8 @@ export async function identityFor(
     "FORBIDDEN",
     "此身份未获后台访问权限",
   );
-  const { version, ...identity } = user;
+  // Login identity stays minimal; username is only exposed through account management.
+  const { version, username: _username, ...identity } = user;
   return user.role === "SALES"
     ? (identity as Responses["SalesIdentity"])
     : (identity as Responses["AdminIdentity"]);
@@ -102,3 +37,4 @@ export async function authenticate(
 ) {
   return identityFor(repo, await provider.subject(header));
 }
+export { AppError };

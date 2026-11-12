@@ -2,24 +2,25 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { createPublicIdPlan, applyPublicIdMigration } from "../../services/api/src/public-id-migration";
-import { initialize } from "../../services/api/src/initialize";
 import { validateBackup } from "../../services/api/src/backup-validation";
 import { collections, type Repository, type Transaction } from "../../services/api/src/repository";
 import type { ProductRecord } from "@zj/contracts";
-import { CloudBackend } from "../../services/api/src/cloud-backend";
+import { DomainBackend } from "../../services/api/src/domain-backend";
+import { bootstrapTestRepo } from "../support/bootstrap";
 
 class Harness implements Repository {
   data = new Map<string, any>();
   fail = false;
   async get<T>(collection: string, id: string) { return structuredClone(this.data.get(collection + "/" + id)) as T | undefined; }
   async set(collection: string, id: string, value: unknown) { this.data.set(collection + "/" + id, structuredClone(value)); }
+  async delete(collection: string, id: string) { this.data.delete(collection + "/" + id); }
   async list<T>(collection: string) { return [...this.data].filter(([k]) => k.startsWith(collection + "/")).map(([,v]) => structuredClone(v) as T); }
   async transaction<T>(fn: (tx: Transaction) => Promise<T>) { const before = structuredClone(this.data); try { const result = await fn(this); if (this.fail) throw new Error("INJECTED_FAILURE"); return result; } catch (e) { this.data = before; throw e; } }
 }
 
 test("public UUID migration fills all 27 old codes, preserves snapshots, rolls back and survives backup validation", async () => {
   const repo = new Harness();
-  await initialize(repo, "test-only-subject");
+  await bootstrapTestRepo(repo, "test-only-subject");
   const state = await repo.get<any>("control", "state");
   const old = await repo.get<any>("products", "ZJ-001"), draft = await repo.get<any>("drafts", "ZJ-001");
   const releaseId = randomUUID();
@@ -45,7 +46,7 @@ test("public UUID migration fills all 27 old codes, preserves snapshots, rolls b
   assert.deepEqual(await repo.list("drafts"), drafts);
   assert.deepEqual(await repo.list("releases"), releases);
   assert.deepEqual((await repo.list<any>("products")).map(({publicId,...p}) => p), originals);
-  const backend = new CloudBackend(repo, { subject: async () => "test-only-subject" }, { upload: async () => { throw new Error("NO_STORAGE"); }, download: async () => { throw new Error("NO_STORAGE"); } });
+  const backend = new DomainBackend(repo, { subject: async () => "test-only-subject" }, { upload: async () => { throw new Error("NO_STORAGE"); }, download: async () => { throw new Error("NO_STORAGE"); } });
   const publicId = plan.entries.find(entry => entry.productId === "ZJ-001")!.publicId;
   assert.equal((await backend.publicProduct(publicId)).name, content.name);
   await assert.rejects(backend.publicProduct("ZJ-001"), { status: 404 });
@@ -68,7 +69,7 @@ test("public UUID migration fills all 27 old codes, preserves snapshots, rolls b
 });
 
 test("migration rejects duplicates, malformed IDs, tampered mappings, stale state and index collisions", async () => {
-  const repo = new Harness(); await initialize(repo, "test-only-subject");
+  const repo = new Harness(); await bootstrapTestRepo(repo, "test-only-subject");
   const state = await repo.get<any>("control", "state");
   const products = await repo.list<Omit<ProductRecord,"draft">>("products");
   const duplicate = structuredClone(products); duplicate[0].publicId = duplicate[1].publicId = randomUUID();
@@ -86,13 +87,13 @@ test("migration rejects duplicates, malformed IDs, tampered mappings, stale stat
 });
 
 test("an existing public index cannot make a duplicate UUID accessible", async () => {
-  const repo = new Harness(); await initialize(repo, "test-only-subject");
+  const repo = new Harness(); await bootstrapTestRepo(repo, "test-only-subject");
   const products = await repo.list<Omit<ProductRecord, "draft">>("products");
   const id = randomUUID();
   await repo.set("products", products[0].productId, { ...products[0], publicId: id, publicationState: "PUBLISHED" });
   await repo.set("products", products[1].productId, { ...products[1], publicId: id.toUpperCase() });
   await repo.set("control", "public-" + id, { productId: products[0].productId });
-  const backend = new CloudBackend(repo, { subject: async () => "test-only-subject" }, { upload: async () => { throw new Error("NO_STORAGE"); }, download: async () => { throw new Error("NO_STORAGE"); } });
+  const backend = new DomainBackend(repo, { subject: async () => "test-only-subject" }, { upload: async () => { throw new Error("NO_STORAGE"); }, download: async () => { throw new Error("NO_STORAGE"); } });
   await assert.rejects(backend.resolvePublicId(id), { status: 404 });
   await assert.rejects(backend.publicProduct(products[0].productId), { status: 404 });
 });

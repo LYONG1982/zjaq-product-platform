@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { templates, validateTemplateContent } from "@zj/template-registry";
-import { seedProducts } from "../../services/mock-api/src/seed";
+import { seedProducts } from "../../services/domain/src/seed-products";
 
 test("boundaries remain in draft content but are optional for publication", () => {
   for (const template of templates) {

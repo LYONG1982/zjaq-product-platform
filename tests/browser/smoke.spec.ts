@@ -82,7 +82,7 @@ for (const width of [390, 320])
         }),
       );
       await page.goto(urls.h5);
-      await expect(page.getByText("产品资料正在整理")).toBeVisible();
+      await expect(page.getByText("暂无已发布产品")).toBeVisible();
       expect(
         await page.evaluate(
           () => document.documentElement.scrollWidth <= window.innerWidth,

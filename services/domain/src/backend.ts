@@ -1,7 +1,7 @@
 import type { IncomingMessage } from "node:http";
 import type { Responses } from "@zj/contracts";
 import type { DomainEngine } from "./engine";
-import type { AssetStore } from "../../mock-api/src/assets";
+import type { AssetStore } from "./asset-store";
 export type Query = Record<string, string | number | boolean>;
 type Awaitable<T> = T | Promise<T>;
 type Method<K extends keyof DomainEngine> = DomainEngine[K] extends (
@@ -10,7 +10,7 @@ type Method<K extends keyof DomainEngine> = DomainEngine[K] extends (
   ? (...args: A) => Awaitable<R>
   : never;
 export type Backend = {
-  provider: "mock" | "cloudbase";
+  provider: "mysql" | "test";
   sessionId?: string;
   throttle?(ip: string): Promise<void>;
   authenticate(
@@ -32,8 +32,9 @@ export type Backend = {
   save: Method<"save">;
   publish: Method<"publish">;
   unpublish: Method<"unpublish">;
+  restoreDraft: Method<"restoreDraft">;
   removeProduct: Method<"removeProduct">;
-  restoreProduct: Method<"restoreProduct">;
+  renumberProduct: Method<"renumberProduct">;
   assertProductWritable: Method<"assertProductWritable">;
   assertProductReadable: Method<"assertProductReadable">;
   createUpload: Method<"createUpload">;
@@ -76,12 +77,13 @@ export type Backend = {
 export function filters(engine: DomainEngine) {
   return {
     listProducts(q: Query) {
-      if (q.removed === true) engine.assertRemovedProductsAccess();
+      // Removal is permanent; the former recycle-bin view is always empty.
+      if (q.removed === true) return [];
       const term = String(q.q ?? "").toLocaleLowerCase();
       return [...engine.products.values()]
         .filter(
           (p) =>
-            (q.removed === true ? !!p.deletedAt : !p.deletedAt) &&
+            !p.deletedAt &&
             (!term ||
               [p.draft.name, ...(p.draft.aliases ?? [])].some((v) =>
                 v.toLocaleLowerCase().includes(term),

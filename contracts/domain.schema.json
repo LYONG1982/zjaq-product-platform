@@ -3,6 +3,26 @@
   "$id": "domain.schema.json",
   "title": "RC2 lightweight domain contracts",
   "$defs": {
+    "LoginRequest": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "password": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        }
+      },
+      "required": [
+        "username",
+        "password"
+      ],
+      "additionalProperties": false
+    },
     "TextItem": {
       "type": "object",
       "properties": {
@@ -422,6 +442,11 @@
             "SELF_DEVELOPED",
             "PARTNER"
           ]
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 999
         }
       },
       "additionalProperties": false,
@@ -434,6 +459,52 @@
         "model",
         "productType",
         "ownership"
+      ]
+    },
+    "RenumberProduct": {
+      "type": "object",
+      "properties": {
+        "expectedDraftVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "categoryId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "productType": {
+          "enum": [
+            "SOFTWARE",
+            "HARDWARE"
+          ]
+        },
+        "ownership": {
+          "enum": [
+            "SELF_DEVELOPED",
+            "PARTNER"
+          ]
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 999
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "expectedDraftVersion",
+        "categoryId",
+        "productType",
+        "ownership",
+        "sequence",
+        "reason"
       ]
     },
     "SaveDraft": {
@@ -706,10 +777,16 @@
     "AdminUserWrite": {
       "type": "object",
       "properties": {
-        "subjectId": {
+        "username": {
           "type": "string",
-          "minLength": 1,
-          "maxLength": 200
+          "minLength": 3,
+          "maxLength": 64,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "password": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 128
         },
         "displayName": {
           "type": "string",
@@ -733,7 +810,7 @@
       },
       "additionalProperties": false,
       "required": [
-        "subjectId",
+        "username",
         "displayName",
         "role",
         "enabled"
@@ -982,6 +1059,40 @@
       "additionalProperties": false
     },
     "ProductRemoval": {
+      "type": "object",
+      "properties": {
+        "expectedDraftVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "expectedPublicationVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "confirmation": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "confirmed": {
+          "const": true
+        }
+      },
+      "required": [
+        "expectedDraftVersion",
+        "expectedPublicationVersion",
+        "reason",
+        "confirmation",
+        "confirmed"
+      ],
+      "additionalProperties": false
+    },
+    "RestoreDraft": {
       "type": "object",
       "properties": {
         "expectedDraftVersion": {

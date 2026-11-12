@@ -3,18 +3,18 @@ import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { once } from "node:events";
 import { readFile, writeFile, rm } from "node:fs/promises";
-import { MockStore } from "../../services/mock-api/src/store";
-import { mockBackend } from "../../services/mock-api/src/backend";
+import { TestStore } from "../support/store";
+import { testBackend } from "../support/backend";
 import { makeApiServer } from "../../services/domain/src/http";
 import { sourceIp, recentAnalytics, analyticsRecord, ANALYTICS_RETENTION_MS, restoreAnalyticsRecord } from "../../services/domain/src/analytics";
-import { CloudBackend } from "../../services/api/src/cloud-backend";
-import { initialize } from "../../services/api/src/initialize";
+import { DomainBackend } from "../../services/api/src/domain-backend";
+import { bootstrapTestRepo } from "../support/bootstrap";
 import { actorContext } from "../../services/domain/src/identity";
 import type { Repository, Transaction } from "../../services/api/src/repository";
 import type { IncomingMessage } from "node:http";
 
 async function fixture() {
-  const store = new MockStore(undefined, true), product = store.products.get("ZJ-001")!;
+  const store = new TestStore(undefined, true), product = store.products.get("ZJ-001")!;
   const releaseId = randomUUID(), materialId = randomUUID(), versionId = randomUUID();
   const bytes = await readFile(new URL("../fixtures/validation/sample-v1.pdf", import.meta.url));
   const intent = store.assets.create({ productId: product.productId, purpose: "preview", fileName: "sample.pdf", contentType: "application/pdf", size: bytes.length });
@@ -27,7 +27,7 @@ async function fixture() {
 }
 
 test("analytics API enforces admin controls, valid current material, view deduplication, range exclusion and immediate stop", async () => {
-  const f = await fixture(), backend = mockBackend(f.store, { ENABLE_MOCK_ROLES: "true" });
+  const f = await fixture(), backend = testBackend(f.store, { ENABLE_MOCK_ROLES: "true" });
   const server = makeApiServer(backend); server.listen(0, "127.0.0.1"); await once(server, "listening");
   const address = server.address(); assert.ok(address && typeof address === "object");
   const base = `http://127.0.0.1:${address.port}/api/v1`;
@@ -72,7 +72,7 @@ test("analytics API enforces admin controls, valid current material, view dedupl
 });
 
 test("analytics limits new events by observed IP while deduplicated retries remain harmless", async () => {
-  const f = await fixture(), backend = mockBackend(f.store, { ENABLE_MOCK_ROLES: "true" });
+  const f = await fixture(), backend = testBackend(f.store, { ENABLE_MOCK_ROLES: "true" });
   try {
     await actorContext.run(f.store.users.get("mock-admin")!, () => backend.writeAnalyticsSettings({ expectedVersion: 0, viewEnabled: true, downloadEnabled: false, dashboardEnabled: false }, "enable"));
     for (let i = 0; i < 60; i++) await backend.submitAnalyticsView({ ...f.body, viewId: randomUUID() }, "198.51.100.7");
@@ -95,6 +95,7 @@ class AnalyticsRepository implements Repository {
   data = new Map<string, unknown>(); tail = Promise.resolve();
   async get<T>(collection: string, id: string) { return structuredClone(this.data.get(collection + "/" + id)) as T | undefined; }
   async set(collection: string, id: string, value: unknown) { this.data.set(collection + "/" + id, structuredClone(value)); }
+  async delete(collection: string, id: string) { this.data.delete(collection + "/" + id); }
   async list<T>(collection: string) { if (collection === "analytics") throw new Error("General collection listing is intentionally not used for analytics"); return [...this.data].filter(([key]) => key.startsWith(collection + "/")).map(([, value]) => structuredClone(value) as T); }
   async *scan<T>(collection: string) { for (const [key, value] of this.data) if (key.startsWith(collection + "/")) yield structuredClone(value) as T; }
   async pruneExpired(collection: string, before: Date) { for (const [key, value] of this.data) if (key.startsWith(collection + "/") && new Date((value as { expiresAt: Date }).expiresAt).getTime() <= before.getTime()) this.data.delete(key); }
@@ -104,10 +105,10 @@ class AnalyticsRepository implements Repository {
 test("Cloud analytics transaction harness persists switch, concurrent dedup and expiration without a real cloud", async () => {
   const f = await fixture(), repo = new AnalyticsRepository();
   try {
-    await initialize(repo, "analytics-admin");
+    await bootstrapTestRepo(repo, "analytics-admin");
     const { draft, ...product } = f.product;
     await repo.set("products", product.productId, product); await repo.set("drafts", product.productId, { content: draft }); await repo.set("releases", f.releaseId, f.store.releases.get(f.releaseId)); await repo.set("control", "public-" + product.publicId, { productId: product.productId });
-    const backend = new CloudBackend(repo, { subject: async () => "analytics-admin" }, { upload: async () => { throw new Error("not used"); }, download: async () => { throw new Error("not used"); } });
+    const backend = new DomainBackend(repo, { subject: async () => "analytics-admin" }, { upload: async () => { throw new Error("not used"); }, download: async () => { throw new Error("not used"); } });
     const me = await backend.authenticate("Bearer test");
     await actorContext.run(me, () => backend.writeAnalyticsSettings({ expectedVersion: 0, viewEnabled: true, downloadEnabled: true, dashboardEnabled: true }, "test"));
     await Promise.all(Array.from({ length: 8 }, () => backend.submitAnalyticsView(f.body, "192.0.2.8")));
@@ -122,7 +123,7 @@ test("Cloud analytics transaction harness persists switch, concurrent dedup and 
     await repo.set("analytics", "expired", old);
     assert.equal(recentAnalytics([old]).length, 0);
     events = await actorContext.run(me, () => backend.analyticsEvents()); assert.equal(events.length, 1); assert.equal(await repo.get("analytics", "expired"), undefined);
-    const restart = new CloudBackend(repo, { subject: async () => "analytics-admin" }, { upload: async () => "unused", download: async () => {} });
+    const restart = new DomainBackend(repo, { subject: async () => "analytics-admin" }, { upload: async () => "unused", download: async () => {} });
     assert.equal((await restart.analyticsSettings()).viewEnabled, true);
     await actorContext.run(me, () => restart.writeAnalyticsSettings({ expectedVersion: 1, viewEnabled: false, downloadEnabled: false, dashboardEnabled: false }, "test-stop"));
     await restart.submitAnalyticsView({ ...f.body, viewId: randomUUID() }, "192.0.2.8");

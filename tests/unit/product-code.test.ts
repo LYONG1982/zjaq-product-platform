@@ -12,9 +12,9 @@ test("product codes use explicit user-selected type and stable five-part format"
 });
 
 test("legacy products keep their code and missing attributes until publication", async () => {
-  const { MockStore } = await import("../../services/mock-api/src/store");
+  const { TestStore } = await import("../support/store");
   const { rm } = await import("node:fs/promises");
-  const store = new MockStore();
+  const store = new TestStore();
   try {
     const original = store.draft("ZJ-001");
     const saved = store.save("ZJ-001", { expectedDraftVersion: original.draftVersion, content: { ...original.content, summary: "仅用于本地验证" } }, "test");

@@ -1,4 +1,4 @@
-import { planSeed } from "../services/mock-api/src/seed";
+import { planSeed } from "../services/domain/src/seed-products";
 const plan = planSeed([]);
 console.log(
   JSON.stringify(

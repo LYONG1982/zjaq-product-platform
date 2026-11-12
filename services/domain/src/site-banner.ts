@@ -1,4 +1,4 @@
-import { siteImageMetadata } from "../../mock-api/src/site-image";
+import { siteImageMetadata } from "./site-image";
 import type { Domain, Responses } from "@zj/contracts";
 import { requireValue, validateBody } from "./errors";
 

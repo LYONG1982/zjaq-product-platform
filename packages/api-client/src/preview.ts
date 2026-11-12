@@ -55,7 +55,7 @@ export class PreviewSession {
       this.base.replace(/\/$/, "") + path.replace(/^\/api\/v1/, "");
     if (this.manifest.previewKind === "pdf") {
       if (!this.pdf) {
-        const lib = await import("pdfjs-dist");
+        const lib = await import("pdfjs-dist/legacy/build/pdf.mjs");
         lib.GlobalWorkerOptions.workerSrc =
           this.assetsBase + "pdf.worker.min.mjs";
         if (seq !== this.sequence || this.stopped) return;

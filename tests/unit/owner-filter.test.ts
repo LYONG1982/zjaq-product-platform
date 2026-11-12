@@ -2,11 +2,11 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { rm } from "node:fs/promises";
 import { filters } from "../../services/domain/src/backend";
-import { validateQuery } from "../../services/mock-api/src/contract";
-import { MockStore } from "../../services/mock-api/src/store";
+import { validateQuery } from "../../services/domain/src/contract";
+import { TestStore } from "../support/store";
 
 test("admin owner filter is validated and combines with other filters", async () => {
-  const store = new MockStore();
+  const store = new TestStore();
   try {
     store.products.get("ZJ-001")!.draft.owner = "品牌部测试人员";
     store.products.get("ZJ-002")!.draft.owner = "销售部测试人员";

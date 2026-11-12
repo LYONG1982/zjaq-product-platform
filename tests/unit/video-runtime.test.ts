@@ -8,8 +8,8 @@ import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 import { createVideoProbeRuntime, classifyVideoProbeFailure, videoProbeCommand, checkVideoRuntimeAtStartup } from "../../services/domain/src/video-probe.mjs";
 import { makeApiServer } from "../../services/domain/src/http";
-import { MockStore } from "../../services/mock-api/src/store";
-import { mockBackend } from "../../services/mock-api/src/backend";
+import { TestStore } from "../support/store";
+import { testBackend } from "../support/backend";
 
 const good = { stdout: "ffprobe version 8.1.1 Copyright test\nprivate build details" };
 test("probe path rules and failure classification never return diagnostic stderr", () => {
@@ -76,7 +76,7 @@ test("real executable launch bounds timeout/output; CLI has useful exit codes wi
     const path = join(root,name); await writeFile(path,"#!"+process.execPath+"\n"+code,{mode}); return path;
   }
   const cli = (probe: string) => new Promise<{exit: number; report:any}>(resolve => execFile(process.execPath, ["scripts/check-video-runtime.mjs"],
-    {env:{...process.env, FFPROBE_PATH:probe, DATABASE_URL:"SECRET_UNUSED", CLOUDBASE_ENV_ID:"SECRET_UNUSED"}, timeout:10000},
+    {env:{...process.env, FFPROBE_PATH:probe, DATABASE_URL:"SECRET_UNUSED", MYSQL_PASSWORD:"SECRET_UNUSED"}, timeout:10000},
     (error, stdout) => resolve({exit:error ? Number(error.code) : 0, report:JSON.parse(stdout)})));
   try {
     const valid = await executable("probe with space", 'console.log("ffprobe version 8.1.1 test")');
@@ -90,7 +90,7 @@ test("real executable launch bounds timeout/output; CLI has useful exit codes wi
     const success = await cli(valid); assert.equal(success.exit,0); assert.equal(success.report.ready,true);
     const failed = await cli(join(root,"missing")); assert.equal(failed.exit,1); assert.equal(failed.report.reason,"NOT_FOUND");
     const invalid = await cli("relative/path"); assert.equal(invalid.exit,1); assert.equal(invalid.report.reason,"INVALID_PATH");
-    assert.doesNotMatch(JSON.stringify([success,failed,invalid]), /SECRET_UNUSED|DATABASE_URL|CLOUDBASE_ENV_ID/);
+    assert.doesNotMatch(JSON.stringify([success,failed,invalid]), /SECRET_UNUSED|DATABASE_URL|MYSQL_PASSWORD/);
   } finally { await rm(root,{recursive:true,force:true}); }
 });
 
@@ -98,8 +98,8 @@ test("HTTP rejects videos before allocation, preserves authorization and nonvide
   let calls = 0, now = 0, available = false;
   const runtime = createVideoProbeRuntime({env:()=>({FFPROBE_PATH:join(tmpdir(),"PRIVATE_PROBE")}),now:()=>now,
     run:async () => { calls++; return available ? good : {error:{code:"ENOENT"},stdout:"",stderr:"SECRET"}; }});
-  const store = new MockStore(undefined,true);
-  const server = makeApiServer(mockBackend(store,{ENABLE_MOCK_ROLES:"true"}),{videoRuntime:runtime});
+  const store = new TestStore(undefined,true);
+  const server = makeApiServer(testBackend(store,{ENABLE_MOCK_ROLES:"true"}),{secureMediaCookie:false,videoRuntime:runtime});
   server.listen(0,"127.0.0.1"); await once(server,"listening");
   const address = server.address(); assert.ok(address && typeof address === "object"); const base = `http://127.0.0.1:${address.port}`;
   const body = {productId:"ZJ-001",fileName:"demo.mp4",contentType:"video/mp4",purpose:"preview",size:100};

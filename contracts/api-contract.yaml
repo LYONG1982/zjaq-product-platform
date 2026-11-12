@@ -674,7 +674,7 @@ paths:
   /api/v1/admin/me:
     get:
       operationId: getAdminMe
-      summary: 服务端验证CloudBase身份与后台白名单，返回角色；不是外部阅读登录。
+      summary: 服务端验证 MySQL 账号会话与后台白名单，返回角色；不是外部阅读登录。
       tags:
         - admin
       security:
@@ -1691,7 +1691,7 @@ paths:
   /api/v1/sales/me:
     get:
       operationId: getSalesMe
-      summary: 服务端验证 CloudBase 身份及现有主体白名单，仅返回 SALES 身份。
+      summary: 服务端验证 MySQL 账号会话及现有主体白名单，仅返回 SALES 身份。
       tags:
         - sales
       security:
@@ -1959,7 +1959,7 @@ paths:
                 $ref: ./domain.schema.json#/$defs/Error
     post:
       operationId: createProduct
-      summary: Idempotency-Key必填；事务分配编号并建立草稿。
+      summary: Idempotency-Key必填；事务内按手填或自动分配编号并建立草稿。
       tags:
         - admin
       security:
@@ -3899,10 +3899,164 @@ paths:
           content:
             application/json:
               schema: { $ref: './domain.schema.json#/$defs/Error' }
+  /api/v1/admin/products/{productId}/renumber:
+    post:
+      operationId: renumberProduct
+      summary: 管理员为未发布草稿重算产品编号与配置项；已发布或曾发布的产品不可改号。
+      tags:
+        - admin
+      security:
+        - AdminBearer: []
+      x-required-role: CONTENT_MANAGER, ADMIN
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 16
+            maxLength: 120
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./domain.schema.json#/$defs/RenumberProduct
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/AdminDraftResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 编号被占用、草稿版本变化或产品已有发布记录。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/admin/products/{productId}/restore-draft:
+    post:
+      operationId: restoreDraft
+      summary: 将已下架产品恢复为草稿；保留编号、公开标识、发布快照与历史，不改变公开读取结果。
+      tags:
+        - admin
+      security:
+        - AdminBearer: []
+      x-required-role: CONTENT_MANAGER, ADMIN
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 16
+            maxLength: 120
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./domain.schema.json#/$defs/RestoreDraft
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope。具体DTO见response-shapes.json。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/AdminDraftResponse
+        '400':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '401':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '404':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '409':
+          description: 产品不是已下架状态，或草稿/发布版本已变化。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '422':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '500':
+          description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
   /api/v1/admin/products/{productId}/remove:
     post:
       operationId: removeProduct
-      summary: 管理员安全移除产品；保留全部身份和历史，不物理删除。
+      summary: 管理员彻底移除草稿产品并释放编号；不可恢复，连同发布快照、历史与原件一并清除。
       tags:
         - admin
       security:
@@ -3929,11 +4083,11 @@ paths:
               $ref: ./domain.schema.json#/$defs/ProductRemoval
       responses:
         '200':
-          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          description: 成功；JSON使用data/requestId envelope。具体DTO见response-shapes.json。
           content:
             application/json:
               schema:
-                $ref: ./response.schema.json#/$defs/AdminDraftResponse
+                $ref: ./response.schema.json#/$defs/RemoveResultResponse
         '400':
           description: 规范错误，详见补充说明；只在对应条件下返回。
           content:
@@ -3959,7 +4113,7 @@ paths:
               schema:
                 $ref: ./domain.schema.json#/$defs/Error
         '409':
-          description: 规范错误，详见补充说明；只在对应条件下返回。
+          description: 产品不是草稿状态，或草稿/发布版本已变化。
           content:
             application/json:
               schema:
@@ -3977,7 +4131,7 @@ paths:
               schema:
                 $ref: ./domain.schema.json#/$defs/Error
         '422':
-          description: 规范错误，详见补充说明；只在对应条件下返回。
+          description: 确认编号与产品编号不一致，或缺少原因。
           content:
             application/json:
               schema:
@@ -3994,41 +4148,27 @@ paths:
             application/json:
               schema:
                 $ref: ./domain.schema.json#/$defs/Error
-  /api/v1/admin/products/{productId}/restore:
+  /api/v1/auth/login:
     post:
-      operationId: restoreProduct
-      summary: 管理员恢复产品；不会自动上架。
+      operationId: login
+      summary: 使用 MySQL 账号密码换取 Bearer 会话令牌；连续失败受 IP 限流。
       tags:
-        - admin
-      security:
-        - AdminBearer: []
-      x-required-role: ADMIN
-      parameters:
-        - name: productId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: Idempotency-Key
-          in: header
-          required: true
-          schema:
-            type: string
-            minLength: 16
-            maxLength: 120
+        - auth
+      security: []
+      x-required-role: public
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: ./domain.schema.json#/$defs/ProductRemoval
+              $ref: ./domain.schema.json#/$defs/LoginRequest
       responses:
         '200':
-          description: 成功；JSON使用data/requestId envelope，列表另含page。具体DTO见response-shapes.json。
+          description: 成功；返回访问令牌与过期时间。
           content:
             application/json:
               schema:
-                $ref: ./response.schema.json#/$defs/AdminDraftResponse
+                $ref: ./response.schema.json#/$defs/LoginResponse
         '400':
           description: 规范错误，详见补充说明；只在对应条件下返回。
           content:
@@ -4036,55 +4176,65 @@ paths:
               schema:
                 $ref: ./domain.schema.json#/$defs/Error
         '401':
-          description: 规范错误，详见补充说明；只在对应条件下返回。
-          content:
-            application/json:
-              schema:
-                $ref: ./domain.schema.json#/$defs/Error
-        '403':
-          description: 规范错误，详见补充说明；只在对应条件下返回。
-          content:
-            application/json:
-              schema:
-                $ref: ./domain.schema.json#/$defs/Error
-        '404':
-          description: 规范错误，详见补充说明；只在对应条件下返回。
-          content:
-            application/json:
-              schema:
-                $ref: ./domain.schema.json#/$defs/Error
-        '409':
-          description: 规范错误，详见补充说明；只在对应条件下返回。
-          content:
-            application/json:
-              schema:
-                $ref: ./domain.schema.json#/$defs/Error
-        '410':
-          description: 规范错误，详见补充说明；只在对应条件下返回。
-          content:
-            application/json:
-              schema:
-                $ref: ./domain.schema.json#/$defs/Error
-        '413':
-          description: 规范错误，详见补充说明；只在对应条件下返回。
-          content:
-            application/json:
-              schema:
-                $ref: ./domain.schema.json#/$defs/Error
-        '422':
-          description: 规范错误，详见补充说明；只在对应条件下返回。
+          description: 账号或密码不正确。
           content:
             application/json:
               schema:
                 $ref: ./domain.schema.json#/$defs/Error
         '429':
-          description: 规范错误，详见补充说明；只在对应条件下返回。
+          description: 登录尝试过于频繁。
           content:
             application/json:
               schema:
                 $ref: ./domain.schema.json#/$defs/Error
         '500':
           description: 规范错误，详见补充说明；只在对应条件下返回。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/auth/me:
+    get:
+      operationId: me
+      summary: 返回当前令牌对应的管理员或销售身份。
+      tags:
+        - auth
+      security:
+        - AdminBearer: []
+      x-required-role: CONTENT_MANAGER, ADMIN, SALES
+      responses:
+        '200':
+          description: 成功；JSON使用data/requestId envelope。
+          content:
+            application/json:
+              schema:
+                $ref: ./response.schema.json#/$defs/IdentityResponse
+        '401':
+          description: 登录已失效，请重新登录。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+        '403':
+          description: 此身份未获访问权限。
+          content:
+            application/json:
+              schema:
+                $ref: ./domain.schema.json#/$defs/Error
+  /api/v1/auth/logout:
+    post:
+      operationId: logout
+      summary: 删除当前 Bearer 令牌对应的数据库会话。
+      tags:
+        - auth
+      security:
+        - AdminBearer: []
+      x-required-role: public
+      responses:
+        '204':
+          description: 已退出。
+        '401':
+          description: 登录已失效，请重新登录。
           content:
             application/json:
               schema:

@@ -4,7 +4,7 @@ import {
   applyDevelopmentSeed,
   planSeed,
   seedProducts,
-} from "../../services/mock-api/src/seed";
+} from "../../services/domain/src/seed-products";
 import { validateTemplateContent } from "@zj/template-registry";
 import pilots from "../../data/pilot-products.json";
 test("baseline seeds remain private and match the six pilot IDs in order", () => {

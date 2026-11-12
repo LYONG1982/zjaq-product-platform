@@ -7,17 +7,17 @@ import sharp from "sharp";
 import { normalizeProductName, productNameUnits, productNameError } from "@zj/contracts";
 import { shareLink, shareQr } from "../../packages/api-client/src/sharing";
 import { validateShareSettings } from "../../services/domain/src/share-settings";
-import { MockStore } from "../../services/mock-api/src/store";
-import { makeMockServer } from "../../services/mock-api/src/server";
-import { CloudBackend } from "../../services/api/src/cloud-backend";
-import { initialize } from "../../services/api/src/initialize";
+import { TestStore } from "../support/store";
+import { makeTestServer } from "../support/server";
+import { DomainBackend } from "../../services/api/src/domain-backend";
+import { bootstrapTestRepo } from "../support/bootstrap";
 import { actorContext } from "../../services/domain/src/identity";
 import type { Repository, Transaction } from "../../services/api/src/repository";
 const create = { name:"新测试（名称）",owner:"虚构负责人",model:"SECOND-TEST",productType:"SOFTWARE",ownership:"SELF_DEVELOPED",categoryId:"miding",templateId:"software",templateVersion:1 };
 test("name normalization and grapheme width preserve old long names and hidden content", async () => {
   assert.equal(normalizeProductName("版本（A1）"),"版本(A1)");
   assert.equal(productNameUnits("中A1()👩‍💻e\u0301"),5);assert.equal(productNameError("中".repeat(15)),"");assert.ok(productNameError("中".repeat(16)));assert.equal(productNameError("A".repeat(30)),"");
-  const store=new MockStore();
+  const store=new TestStore();
   try {
     const d=store.create(create,randomUUID(),"new");assert.equal(d.content.name,"新测试(名称)");
     assert.throws(()=>store.create({...create,model:"LONG",name:"长".repeat(16)},randomUUID(),"long"),{status:422});
@@ -28,7 +28,7 @@ test("name normalization and grapheme width preserve old long names and hidden c
   } finally {await rm(store.assets.directory,{recursive:true,force:true});}
 });
 test("new PDF originals remain optional; image bounds and document admission are enforced server side",async()=>{
-  const store=new MockStore();
+  const store=new TestStore();
   try {
     const d=store.create(create,randomUUID(),"new");
     const intent={productId:d.productId,fileName:"image.png",contentType:"image/png",purpose:"media" as const,size:2_000_000};
@@ -58,7 +58,7 @@ test("sharing only accepts project HTTPS origins and UUID targets; QR is opaque 
   await mkdir("work/second-test-20261105",{recursive:true});await writeFile("work/second-test-20261105/qr-fixture.png",png);await writeFile("work/second-test-20261105/qr-target.txt",link);
 });
 test("share targets follow the current publication and enforce public-versus-sales material access",async()=>{
-  const store=new MockStore();
+  const store=new TestStore();
   try {
     const d=store.create(create,randomUUID(),"create");
     assert.throws(()=>store.shareTarget(d.productId),{status:404});
@@ -82,12 +82,13 @@ class Repo implements Repository {
   data=new Map<string,unknown>();
   async get<T>(c:string,id:string){return structuredClone(this.data.get(c+"/"+id)) as T|undefined;}
   async set(c:string,id:string,v:unknown){this.data.set(c+"/"+id,structuredClone(v));}
+  async delete(c:string,id:string){this.data.delete(c+"/"+id);}
   async list<T>(c:string){return [...this.data].filter(([k])=>k.startsWith(c+"/")).map(([,v])=>structuredClone(v) as T);}
   async transaction<T>(fn:(t:Transaction)=>Promise<T>){const before=structuredClone(this.data);try{return await fn(this);}catch(e){this.data=before;throw e;}}
 }
 test("sharing settings enforce admin/version checks and persist across service reconstruction without touching products",async()=>{
   const old=process.env.SHARE_ALLOWED_ORIGINS;process.env.SHARE_ALLOWED_ORIGINS="https://uat.example.invalid";
-  const repo=new Repo();await initialize(repo,"share-admin");const make=()=>new CloudBackend(repo,{async subject(){return "share-admin";}},{async upload(){throw new Error("unused");},async download(){throw new Error("unused");}});
+  const repo=new Repo();await bootstrapTestRepo(repo,"share-admin");const make=()=>new DomainBackend(repo,{async subject(){return "share-admin";}},{async upload(){throw new Error("unused");},async download(){throw new Error("unused");}});
   try {const backend=make(), actor=await backend.authenticate("test");const products=await repo.list("products");
     await actorContext.run(actor,async()=>{
       const value={expectedVersion:0,baseUrl:"https://uat.example.invalid",target:"portal",size:512};
@@ -98,7 +99,7 @@ test("sharing settings enforce admin/version checks and persist across service r
   } finally {if(old===undefined)delete process.env.SHARE_ALLOWED_ORIGINS;else process.env.SHARE_ALLOWED_ORIGINS=old;}
 });
 test("HTTP share settings stay admin-only and logout clears only the browser media cookie",async()=>{
-  const store=new MockStore(undefined,true), server=makeMockServer({APP_ENV:"test",ENABLE_MOCK_ROLES:"true",SHARE_ALLOWED_ORIGINS:"https://uat.example.invalid"},store);
+  const store=new TestStore(undefined,true), server=makeTestServer({APP_ENV:"test",ENABLE_MOCK_ROLES:"true",SHARE_ALLOWED_ORIGINS:"https://uat.example.invalid"},store);
   server.listen(0,"127.0.0.1");await once(server,"listening");const addr=server.address();assert.ok(addr&&typeof addr==="object");const base=`http://127.0.0.1:${addr.port}/api/v1`;
   try {
     for(const [role,status] of [["",401],["local-mock",403],["local-sales",403],["local-admin",200]] as const) assert.equal((await fetch(base+"/admin/share-settings",{headers:role?{Authorization:"Bearer "+role}:{}})).status,status);
@@ -116,7 +117,7 @@ test("video failures distinguish unavailable probe, timeout, corruption and unsu
  const badCodec=await probe("codec",`process.stdout.write(JSON.stringify({format:{format_name:"mp4",duration:"1"},streams:[{codec_type:"video",codec_name:"hevc",width:32,height:32,pix_fmt:"yuv420p"}]}));`);
  const corrupt=await probe("corrupt",`process.stderr.write("PRIVATE_PATH_SECRET");process.exit(1);`);
  const timeout=await probe("timeout",`setTimeout(()=>{},70000);`);
- const parse=(path:string)=>new Promise<string>((resolve,reject)=>execFile(process.execPath,["services/mock-api/src/parse-file.mjs",input,join(dir,"out"),"mp4"],{env:{...process.env,FFPROBE_PATH:path},timeout:70000},(_error,stdout)=>{try{resolve(JSON.parse(stdout).error);}catch(e){reject(e);}}));
+ const parse=(path:string)=>new Promise<string>((resolve,reject)=>execFile(process.execPath,["services/domain/src/media/parse-file.mjs",input,join(dir,"out"),"mp4"],{env:{...process.env,FFPROBE_PATH:path},timeout:70000},(_error,stdout)=>{try{resolve(JSON.parse(stdout).error);}catch(e){reject(e);}}));
  try {
   const [unavailable,unsupported,broken,timedout]=await Promise.all([parse(join(dir,"missing")),parse(badCodec),parse(corrupt),parse(timeout)]);
   assert.match(unavailable,/VIDEO_PROBE_UNAVAILABLE/);assert.match(unsupported,/VIDEO_CODEC_UNSUPPORTED/);assert.match(broken,/VIDEO_CORRUPT/);assert.match(timedout,/VIDEO_PROBE_TIMEOUT/);

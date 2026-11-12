@@ -1,11 +1,11 @@
-const actions = ["plan", "initialize", "seed-originals", "backup", "restore", "migrate-public-ids"] as const;
+const actions = ["plan", "initialize", "backup", "restore", "migrate-public-ids"] as const;
 type Action = typeof actions[number];
-/** Parse before constructing any cloud client; reject ambiguous maintenance commands. */
+/** Parse before constructing any database client; reject ambiguous maintenance commands. */
 export function parseCloudOperationArguments(args: string[]) {
   const action = (args[0] ?? "plan") as Action;
   if (!(actions as readonly string[]).includes(action)) throw new Error("Unknown action");
   const extra: Record<Action, string[]> = {
-    plan: [], initialize: ["--create-collections"], "seed-originals": [], backup: ["--file"], restore: ["--file", "--isolated-target"], "migrate-public-ids": ["--file", "--backup"],
+    plan: [], initialize: [], backup: ["--file"], restore: ["--file", "--isolated-target"], "migrate-public-ids": ["--file", "--backup"],
   };
   const values = new Map<string, string>(), flags = new Set<string>(), allowed = new Set(["--apply", "--environment", ...extra[action]]);
   for (let index = 1; index < args.length; index++) {

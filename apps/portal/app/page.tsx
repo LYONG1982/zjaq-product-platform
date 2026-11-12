@@ -26,10 +26,7 @@ export default async function Home() {
   } catch {
     failed = true;
   }
-  const featured = rows
-    ?.filter((p) => p.pilotOrder != null)
-    .sort((a, b) => a.pilotOrder! - b.pilotOrder!)
-    .slice(0, 6);
+  const featured = rows.slice(0, 3);
   return (
     <main>
       <section className="home-hero">
@@ -91,7 +88,7 @@ export default async function Home() {
           </section>
           <section>
             <div className="section-head">
-              <h2>首批产品</h2>
+              <h2>产品一览</h2>
               <Link href="/products">查看全部 →</Link>
             </div>
             <div className="product-grid">
@@ -101,7 +98,7 @@ export default async function Home() {
             </div>
             {!featured?.length && (
               <div className="empty-state featured-empty">
-                <h3>产品资料正在整理</h3>
+                <h3>暂无已发布产品</h3>
                 <Link className="outline-button" href="/products">
                   浏览产品
                 </Link>

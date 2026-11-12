@@ -45,7 +45,7 @@ test("video parser distinguishes codec/audio/container/configuration and sanitiz
   const root = await mkdtemp(join(tmpdir(), "zj-video-error-matrix-"));
   const input = join(root, "test.mp4"); await writeFile(input, Buffer.from("0000ftypisom00000000000000000000"));
   const metadata = { format: { format_name: "mp4", duration: "1" }, streams: [{ codec_type: "video", codec_name: "h264", width: 32, height: 32, pix_fmt: "yuv420p" }] };
-  const parse = (probe: string, file = input) => new Promise<{ok:boolean;error?:string}>(resolve => execFile(process.execPath, ["services/mock-api/src/parse-file.mjs",file,join(root,"output"),"mp4"], { env: {...process.env,FFPROBE_PATH:probe},timeout:10000 }, (_error, stdout) => resolve(JSON.parse(stdout))));
+  const parse = (probe: string, file = input) => new Promise<{ok:boolean;error?:string}>(resolve => execFile(process.execPath, ["services/domain/src/media/parse-file.mjs",file,join(root,"output"),"mp4"], { env: {...process.env,FFPROBE_PATH:probe},timeout:10000 }, (_error, stdout) => resolve(JSON.parse(stdout))));
   async function fixture(name: string, source: string) { const path=join(root,name); await writeFile(path,"#!"+process.execPath+"\n"+source,{mode:0o700}); return path; }
   try {
     const cases: [string, unknown, string][] = [

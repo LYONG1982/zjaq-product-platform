@@ -15,7 +15,7 @@ import {
 } from "@zj/template-registry";
 import categories from "../../../data/categories.seed.json";
 
-import { AssetStore } from "../../mock-api/src/assets";
+import { AssetStore } from "./asset-store";
 import {
   AppError,
   requireValue,
@@ -55,7 +55,7 @@ export class DomainEngine {
       (a, b) => a.sortOrder - b.sortOrder || a.id.localeCompare(b.id),
     );
   }
-  readonly assets: Pick<AssetStore, "asset" | "create">;
+  readonly assets: Pick<AssetStore, "asset" | "create" | "uploads">;
   readonly products = new Map<string, ProductRecord>();
   readonly releases = new Map<string, Release>();
   readonly events: Responses["AuditEvent"][] = [];
@@ -69,7 +69,7 @@ export class DomainEngine {
   readonly idempotency = new Map<string, { hash: string; result: unknown }>();
   // A direct test seam only: never selectable through HTTP, query strings or environment variables.
   constructor(
-    assets: Pick<AssetStore, "asset" | "create">,
+    assets: Pick<AssetStore, "asset" | "create" | "uploads">,
     private beforeCommit?: (action: string) => void,
     private allowMockActor = false,
   ) {
@@ -95,7 +95,6 @@ export class DomainEngine {
     const product = this.product(id);
     requireValue(!product.deletedAt || actorContext.getStore()?.role === "ADMIN", 404, "RESOURCE_UNAVAILABLE", "产品不存在或已移除");
   }
-  assertRemovedProductsAccess() { this.adminOnly(); }
   draft(id: string): AdminDraft {
     this.assertProductReadable(id);
     const p = this.product(id),
@@ -242,7 +241,7 @@ export class DomainEngine {
     this.adminOnly();
     return clone([...this.users.values()]);
   }
-  writeUser(id: string | undefined, body: unknown, requestId: string) {
+  writeUser(id: string | undefined, body: unknown, requestId: string, userIdHint?: string) {
     this.adminOnly();
     const b = validateBody<Domain["AdminUserWrite"]>("AdminUserWrite", body);
     const old = id ? this.users.get(id) : undefined;
@@ -255,25 +254,25 @@ export class DomainEngine {
         "账号已修改，请重新加载",
       );
       requireValue(
-        b.subjectId === old.subjectId,
+        !old.username || b.username.trim() === old.username,
         422,
         "VALIDATION_FAILED",
-        "身份主体创建后不能变更",
+        "登录账号创建后不能变更",
       );
     }
     requireValue(
-      b.displayName.trim() && b.subjectId.trim(),
+      b.displayName.trim() && b.username.trim(),
       422,
       "VALIDATION_FAILED",
-      "请填写身份主体和显示名称",
+      "请填写登录账号和显示名称",
     );
     requireValue(
       ![...this.users.values()].some(
-        (u) => u.userId !== id && u.subjectId === b.subjectId.trim(),
+        (u) => u.userId !== id && u.username === b.username.trim(),
       ),
       409,
-      "DUPLICATE_SUBJECT",
-      "该身份主体已存在",
+      "DUPLICATE_USERNAME",
+      "该登录账号已存在",
     );
     if (
       old?.role === "ADMIN" &&
@@ -287,12 +286,14 @@ export class DomainEngine {
         "LAST_ADMIN",
         "至少保留一个可用管理员",
       );
-    const { expectedVersion, ...data } = b;
+    const { expectedVersion, password: _password, ...data } = b;
+    const userId = id ?? userIdHint ?? randomUUID();
     const user = {
       ...data,
-      subjectId: b.subjectId.trim(),
+      userId,
+      subjectId: old?.subjectId ?? `mysql:${userId}`,
+      username: b.username.trim(),
       displayName: b.displayName.trim(),
-      userId: id ?? randomUUID(),
       version: (old?.version ?? 0) + 1,
     };
     this.beforeCommit?.("USER_WRITE");
@@ -383,9 +384,10 @@ export class DomainEngine {
       requireValue(b.model.trim(), 422, "VALIDATION_FAILED", "请填写产品型号");
       requireValue(!this.modelOwners.has(normalizedModel(b.model)) && ![...this.products.values()].some((p) => p.draft.model && normalizedModel(p.draft.model) === normalizedModel(b.model)), 409, "MODEL_CONFLICT", "产品型号已存在");
       const prefix = productCodePrefix(b.categoryId, b.productType, b.ownership);
-      const next = this.codeCounters.get(prefix) ?? 1;
+      const next = b.sequence ?? this.nextFreeSequence(b.categoryId, b.productType, b.ownership, this.codeCounters.get(prefix) ?? 1);
       const id = productCode(b.categoryId, b.productType, b.ownership, next);
-      requireValue(!this.products.has(id), 409, "INVALID_STATE", "编号冲突");
+      const occupied = this.products.get(id);
+      requireValue(!occupied, 409, "CODE_CONFLICT", occupied ? `编号 ${id} 已被「${occupied.draft.name}」占用` : "编号已存在");
       const p: ProductRecord = {
         productId: id,
         publicId: randomUUID(),
@@ -399,7 +401,7 @@ export class DomainEngine {
         draftVersion: 1,
         lastPublishedDraftVersion: null,
         draft: {
-          ...clone(b),
+          ...clone((({ sequence: _sequence, ...creation }) => creation)(b)),
           name: b.name.trim(),
           owner: b.owner.trim(),
           model: b.model.trim(),
@@ -417,9 +419,57 @@ export class DomainEngine {
         },
       };
       this.commit("CREATE", p, requestId);
-      this.codeCounters.set(prefix, next + 1);
+      this.codeCounters.set(prefix, Math.max(this.codeCounters.get(prefix) ?? 1, next + 1));
       this.modelOwners.set(normalizedModel(b.model), id);
       return this.draft(id);
+    });
+  }
+  private nextFreeSequence(
+    categoryId: string,
+    productType: CreateProduct["productType"],
+    ownership: CreateProduct["ownership"],
+    start: number,
+  ) {
+    for (let sequence = Math.max(1, start); sequence <= 999; sequence++)
+      if (!this.products.has(productCode(categoryId, productType, ownership, sequence)))
+        return sequence;
+    throw new AppError(409, "CODE_CONFLICT", "该系列编号已用尽，请联系维护人员");
+  }
+  renumberProduct(id: string, body: unknown, key: string | undefined, requestId: string) {
+    return this.once("POST /admin/products/" + id + "/renumber", key, body, () => {
+      const b = validateBody<Domain["RenumberProduct"]>("RenumberProduct", body);
+      this.assertProductWritable(id);
+      const p = clone(this.product(id));
+      requireValue(
+        p.publicationState === "DRAFT" && !p.deletedAt,
+        409,
+        "INVALID_STATE",
+        "仅草稿状态的产品可以修改编号；已发布产品请先下架，已下架产品请先恢复为草稿",
+      );
+      requireValue(p.draftVersion === b.expectedDraftVersion, 409, "DRAFT_CONFLICT", "草稿已变化，请刷新后重新修改编号");
+      requireValue(p.draft.templateId && p.draft.templateVersion, 500, "DATA_INTEGRITY", "草稿模板信息缺失");
+      const category = this.categories.find((c) => c.id === b.categoryId && c.enabled);
+      requireValue(category, 422, "VALIDATION_FAILED", "分类已停用或不存在");
+      requireValue(category!.allowedTemplateIds.includes(p.draft.templateId), 422, "VALIDATION_FAILED", "分类与模板不兼容，请核对配置项");
+      const nextId = productCode(b.categoryId, b.productType, b.ownership, b.sequence);
+      const occupied = this.products.get(nextId);
+      requireValue(!occupied || nextId === id, 409, "CODE_CONFLICT", occupied ? `编号 ${nextId} 已被「${occupied.draft.name}」占用` : "编号已存在");
+      const now = new Date().toISOString();
+      p.productId = nextId;
+      p.draft = { ...p.draft, categoryId: b.categoryId, productType: b.productType, ownership: b.ownership };
+      p.draftVersion++;
+      this.commit("RENUMBER_PRODUCT", p, requestId, undefined, `${id} → ${nextId}：${b.reason.trim()}`);
+      if (nextId !== id) {
+        this.products.delete(id);
+        const meta = this.metadata.get(id);
+        if (meta) this.metadata.delete(id);
+        if (meta) this.metadata.set(nextId, { ...meta, updatedAt: now });
+      }
+      for (const [model, owner] of this.modelOwners)
+        if (owner === id) this.modelOwners.set(model, nextId);
+      for (const upload of this.assets.uploads.values())
+        if (upload.productId === id) upload.productId = nextId;
+      return this.draft(nextId);
     });
   }
   private validateContent(id: string, c: DraftContent, publish = false) {
@@ -736,33 +786,61 @@ export class DomainEngine {
       },
     );
   }
+  restoreDraft(
+    id: string,
+    body: unknown,
+    key: string | undefined,
+    requestId: string,
+  ) {
+    return this.once(
+      "POST /admin/products/" + id + "/restoreDraft",
+      key,
+      body,
+      () => {
+        const b = validateBody<Domain["RestoreDraft"]>("RestoreDraft", body);
+        this.assertProductWritable(id);
+        const p = clone(this.product(id));
+        requireValue(p.publicationState === "OFFLINE", 409, "INVALID_STATE", "仅已下架产品可以恢复为草稿");
+        requireValue(p.draftVersion === b.expectedDraftVersion, 409, "DRAFT_CONFLICT", "草稿已变化，请刷新后重新操作");
+        requireValue(p.publicationVersion === b.expectedPublicationVersion, 409, "PUBLICATION_CONFLICT", "线上状态已变化，请确认后重新操作");
+        p.publicationState = "DRAFT";
+        p.publicationVersion++;
+        this.commit("RESTORE_DRAFT", p, requestId, undefined, b.reason.trim());
+        return this.draft(id);
+      },
+    );
+  }
   removeProduct(id: string, body: unknown, key: string | undefined, requestId: string) {
     this.adminOnly();
     return this.once("POST /admin/products/" + id + "/remove", key, body, () => {
-      const data = validateBody<Domain["ProductRemoval"]>("ProductRemoval", body), product = clone(this.product(id));
+      const data = validateBody<Domain["ProductRemoval"]>("ProductRemoval", body), product = this.product(id);
       requireValue(data.reason.trim(), 422, "VALIDATION_FAILED", "请填写移除原因");
-      this.assertProductWritable(id);
+      requireValue(data.confirmation.trim() === id, 422, "VALIDATION_FAILED", "确认编号与产品编号不一致");
+      requireValue(product.publicationState === "DRAFT", 409, "INVALID_STATE", "仅草稿状态的产品可以移除；已发布产品请先下架，已下架产品请先恢复为草稿");
       requireValue(product.draftVersion === data.expectedDraftVersion, 409, "DRAFT_CONFLICT", "草稿已变化，请刷新后重新确认移除");
       requireValue(product.publicationVersion === data.expectedPublicationVersion, 409, "PUBLICATION_CONFLICT", "发布状态已变化，请刷新后重新确认移除");
-      requireValue(product.publicationState === "DRAFT" && product.releaseSequence === 0 && !product.lastReleaseId && product.lastPublishedDraftVersion === null, 409, "INVALID_STATE", "仅从未发布的草稿可以移除；已发布或曾发布的产品请使用下架");
-      product.deletedAt = new Date().toISOString(); product.deletedBy = this.actor().userId; product.deletionReason = data.reason.trim(); product.draftVersion++;
-      this.commit("REMOVE_PRODUCT", product, requestId, undefined, product.deletionReason);
-      return this.draft(id);
-    });
-  }
-  restoreProduct(id: string, body: unknown, key: string | undefined, requestId: string) {
-    this.adminOnly();
-    return this.once("POST /admin/products/" + id + "/restore", key, body, () => {
-      const data = validateBody<Domain["ProductRemoval"]>("ProductRemoval", body), product = clone(this.product(id));
-      requireValue(data.reason.trim(), 422, "VALIDATION_FAILED", "请填写恢复原因");
-      requireValue(product.deletedAt, 409, "INVALID_STATE", "产品当前未被移除");
-      requireValue(product.draftVersion === data.expectedDraftVersion, 409, "DRAFT_CONFLICT", "草稿已变化，请刷新后重新确认恢复");
-      requireValue(product.publicationVersion === data.expectedPublicationVersion, 409, "PUBLICATION_CONFLICT", "发布状态已变化，请刷新后重新确认恢复");
-      // Restoration never restores an active publication, including malformed old tombstones.
-      if (product.publicationState === "PUBLISHED") { product.publicationState = "OFFLINE"; product.activeReleaseId = null; product.publicationVersion++; }
-      product.deletedAt = null; product.deletedBy = null; product.deletionReason = null; product.draftVersion++;
-      this.commit("RESTORE_PRODUCT", product, requestId, undefined, data.reason.trim());
-      return this.draft(id);
+      this.events.push({
+        eventId: randomUUID(),
+        actorId: this.actor().userId,
+        actorName: this.actor().displayName,
+        action: "REMOVE_PRODUCT",
+        targetId: id,
+        draftVersion: product.draftVersion,
+        publicationVersion: product.publicationVersion,
+        releaseSequence: product.releaseSequence,
+        requestId,
+        createdAt: new Date().toISOString(),
+        reason: data.reason.trim(),
+      });
+      for (const [releaseId, release] of this.releases)
+        if (release.productId === id) this.releases.delete(releaseId);
+      for (const [model, owner] of this.modelOwners)
+        if (owner === id) this.modelOwners.delete(model);
+      for (const [versionId, owner] of this.materialVersionOwners)
+        if (owner === id) this.materialVersionOwners.delete(versionId);
+      this.products.delete(id);
+      this.metadata.delete(id);
+      return { productId: id };
     });
   }
   createUpload(body: unknown, key: string | undefined) {

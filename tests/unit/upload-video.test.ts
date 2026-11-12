@@ -13,10 +13,10 @@ import { once } from "node:events";
 import { execFileSync } from "node:child_process";
 import { prepareVideoFixtures, sparsePdf } from "../helpers/upload-fixtures";
 import { after } from "node:test";
-import { AssetStore } from "../../services/mock-api/src/assets";
-import { CloudAssets, persisted } from "../../services/api/src/cloud-assets";
-import { makeMockServer } from "../../services/mock-api/src/server";
-import { MockStore } from "../../services/mock-api/src/store";
+import { AssetStore } from "../../services/domain/src/asset-store";
+import { PersistedAssets, persisted } from "../../services/api/src/asset-repository";
+import { makeTestServer } from "../support/server";
+import { TestStore } from "../support/store";
 import type { Repository, Transaction } from "../../services/api/src/repository";
 const fixtures = new URL("../fixtures/validation/", import.meta.url);
 const videoFixtures = await prepareVideoFixtures();
@@ -26,6 +26,7 @@ class Repo implements Repository {
   data = new Map<string, unknown>();
   async get<T>(c:string,id:string){ return structuredClone(this.data.get(c+"/"+id)) as T | undefined; }
   async set(c:string,id:string,value:unknown){ this.data.set(c+"/"+id,structuredClone(value)); }
+  async delete(c:string,id:string){ this.data.delete(c+"/"+id); }
   async list<T>(c:string){return [...this.data].filter(([k])=>k.startsWith(c+"/")).map(([,v])=>structuredClone(v) as T);}
   async transaction<T>(fn:(tx:Transaction)=>Promise<T>){return fn(this);}
 }
@@ -71,14 +72,14 @@ test("images retain original bytes separately from safe PNG derivative, in local
     await repo.set("control","state",{ready:true,revision:1});
     const raw = await storage.upload("raw",asset.path), preview = await storage.upload("preview",asset.preview.path!);
     await repo.set("assets",asset.assetId,{...persisted(asset,raw),previewFileId:preview});
-    const cloud=new CloudAssets(repo,storage);
+    const cloud=new PersistedAssets(repo,storage);
     const safe=await cloud.bytes("TEST",asset.assetId); assert.equal(await hash(safe.path),asset.preview.checksum);await safe.cleanup();
     const source=await cloud.bytes("TEST",asset.assetId,true);assert.equal(await hash(source.path),await hash(original));await source.cleanup();
     assert.ok(!(await repo.get<any>("assets",asset.assetId)).preview.path);
   } finally {await rm(store.directory,{recursive:true,force:true});await rm(root,{recursive:true,force:true});}
 });
 test("499/500 MiB real HTTP streams pass admission/check/Range; 501 MiB is refused before bytes, Cloud uses disk streams", {timeout:300000}, async () => {
-  const store = new MockStore(); const server=makeMockServer({APP_ENV:"test",ENABLE_MOCK_ROLES:"true"},store);
+  const store = new TestStore(); const server=makeTestServer({APP_ENV:"test",ENABLE_MOCK_ROLES:"true"},store);
   server.listen(0,"127.0.0.1");await once(server,"listening");const address=server.address();assert.ok(address&&typeof address==="object");
   const base="http://127.0.0.1:"+address.port;const root=await mkdtemp(join(tmpdir(),"zj-500m-"));
   const json = async(path:string,body:unknown)=>{const r=await fetch(base+path,{method:"POST",headers:{Authorization:"Bearer local-admin","Content-Type":"application/json","Idempotency-Key":randomUUID()},body:JSON.stringify(body)});return {status:r.status,data:(await r.json()).data};};
@@ -94,7 +95,7 @@ test("499/500 MiB real HTTP streams pass admission/check/Range; 501 MiB is refus
       const range=await fetch(base+"/api/v1/admin/products/ZJ-001/assets/"+intent.data.assetId+"/content",{headers:{Authorization:"Bearer local-admin",Range:"bytes=-32"}});assert.equal(range.status,206);assert.equal((await range.arrayBuffer()).byteLength,32);
       // Model Cloud object service with copyFile, never a Buffer (real cloud not connected).
       const repo=new Repo();await repo.set("control","state",{ready:true,revision:1});const original=store.assets.get(intent.data.uploadId);const object=join(root,"cloud-object");await copyFile(original.path,object);await repo.set("assets",original.assetId,persisted(original,"cloud-test"));
-      const cloud=new CloudAssets(repo,{async upload(){throw new Error("unused");},async download(_,dest){await copyFile(object,dest);}});
+      const cloud=new PersistedAssets(repo,{async upload(){throw new Error("unused");},async download(_,dest){await copyFile(object,dest);}});
       const streamed=await cloud.bytes("ZJ-001",original.assetId,true);assert.equal(streamed.size,mib*1024*1024);assert.equal(await hash(streamed.path),complete.data.checksum);await streamed.cleanup();
       console.log(JSON.stringify({event:"large_upload_verified",mib,bytes:complete.data.size,durationMs:Date.now()-start,rssMiB:Math.round(process.memoryUsage().rss/1024/1024)}));
       await rm(path);await rm(object);await rm(original.path);
@@ -104,7 +105,7 @@ test("499/500 MiB real HTTP streams pass admission/check/Range; 501 MiB is refus
 });
 
 test("authenticated media cookie stays read-only; video Range and images ZIP preserve current-release access", async () => {
-  const store=new MockStore(undefined,true);const server=makeMockServer({APP_ENV:"test",ENABLE_MOCK_ROLES:"true"},store);server.listen(0,"127.0.0.1");await once(server,"listening");const addr=server.address();assert.ok(addr&&typeof addr==="object");const base="http://127.0.0.1:"+addr.port;
+  const store=new TestStore(undefined,true);const server=makeTestServer({APP_ENV:"test",ENABLE_MOCK_ROLES:"true"},store);server.listen(0,"127.0.0.1");await once(server,"listening");const addr=server.address();assert.ok(addr&&typeof addr==="object");const base="http://127.0.0.1:"+addr.port;
   const root=await mkdtemp(join(tmpdir(),"zj-zip-test-"));
   try {
     const a=await putFile(store.assets,"one.png","image/png",fileURLToPath(new URL("page-1.png",fixtures)));
@@ -136,12 +137,9 @@ test("authenticated media cookie stays read-only; video Range and images ZIP pre
 
 test("media cookie encryption rejects tampering, enforces server expiry and fails closed without production key", async () => {
   const { mediaSessions }=await import("../../services/domain/src/media-session");
-  const { CloudBasePrivateStorage }=await import("../../services/api/src/private-storage");
   const sessions=mediaSessions(false);const value=sessions.issue("test-only-bearer");assert.ok(!value.includes("test-only-bearer"));assert.equal(sessions.read(value),"test-only-bearer");assert.equal(sessions.read("AA"+value.slice(2)),undefined);
   const previous=Date.now;const start=Date.now();Date.now=()=>start+300001;try {assert.equal(sessions.read(value),undefined);} finally {Date.now=previous;}
   assert.throws(()=>mediaSessions(true).issue("unused"));
-  let removed=false;const untrusted=new CloudBasePrivateStorage({getUploadMetadata:async()=>({data:{url:"http://127.0.0.1/never-connect",fileId:"cloud-test",token:"secret-never-printed",authorization:"secret-never-printed"}}),deleteFile:async()=>{removed=true;return {fileList:[{code:"SUCCESS"}]};}} as never);
-  await assert.rejects(untrusted.upload("test",fileURLToPath(new URL("sample-v1.pdf",fixtures))),/受信任/);assert.equal(removed,true);
 });
 
 test("private Range cache deduplicates concurrent objects, rechecks ownership and evicts within bounded TTL",async()=>{
@@ -159,7 +157,7 @@ test("private Range cache deduplicates concurrent objects, rechecks ownership an
     await repo.set("control","state",{ready:true,revision:1});
     const intent=store.create({productId:"TEST",purpose:"preview",fileName:"bad.pdf",contentType:"application/pdf",size:10});let removed=false;
     await repo.set("assets",intent.assetId,{...persisted(store.get(intent.uploadId),"private-invalid"),status:"CHECKING",size:10});await repo.set("uploads",intent.uploadId,{assetId:intent.assetId});
-    const cloud=new CloudAssets(repo,{async upload(){throw new Error("unused");},async download(_id,dest){const f=await open(dest,"wx");await f.write(Buffer.from("not-a-pdf!"));await f.close();},async remove(){removed=true;}});
+    const cloud=new PersistedAssets(repo,{async upload(){throw new Error("unused");},async download(_id,dest){const f=await open(dest,"wx");await f.write(Buffer.from("not-a-pdf!"));await f.close();},async remove(){removed=true;}});
     const result=await cloud.complete(intent.uploadId);assert.equal(result.status,"REJECTED");const rejected=await cloud.get(intent.uploadId);assert.ok(!rejected.fileId);assert.ok(!rejected.lease);assert.equal(removed,true);await cloud.close();
   }finally{await rm(store.directory,{recursive:true,force:true});await rm(root,{recursive:true,force:true});}
 });

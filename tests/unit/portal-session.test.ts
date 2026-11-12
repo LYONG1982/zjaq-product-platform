@@ -29,23 +29,39 @@ test("PC sales sessions are encrypted, expire, reject tampering, and require pro
   }
 });
 
-test("PC login/logout reject cross-origin, unsafe returns, and failed real identity without Mock fallback", async () => {
-  const before = { node: process.env.NODE_ENV, mock: process.env.NEXT_PUBLIC_ENABLE_SALES_MOCK, fetch: globalThis.fetch };
+test("PC login/logout reject cross-origin, unsafe returns, and require a real SALES account", async () => {
+  const before = { fetch: globalThis.fetch };
   const make = (body: unknown, origin = "http://localhost", site = "same-origin") => new Request("http://localhost/api/sales/session", { method: "POST", headers: { Origin: origin, "Sec-Fetch-Site": site, "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  const expiresAt = () => new Date(Date.now() + 3600000).toISOString();
   try {
-    process.env.NODE_ENV = "development"; process.env.NEXT_PUBLIC_ENABLE_SALES_MOCK = "true";
-    assert.equal((await POST(make({ localValidation: true }, "https://outside.example", "cross-site"))).status, 403);
+    assert.equal((await POST(make({ username: "sales1", password: "correct-horse" }, "https://outside.example", "cross-site"))).status, 403);
     assert.equal((await DELETE(new Request("http://localhost/api/sales/session", { method: "DELETE" }))).status, 403);
+    assert.equal((await POST(make({ username: "", password: "" }))).status, 401);
     let calls = 0;
-    globalThis.fetch = async (_url, options) => { calls++; assert.equal(new Headers(options?.headers).get("authorization"), "Bearer real-test-token"); return new Response(null, { status: 401 }); };
-    assert.equal((await POST(make({ accessToken: "real-test-token" }))).status, 401);
+    globalThis.fetch = async (url) => {
+      calls++;
+      assert.ok(String(url).endsWith("/auth/login"));
+      return Response.json({ error: { message: "账号或密码不正确" } }, { status: 401 });
+    };
+    assert.equal((await POST(make({ username: "sales1", password: "wrong-password" }))).status, 401);
     assert.equal(calls, 1);
-    globalThis.fetch = async (_url, options) => { assert.equal(new Headers(options?.headers).get("authorization"), "Bearer local-sales"); return Response.json({ data: { role: "SALES" } }); };
-    const accepted = await POST(make({ localValidation: true }));
+    globalThis.fetch = async (url, options) => {
+      calls++;
+      if (String(url).endsWith("/auth/login")) {
+        assert.equal(new Headers(options?.headers).get("authorization"), null);
+        return Response.json({ data: { accessToken: "real-test-token", expiresAt: expiresAt() } });
+      }
+      assert.equal(new Headers(options?.headers).get("authorization"), "Bearer real-test-token");
+      return Response.json({ data: { role: "SALES" } });
+    };
+    const accepted = await POST(make({ username: "sales1", password: "correct-horse" }));
     assert.equal(accepted.status, 200); assert.match(accepted.headers.get("set-cookie")!, /HttpOnly; SameSite=Strict/);
-    assert.ok(!JSON.stringify(await accepted.json()).includes("local-sales"));
-    process.env.NODE_ENV = "production";
-    assert.equal((await POST(make({ localValidation: true }))).status, 401);
+    assert.ok(!JSON.stringify(await accepted.json()).includes("real-test-token"));
+    globalThis.fetch = async (url) => {
+      if (String(url).endsWith("/auth/login")) return Response.json({ data: { accessToken: "admin-token", expiresAt: expiresAt() } });
+      return Response.json({ data: { role: "ADMIN" } });
+    };
+    assert.equal((await POST(make({ username: "admin", password: "correct-horse" }))).status, 403);
     const cleared = await DELETE(new Request("http://localhost/api/sales/session", { method: "DELETE", headers: { Origin: "http://localhost" } }));
     assert.equal(cleared.status, 200); assert.match(cleared.headers.get("set-cookie")!, /Max-Age=0/);
     assert.equal(sameOrigin(make({}, "http://localhost", "same-site")), false);
@@ -53,8 +69,6 @@ test("PC login/logout reject cross-origin, unsafe returns, and failed real ident
     assert.equal(safeLoginReturn("/viewer?productId=valid&materialId=one"), "/viewer?productId=valid&materialId=one");
   } finally {
     globalThis.fetch = before.fetch;
-    if (before.node === undefined) delete process.env.NODE_ENV; else process.env.NODE_ENV = before.node;
-    if (before.mock === undefined) delete process.env.NEXT_PUBLIC_ENABLE_SALES_MOCK; else process.env.NEXT_PUBLIC_ENABLE_SALES_MOCK = before.mock;
   }
 });
 

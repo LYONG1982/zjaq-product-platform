@@ -3,6 +3,62 @@
   "$id": "response.schema.json",
   "title": "RC2 response DTO schemas",
   "$defs": {
+    "LoginResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "accessToken": {
+              "type": "string",
+              "minLength": 20,
+              "maxLength": 64
+            },
+            "expiresAt": {
+              "type": "string",
+              "minLength": 20,
+              "maxLength": 40
+            }
+          },
+          "required": [
+            "accessToken",
+            "expiresAt"
+          ],
+          "additionalProperties": false
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "IdentityResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AdminIdentity"
+            },
+            {
+              "$ref": "#/$defs/SalesIdentity"
+            }
+          ]
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
     "PublicCategory": {
       "type": "object",
       "properties": {
@@ -984,6 +1040,9 @@
           "type": "string"
         },
         "subjectId": {
+          "type": "string"
+        },
+        "username": {
           "type": "string"
         },
         "displayName": {
@@ -2654,6 +2713,34 @@
       "properties": {
         "data": {
           "$ref": "#/$defs/ShareTarget"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "requestId"
+      ],
+      "additionalProperties": false
+    },
+    "RemoveResult": {
+      "type": "object",
+      "properties": {
+        "productId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "productId"
+      ],
+      "additionalProperties": false
+    },
+    "RemoveResultResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/RemoveResult"
         },
         "requestId": {
           "type": "string"

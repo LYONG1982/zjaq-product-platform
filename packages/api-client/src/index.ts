@@ -230,8 +230,15 @@ export function createClient(
         body,
         key,
       ),
-    removeProduct: (id: string, body: Domain["ProductRemoval"], key: string) => write<AdminDraft>("POST", "/admin/products/" + encodeURIComponent(id) + "/remove", body, key),
-    restoreProduct: (id: string, body: Domain["ProductRemoval"], key: string) => write<AdminDraft>("POST", "/admin/products/" + encodeURIComponent(id) + "/restore", body, key),
+    restoreDraft: (id: string, body: Domain["RestoreDraft"], key: string) =>
+      write<AdminDraft>(
+        "POST",
+        "/admin/products/" + encodeURIComponent(id) + "/restore-draft",
+        body,
+        key,
+      ),
+    removeProduct: (id: string, body: Domain["ProductRemoval"], key: string) => write<Responses["RemoveResult"]>("POST", "/admin/products/" + encodeURIComponent(id) + "/remove", body, key),
+    renumberProduct: (id: string, body: Domain["RenumberProduct"], key: string) => write<AdminDraft>("POST", "/admin/products/" + encodeURIComponent(id) + "/renumber", body, key),
     audit: (q: Record<string, string | number | undefined> = {}) =>
       get<Responses["AuditEventListResponse"]>("/admin/audit-events", q),
     createUpload: (body: Domain["UploadIntent"], key: string) =>

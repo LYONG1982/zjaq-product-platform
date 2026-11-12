@@ -4,14 +4,14 @@ import assert from "node:assert/strict";
 import { once } from "node:events";
 import { readFile, rm } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
-import { makeMockServer } from "../../services/mock-api/src/server";
-import { MockStore } from "../../services/mock-api/src/store";
-import { AppError } from "../../services/mock-api/src/errors";
+import { makeTestServer } from "../support/server";
+import { TestStore } from "../support/store";
+import { AppError } from "../../services/domain/src/errors";
 import type { DraftContent, Domain } from "@zj/contracts";
 const fixture = (f: string) =>
   readFile(new URL("../fixtures/validation/" + f, import.meta.url));
-async function setup(store = new MockStore()) {
-  const server = makeMockServer({ APP_ENV: "test" }, store);
+async function setup(store = new TestStore()) {
+  const server = makeTestServer({ APP_ENV: "test" }, store);
   server.listen(0, "127.0.0.1");
   await once(server, "listening");
   const address = server.address();
@@ -511,7 +511,7 @@ test("publish snapshots, update version binding, range, unpublish and republish 
 });
 test("atomic failure and publication race do not mutate the previous snapshot or append duplicate logs", async () => {
   let fail = false;
-  const store = new MockStore((action) => {
+  const store = new TestStore((action) => {
     if (fail && action === "PUBLISH") throw new Error("injected");
   });
   const t = await setup(store);
@@ -974,6 +974,280 @@ test("public pagination and literal search use releases, while invalid empty and
       ).status,
       422,
     );
+  } finally {
+    await t.close();
+  }
+});
+test("manual sequence creates the requested code, rejects occupied codes and skips occupied auto numbers", async () => {
+  const t = await setup();
+  try {
+    const manual = {
+      name: "【验证数据】手填编号产品",
+      categoryId: "miding",
+      templateId: "software",
+      templateVersion: 1,
+      model: "MANUAL-001",
+      productType: "SOFTWARE",
+      ownership: "SELF_DEVELOPED",
+      owner: "虚构验证人员",
+      sequence: 8,
+    };
+    const created = await t.req("/admin/products", "POST", manual, randomUUID());
+    assert.equal(created.status, 200, JSON.stringify(created.body));
+    assert.equal(created.body.data.productId, "ZJ-D-S-A-008");
+    const occupied = await t.req(
+      "/admin/products",
+      "POST",
+      { ...manual, name: "【验证数据】占用编号产品", model: "MANUAL-002" },
+      randomUUID(),
+    );
+    assert.equal(occupied.status, 409);
+    assert.match(occupied.body.error.message, /ZJ-D-S-A-008/);
+    assert.match(occupied.body.error.message, /手填编号产品/);
+    const outOfRange = await t.req(
+      "/admin/products",
+      "POST",
+      { ...manual, name: "【验证数据】越界编号产品", model: "MANUAL-003", sequence: 1000 },
+      randomUUID(),
+    );
+    assert.equal(outOfRange.status, 400);
+    const auto = await t.create("【验证数据】自动编号产品");
+    assert.equal(auto.body.data.productId, "ZJ-D-S-A-009");
+  } finally {
+    await t.close();
+  }
+});
+test("only unpublished drafts can be renumbered, with conflict detection and audit trail", async () => {
+  const t = await setup();
+  try {
+    const first = (await t.create("【验证数据】待改号草稿")).body.data;
+    const id = first.productId;
+    assert.equal(id, "ZJ-D-S-A-001");
+    assert.equal((await t.create("【验证数据】已占用草稿")).body.data.productId, "ZJ-D-S-A-002");
+    const conflict = await t.req(
+      "/admin/products/" + id + "/renumber",
+      "POST",
+      {
+        expectedDraftVersion: first.draftVersion,
+        categoryId: "miding",
+        productType: "SOFTWARE",
+        ownership: "SELF_DEVELOPED",
+        sequence: 2,
+        reason: "编号占用验证",
+      },
+      randomUUID(),
+    );
+    assert.equal(conflict.status, 409);
+    assert.match(conflict.body.error.message, /ZJ-D-S-A-002/);
+    assert.match(conflict.body.error.message, /已占用草稿/);
+    const renamed = await t.req(
+      "/admin/products/" + id + "/renumber",
+      "POST",
+      {
+        expectedDraftVersion: first.draftVersion,
+        categoryId: "miyi",
+        productType: "HARDWARE",
+        ownership: "PARTNER",
+        sequence: 5,
+        reason: "按对照表纠正编号",
+      },
+      randomUUID(),
+    );
+    assert.equal(renamed.status, 200, JSON.stringify(renamed.body));
+    assert.equal(renamed.body.data.productId, "ZJ-Y-H-B-005");
+    assert.equal(renamed.body.data.content.categoryId, "miyi");
+    assert.equal(renamed.body.data.content.productType, "HARDWARE");
+    assert.equal(renamed.body.data.content.ownership, "PARTNER");
+    assert.equal(renamed.body.data.draftVersion, first.draftVersion + 1);
+    assert.equal((await t.req("/admin/products/" + id + "/draft")).status, 404);
+    const audit = await t.req(
+      "/admin/audit-events?productId=ZJ-Y-H-B-005&action=RENUMBER_PRODUCT",
+    );
+    assert.equal(audit.body.data.length, 1);
+    assert.match(audit.body.data[0].reason, /ZJ-D-S-A-001 → ZJ-Y-H-B-005/);
+    const published = await t.create("【验证数据】已发布产品");
+    const publishedId = published.body.data.productId;
+    const ready = await t.ready(publishedId);
+    const publish = await t.req(
+      "/admin/products/" + publishedId + "/publish",
+      "POST",
+      {
+        expectedDraftVersion: ready.draftVersion,
+        expectedPublicationVersion: 0,
+        publicContentConfirmed: true,
+      },
+      randomUUID(),
+    );
+    assert.equal(publish.status, 200, JSON.stringify(publish.body));
+    const rejected = await t.req(
+      "/admin/products/" + publishedId + "/renumber",
+      "POST",
+      {
+        expectedDraftVersion: ready.draftVersion,
+        categoryId: "miding",
+        productType: "SOFTWARE",
+        ownership: "SELF_DEVELOPED",
+        sequence: 9,
+        reason: "已发布不可直接改号",
+      },
+      randomUUID(),
+    );
+    assert.equal(rejected.status, 409);
+    assert.match(rejected.body.error.message, /仅草稿状态的产品可以修改编号/);
+  } finally {
+    await t.close();
+  }
+});
+test("offline products can be restored to draft and republished with history preserved", async () => {
+  const t = await setup();
+  try {
+    const id = (await t.create("【验证数据】恢复草稿产品")).body.data.productId;
+    const ready = await t.ready(id);
+    const published = await t.req(
+      "/admin/products/" + id + "/publish",
+      "POST",
+      { expectedDraftVersion: ready.draftVersion, expectedPublicationVersion: 0, publicContentConfirmed: true },
+      randomUUID(),
+    );
+    assert.equal(published.status, 200, JSON.stringify(published.body));
+    const restoreBody = (publicationVersion: number) => ({
+      expectedDraftVersion: ready.draftVersion,
+      expectedPublicationVersion: publicationVersion,
+      reason: "恢复为草稿继续整理",
+      confirmed: true as const,
+    });
+    const beforeOffline = await t.req(
+      "/admin/products/" + id + "/restore-draft",
+      "POST",
+      restoreBody(published.body.data.publicationVersion),
+      randomUUID(),
+    );
+    assert.equal(beforeOffline.status, 409);
+    const offline = await t.req(
+      "/admin/products/" + id + "/unpublish",
+      "POST",
+      { expectedPublicationVersion: published.body.data.publicationVersion, reason: "下架验证" },
+      randomUUID(),
+    );
+    assert.equal(offline.status, 200, JSON.stringify(offline.body));
+    assert.equal(offline.body.data.publicationState, "OFFLINE");
+    assert.equal(
+      (
+        await t.req(
+          "/admin/products/" + id + "/restore-draft",
+          "POST",
+          { ...restoreBody(0) },
+          randomUUID(),
+        )
+      ).status,
+      409,
+    );
+    const restored = await t.req(
+      "/admin/products/" + id + "/restore-draft",
+      "POST",
+      restoreBody(offline.body.data.publicationVersion),
+      randomUUID(),
+    );
+    assert.equal(restored.status, 200, JSON.stringify(restored.body));
+    assert.equal(restored.body.data.productId, id);
+    assert.equal(restored.body.data.publicationState, "DRAFT");
+    assert.equal(restored.body.data.publicationVersion, offline.body.data.publicationVersion + 1);
+    assert.equal(restored.body.data.lastPublishedDraftVersion, ready.draftVersion);
+    assert.equal(restored.body.data.content.name, ready.content.name);
+    const audit = await t.req("/admin/audit-events?productId=" + id + "&action=RESTORE_DRAFT");
+    assert.equal(audit.body.data.length, 1);
+    assert.equal(audit.body.data[0].reason, "恢复为草稿继续整理");
+    assert.deepEqual((await t.req("/catalog/products")).body.data, []);
+    assert.equal(
+      (
+        await t.req(
+          "/admin/products/" + id + "/restore-draft",
+          "POST",
+          restoreBody(restored.body.data.publicationVersion),
+          randomUUID(),
+        )
+      ).status,
+      409,
+    );
+    const republished = await t.req(
+      "/admin/products/" + id + "/publish",
+      "POST",
+      {
+        expectedDraftVersion: restored.body.data.draftVersion,
+        expectedPublicationVersion: restored.body.data.publicationVersion,
+        publicContentConfirmed: true,
+      },
+      randomUUID(),
+    );
+    assert.equal(republished.status, 200, JSON.stringify(republished.body));
+    assert.equal(republished.body.data.releaseSequence, 2);
+  } finally {
+    await t.close();
+  }
+});
+test("restored drafts with publication history can be renumbered and republished", async () => {
+  const t = await setup();
+  try {
+    const id = (await t.create("【验证数据】历史改号产品")).body.data.productId;
+    const ready = await t.ready(id);
+    const published = await t.req(
+      "/admin/products/" + id + "/publish",
+      "POST",
+      { expectedDraftVersion: ready.draftVersion, expectedPublicationVersion: 0, publicContentConfirmed: true },
+      randomUUID(),
+    );
+    assert.equal(published.status, 200, JSON.stringify(published.body));
+    const offline = await t.req(
+      "/admin/products/" + id + "/unpublish",
+      "POST",
+      { expectedPublicationVersion: published.body.data.publicationVersion, reason: "下架改号" },
+      randomUUID(),
+    );
+    const restored = await t.req(
+      "/admin/products/" + id + "/restore-draft",
+      "POST",
+      {
+        expectedDraftVersion: ready.draftVersion,
+        expectedPublicationVersion: offline.body.data.publicationVersion,
+        reason: "恢复为草稿后改号",
+        confirmed: true,
+      },
+      randomUUID(),
+    );
+    assert.equal(restored.status, 200, JSON.stringify(restored.body));
+    const renamed = await t.req(
+      "/admin/products/" + id + "/renumber",
+      "POST",
+      {
+        expectedDraftVersion: restored.body.data.draftVersion,
+        categoryId: "miding",
+        productType: "HARDWARE",
+        ownership: "SELF_DEVELOPED",
+        sequence: 6,
+        reason: "历史产品改号",
+      },
+      randomUUID(),
+    );
+    assert.equal(renamed.status, 200, JSON.stringify(renamed.body));
+    const newId = "ZJ-D-H-A-006";
+    assert.equal(renamed.body.data.productId, newId);
+    assert.equal(renamed.body.data.releaseSequence, published.body.data.releaseSequence);
+    assert.equal((await t.req("/admin/products/" + id + "/draft")).status, 404);
+    const audit = await t.req("/admin/audit-events?productId=" + newId + "&action=RENUMBER_PRODUCT");
+    assert.equal(audit.body.data.length, 1);
+    assert.match(audit.body.data[0].reason, new RegExp(id + " → " + newId));
+    const republished = await t.req(
+      "/admin/products/" + newId + "/publish",
+      "POST",
+      {
+        expectedDraftVersion: renamed.body.data.draftVersion,
+        expectedPublicationVersion: renamed.body.data.publicationVersion,
+        publicContentConfirmed: true,
+      },
+      randomUUID(),
+    );
+    assert.equal(republished.status, 200, JSON.stringify(republished.body));
+    assert.equal(republished.body.data.releaseSequence, 2);
   } finally {
     await t.close();
   }

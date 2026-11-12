@@ -10,7 +10,7 @@ import type { Domain } from "@zj/contracts";
 import { assertSchema } from "@zj/contracts/validation";
 import { queryTemplates, type TemplateQuery } from "@zj/template-registry";
 
-import { validateQuery, checkResponse } from "../../mock-api/src/contract";
+import { validateQuery, checkResponse } from "./contract";
 import type { Backend } from "../../domain/src/backend";
 import { AppError, requireValue, validateBody } from "./errors";
 import { mediaSessions } from "./media-session";
@@ -18,7 +18,7 @@ import { zipDownload } from "./zip-download";
 import { actorContext } from "./identity";
 import { visibleSiteBanner } from "./site-banner";
 import { videoProbeRuntime, type VideoProbeRuntime } from "./video-probe.mjs";
-import { validateUploadIntentMetadata } from "../../mock-api/src/assets";
+import { validateUploadIntentMetadata } from "./asset-store";
 import { publicAnalyticsSettings, analyticsSummary, filterAnalytics, sourceIp } from "./analytics";
 const allowedOrigins = new Set(
   [3200, 3201, 3202, 3300, 3301, 3302, 3400, 3401, 3402].flatMap((p) => [
@@ -169,10 +169,22 @@ async function binary(
 }
 export function makeApiServer(
   store: Backend,
-  options: { origins?: string[]; hosts?: string[]; trustedProxyAddresses?: string[]; videoRuntime?: VideoProbeRuntime } = {},
+  options: {
+    origins?: string[];
+    hosts?: string[];
+    trustedProxyAddresses?: string[];
+    videoRuntime?: VideoProbeRuntime;
+    /** 生产环境启用 Secure 媒体 Cookie；测试与本地开发保持关闭。 */
+    secureMediaCookie?: boolean;
+    auth?: {
+      login(body: unknown, ip: string): Promise<{ token: string; expiresAt: Date }>;
+      logout(header: string | undefined): Promise<void>;
+    };
+  } = {},
 ) {
   const videoRuntime = options.videoRuntime ?? videoProbeRuntime;
-  const media = mediaSessions(store.provider === "cloudbase", process.env.ADMIN_MEDIA_SESSION_SECRET);
+  const secureCookie = options.secureMediaCookie ?? false;
+  const media = mediaSessions(secureCookie, process.env.ADMIN_MEDIA_SESSION_SECRET);
   const rates = new Map<string, { minute: number; count: number }>();
   const server = createServer((req, res) => {
     actorContext.run(undefined as never, () => {
@@ -185,7 +197,7 @@ export function makeApiServer(
   async function handle(req: IncomingMessage, res: ServerResponse) {
     const requestId = randomUUID();
     const started = Date.now();
-    if (store.provider === "cloudbase")
+    if (store.provider === "mysql")
       res.on("finish", () =>
         console.log(
           JSON.stringify({
@@ -284,7 +296,24 @@ export function makeApiServer(
       if (path === "/api/v1/admin/logout" && method === "POST") {
         query("logoutAdminBrowser", url);
         // Allowed-origin checks above apply even when the bearer has expired.
-        res.setHeader("Set-Cookie", "zj_admin_media=; HttpOnly; SameSite=Strict; Max-Age=0; Path=/api/v1/admin/products/" + (store.provider === "cloudbase" ? "; Secure" : ""));
+        res.setHeader("Set-Cookie", "zj_admin_media=; HttpOnly; SameSite=Strict; Max-Age=0; Path=/api/v1/admin/products/" + (secureCookie ? "; Secure" : ""));
+        res.writeHead(204); res.end(); return;
+      }
+      if (path === "/api/v1/auth/login" && method === "POST") {
+        requireValue(options.auth, 503, "SERVICE_UNAVAILABLE", "登录服务未启用");
+        const result = await options.auth.login(await jsonBody(req), sourceIp(req, options.trustedProxyAddresses));
+        success("login", { data: { accessToken: result.token, expiresAt: result.expiresAt.toISOString() } });
+        return;
+      }
+      if (path === "/api/v1/auth/me" && method === "GET") {
+        const identity = await store.authenticate(req.headers.authorization);
+        actorContext.enterWith(identity);
+        success("me", { data: identity });
+        return;
+      }
+      if (path === "/api/v1/auth/logout" && method === "POST") {
+        await options.auth?.logout(req.headers.authorization);
+        requireValue(!req.headers.authorization?.startsWith("Bearer ") || options.auth, 503, "SERVICE_UNAVAILABLE", "登录服务未启用");
         res.writeHead(204); res.end(); return;
       }
       let currentIdentity;
@@ -313,7 +342,7 @@ export function makeApiServer(
       if (path === "/api/v1/admin/media-session" && method === "POST") {
         requireValue(!!req.headers.authorization?.startsWith("Bearer "), 401, "SESSION_EXPIRED", "请重新登录");
         // Read-only media cookie is never accepted for mutations or other admin APIs.
-        res.setHeader("Set-Cookie", "zj_admin_media=" + media.issue(req.headers.authorization!.slice(7)) + "; HttpOnly; SameSite=Strict; Max-Age=300; Path=/api/v1/admin/products/" + (store.provider === "cloudbase" ? "; Secure" : ""));
+        res.setHeader("Set-Cookie", "zj_admin_media=" + media.issue(req.headers.authorization!.slice(7)) + "; HttpOnly; SameSite=Strict; Max-Age=300; Path=/api/v1/admin/products/" + (secureCookie ? "; Secure" : ""));
         res.writeHead(204); res.end(); return;
       }
       if (path === "/health" && method === "GET") {
@@ -761,13 +790,41 @@ export function makeApiServer(
         });
         return;
       }
-      const removal = path.match(/^\/api\/v1\/admin\/products\/([^/]+)\/(remove|restore)$/);
-      if (method === "POST" && removal) {
-        requireValue(currentIdentity?.role === "ADMIN", 403, "FORBIDDEN", "仅管理员可移除或恢复产品");
-        const id = decodeURIComponent(removal[1]), operation = removal[2] === "remove" ? "removeProduct" : "restoreProduct";
-        query(operation, url);
+      const restoreDraft = path.match(/^\/api\/v1\/admin\/products\/([^/]+)\/restore-draft$/);
+      if (method === "POST" && restoreDraft) {
+        requireValue(
+          currentIdentity?.role === "ADMIN" || currentIdentity?.role === "CONTENT_MANAGER",
+          403,
+          "FORBIDDEN",
+          "仅内容管理员可将产品恢复为草稿",
+        );
+        const id = decodeURIComponent(restoreDraft[1]);
+        query("restoreDraft", url);
         const body = await jsonBody(req);
-        success(operation, { data: removal[2] === "remove" ? await store.removeProduct(id, body, key, requestId) : await store.restoreProduct(id, body, key, requestId) });
+        success("restoreDraft", { data: await store.restoreDraft(id, body, key, requestId) });
+        return;
+      }
+      const renumber = path.match(/^\/api\/v1\/admin\/products\/([^/]+)\/renumber$/);
+      if (method === "POST" && renumber) {
+        requireValue(
+          currentIdentity?.role === "ADMIN" || currentIdentity?.role === "CONTENT_MANAGER",
+          403,
+          "FORBIDDEN",
+          "仅内容管理员可修改产品编号",
+        );
+        const id = decodeURIComponent(renumber[1]);
+        query("renumberProduct", url);
+        const body = await jsonBody(req);
+        success("renumberProduct", { data: await store.renumberProduct(id, body, key, requestId) });
+        return;
+      }
+      const removal = path.match(/^\/api\/v1\/admin\/products\/([^/]+)\/remove$/);
+      if (method === "POST" && removal) {
+        requireValue(currentIdentity?.role === "ADMIN", 403, "FORBIDDEN", "仅管理员可移除产品");
+        const id = decodeURIComponent(removal[1]);
+        query("removeProduct", url);
+        const body = await jsonBody(req);
+        success("removeProduct", { data: await store.removeProduct(id, body, key, requestId) });
         return;
       }
       if (method === "POST" && path === "/api/v1/admin/uploads") {

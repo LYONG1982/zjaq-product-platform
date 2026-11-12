@@ -1,11 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { once } from "node:events";
-import { makeMockServer } from "../../services/mock-api/src/server";
+import { makeTestServer } from "../support/server";
 import { createClient } from "../../packages/api-client/src/index";
 
 async function start(env: NodeJS.ProcessEnv) {
-  const server = makeMockServer(env);
+  const server = makeTestServer(env);
   server.listen(0, "127.0.0.1");
   await once(server, "listening");
   const address = server.address();
@@ -68,7 +68,7 @@ test("mock sales identity is gated, isolated from admin routes, and disabled imm
     );
     assert.ok(salesUser);
     await admin.updateUser(salesUser.userId, {
-      subjectId: salesUser.subjectId,
+      username: salesUser.username ?? "mock-sales",
       displayName: salesUser.displayName,
       role: "SALES",
       enabled: false,

@@ -1,13 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { once } from "node:events";
-import { makeMockServer } from "../../services/mock-api/src/server";
-import {
-  guardMockEnvironment,
-  requireRealConfiguration,
-} from "../../services/api/src/config";
+import { makeTestServer } from "../support/server";
+import { requireMysqlConfiguration } from "../../services/api/src/config";
 test("loopback API preserves private baseline, supports contracts, and validates write requests", async () => {
-  const server = makeMockServer({ APP_ENV: "test" });
+  const server = makeTestServer({ APP_ENV: "test" });
   server.listen(0, "127.0.0.1");
   await once(server, "listening");
   const address = server.address();
@@ -120,13 +117,18 @@ test("loopback API preserves private baseline, supports contracts, and validates
     await new Promise<void>((resolve) => server.close(() => resolve()));
   }
 });
-test("production never silently falls back to mock", () => {
-  assert.throws(() => guardMockEnvironment({ APP_ENV: "production" }));
-  assert.throws(() => guardMockEnvironment({ NODE_ENV: "production" }));
-  assert.throws(() => guardMockEnvironment({ DATA_PROVIDER: "cloudbase" }));
-  assert.doesNotThrow(() =>
-    guardMockEnvironment({ APP_ENV: "test", DATA_PROVIDER: "mock" }),
+test("real API refuses to start without a complete MySQL configuration", () => {
+  const base = {
+    ALLOWED_ORIGINS: "http://127.0.0.1:3200",
+    ALLOWED_HOSTS: "127.0.0.1:3101",
+    MYSQL_USER: "zj_app",
+    MYSQL_DATABASE: "zjaq",
+  };
+  assert.throws(() => requireMysqlConfiguration({ ...base, DATA_PROVIDER: "mock" }));
+  assert.throws(() => requireMysqlConfiguration({ ...base, DATA_PROVIDER: "cloudbase" }));
+  assert.throws(() => requireMysqlConfiguration({ ...base, DATA_PROVIDER: "mysql", MYSQL_USER: "" }));
+  assert.throws(() =>
+    requireMysqlConfiguration({ ...base, DATA_PROVIDER: "mysql", API_PORT: "80" }),
   );
-  assert.throws(() => requireRealConfiguration({ DATA_PROVIDER: "mock" }));
-  assert.throws(() => requireRealConfiguration({ DATA_PROVIDER: "cloudbase" }));
+  assert.doesNotThrow(() => requireMysqlConfiguration({ ...base, DATA_PROVIDER: "mysql" }));
 });

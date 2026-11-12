@@ -4,13 +4,13 @@
 
 ## 身份与生产配置
 
-- 浏览器通过已配置的 CloudBase 身份服务取得凭证，交给本站 `/api/sales/session`。该接口先调用真实 `/sales/me` 核验销售角色，再建立会话；登录失败不回退 Mock。
+- 浏览器把销售账号密码提交到本站 `/api/sales/session`。该接口调用 API `/auth/login` 换取令牌，再用渲染出的 `/sales/me` 核验销售角色，通过后建立会话；登录失败不区分账号不存在或密码错误。
 - 会话存放在 AES-256-GCM 加密的 `HttpOnly; SameSite=Strict; Path=/` cookie 中，有效期 30 分钟，凭证不进入 URL、localStorage 或页面返回字段。每个 API 请求和服务端页面读均重新检查上游身份；上游会话期限/账号禁用仍优先。
 - 生产必须设置 `PORTAL_SESSION_SECRET`，为独立的 64 位十六进制值（32 个随机字节）。生产缺失或非法时拒绝建立会话。所有 PC 实例使用相同秘密；轮换会使已有会话失效。不要提交真实值。
 - 生产使用 `__Host-zj-sales` cookie 并增加 `Secure`，必须通过 HTTPS 访问；不设置 Domain。反向代理部署应设置 `PORTAL_PUBLIC_ORIGIN=https://实际域名`（无末尾斜杠），并正确转发原始主机/协议，不应放宽 CSRF origin 校验。开发环境从实际 Host 校验来源，兼容 Next 内部规范化 localhost；不信任任意 X-Forwarded-Host。
-- `NEXT_PUBLIC_CLOUDBASE_ENV_ID` 和 `NEXT_PUBLIC_CLOUDBASE_AUTH_ORIGIN` 必须明确配置，后者只接受 `https://<env-id>.api.tcloudbasegateway.com`。实际 CloudBase 登录与账号绑定仍须在真实环境验证。
+- 销售账号由管理员在数据库 `auth_users` 中创建并分配 SALES 角色；密码使用 scrypt 散列，登录令牌只以 sha256 存于 `auth_sessions`，默认 8 小时过期。
 - `PORTAL_API_BASE_URL` 指向共享 API。生产应通过私有网络或 HTTPS 连接，避免 Bearer 凭证经过不可信网络。
-- 本地测试仅在 `NODE_ENV !== production` 且明确开启 `NEXT_PUBLIC_ENABLE_SALES_MOCK=true` 时显示本地验证按钮。开发进程未设置会话秘密时临时生成内存密钥，重启即失效。该能力在 production 中始终禁用。
+- 本地开发未设置会话秘密时临时生成内存密钥，重启即失效。本地验证按钮与 Mock 身份已移除，任何环境都必须使用真实账号登录。
 
 ## 文件与来源记录
 

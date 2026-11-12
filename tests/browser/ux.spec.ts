@@ -20,13 +20,13 @@ test("homepage branding and featured products never fall back to demo records", 
   await expect(
     page.getByRole("heading", { name: /中技于密.*安全于行/ }),
   ).toBeVisible();
-  await expect(page.getByText("产品资料正在整理")).toBeVisible();
+  await expect(page.getByText("暂无已发布产品")).toBeVisible();
   await expect(page.getByText(name, { exact: true })).toHaveCount(0);
   await page.goto(urls.h5);
   await expect(
     page.getByText("中技于密，安全于行", { exact: true }),
   ).toBeVisible();
-  await expect(page.getByText("产品资料正在整理")).toBeVisible();
+  await expect(page.getByText("暂无已发布产品")).toBeVisible();
   await expect(page.getByText(name, { exact: true })).toHaveCount(0);
   await page.getByText("浏览产品", { exact: true }).click();
   await expect(

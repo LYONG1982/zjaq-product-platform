@@ -3,11 +3,11 @@ import assert from "node:assert/strict";
 import { once } from "node:events";
 import { writeFile, rm } from "node:fs/promises";
 import { join } from "node:path";
-import { MockStore } from "../../services/mock-api/src/store";
-import { makeMockServer } from "../../services/mock-api/src/server";
+import { TestStore } from "../support/store";
+import { makeTestServer } from "../support/server";
 
 test("sales reads only current release with scoped preview and source downloads", async () => {
-  const store = new MockStore(undefined, true), product = store.product("ZJ-001");
+  const store = new TestStore(undefined, true), product = store.product("ZJ-001");
   product.publicId = "4655ca52-6f0f-4ab8-9ec0-2e2521954cca";
   product.publicationState = "PUBLISHED";
   product.activeReleaseId = product.lastReleaseId = "released";
@@ -25,7 +25,7 @@ test("sales reads only current release with scoped preview and source downloads"
     store.assets.uploads.set(id, { assetId: id, productId: product.productId, status: "READY", purpose,
       type, mimeType: type === "pdf" ? "application/pdf" : "application/vnd.openxmlformats-officedocument.presentationml.presentation", path } as never);
   }
-  const server = makeMockServer({ APP_ENV: "test", ENABLE_MOCK_ROLES: "true" }, store);
+  const server = makeTestServer({ APP_ENV: "test", ENABLE_MOCK_ROLES: "true" }, store);
   server.listen(0, "127.0.0.1"); await once(server, "listening");
   const address = server.address(); assert.ok(address && typeof address === "object");
   const base = `http://127.0.0.1:${address.port}/api/v1`, headers = { Authorization: "Bearer local-sales" };

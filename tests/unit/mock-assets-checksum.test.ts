@@ -5,7 +5,7 @@ import { rm, readFile } from "node:fs/promises";
 import { Readable } from "node:stream";
 import type { IncomingMessage } from "node:http";
 import { createHash, randomUUID } from "node:crypto";
-import { AssetStore } from "../../services/mock-api/src/assets";
+import { AssetStore } from "../../services/domain/src/asset-store";
 
 test("AssetStore computes the completed asset checksum from the stored bytes", async () => {
   const store = new AssetStore();
