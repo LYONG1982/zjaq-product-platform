@@ -9,6 +9,7 @@ import AnalyticsNotice from "../../components/AnalyticsNotice.vue";
 import { ApiError } from "@zj/api-client";
 import { api, resourceUrl, apiBase } from "../../api";
 import { safeSource, backToSource } from "../../navigation";
+import { useMiniProgramShare } from "../../share";
 // #ifdef H5
 import { PreviewSession } from "@zj/api-client/preview";
 let session: PreviewSession | undefined,
@@ -200,100 +201,59 @@ onUnload(() => {
   session?.close();
   // #endif
 });
+useMiniProgramShare(() => ({
+  title: manifest.value ? manifest.value.name : "产品资料",
+  path:
+    "/pages/viewer/index?productId=" +
+    encodeURIComponent(productId) +
+    "&materialId=" +
+    encodeURIComponent(materialId),
+}));
 </script>
 <template>
-<!-- #ifdef H5 -->
   <view class="h5-v2 v2-viewer">
-    <view class="v2-viewer-header"><button role="button" tabindex="0" @click="backToSource(source)" aria-label="返回上一页">← 资料预览</button><text class="v2-demo">本地演示</text></view>
+    <view class="v2-viewer-header"><button role="button" tabindex="0" @click="backToSource(source)" aria-label="返回上一页">← 资料预览</button></view>
+    <!-- #ifdef H5 -->
     <SharePanel v-if="manifest && !error" :product-id="productId" :material-id="materialId" />
+    <!-- #endif -->
+    <!-- #ifdef MP-WEIXIN -->
+    <button v-if="manifest && !error" class="mp-share" open-type="share">分享资料给同事</button>
+    <!-- #endif -->
     <view class="v2-viewer-title"><text>{{ manifest?.name ?? '资料预览' }}</text><text class="version">{{ manifest ? (manifest.previewKind === 'pdf' ? 'PDF' : manifest.previewKind === 'video' ? '视频' : '图集') + ' / ' + manifest.versionLabel + (manifest.previewKind === 'video' ? '' : ' / 共 ' + manifest.pageCount + ' 页') : '' }}</text></view>
     <view v-if="error" class="v2-viewer-error" role="alert"><text>{{ error }}</text><button role="button" tabindex="0" @click="open">重新打开</button></view>
     <view v-show="!error">
       <video v-if="manifest?.previewKind === 'video' && videoPath" :src="videoPath" controls :autoplay="false" :show-center-play-btn="true" class="material-video" @play="videoStarted" @pause="videoPaused" @ended="videoPaused" @error="fail(new Error('此终端无法播放该视频或资料已更新；请重试，或联系管理员提供兼容的 MP4。'))" />
+      <!-- #ifdef H5 -->
       <text v-if="loading" class="v2-viewer-loading" role="status">正在读取…</text>
       <view id="preview-surface" class="surface" v-show="manifest?.previewKind !== 'video'" />
       <view v-if="manifest?.previewKind !== 'video'" class="v2-view-controls"><button role="button" tabindex="0" :disabled="loading || page <= 1" @click="turn(page - 1)">上一页</button><view class="v2-page-input"><input type="number" :value="String(page)" aria-label="页码" :disabled="loading" @confirm="pageInput" @blur="pageInput" /><text>/ {{ manifest?.pageCount ?? '—' }}</text></view><button role="button" tabindex="0" class="v2-next-page" :disabled="loading || page >= (manifest?.pageCount ?? 1)" @click="turn(page + 1)">下一页</button></view>
       <view v-if="manifest?.previewKind !== 'video'" class="v2-zoom-controls"><button role="button" tabindex="0" :disabled="loading || zoom <= 0.5" @click="zoom = Math.max(0.5, zoom - 0.25); render()">− 缩小</button><text>{{ Math.round(zoom * 100) }}%</text><button role="button" tabindex="0" :disabled="loading || zoom >= 2.5" @click="zoom = Math.min(2.5, zoom + 0.25); render()">放大 +</button></view>
+      <!-- #endif -->
+      <!-- #ifdef MP-WEIXIN -->
+      <text v-if="loading" class="v2-viewer-loading" role="status">正在读取…</text>
+      <view v-if="manifest?.previewKind === 'images'" class="v2-view-controls"><button role="button" tabindex="0" :disabled="loading || page <= 1" @click="turn(page - 1)">上一页</button><view class="v2-page-input"><input type="number" :value="String(page)" aria-label="页码" :disabled="loading" @confirm="pageInput" @blur="pageInput" /><text>/ {{ manifest?.pageCount ?? '—' }}</text></view><button role="button" tabindex="0" class="v2-next-page" :disabled="loading || page >= (manifest?.pageCount ?? 1)" @click="turn(page + 1)">下一页</button></view>
+      <image v-if="imagePath" class="v2-image-page" :src="imagePath" mode="widthFix" @load="analyticsNotice?.record(manifest)" @error="fail(new Error('图片载入失败，请重试'))" />
+      <view v-if="manifest?.previewKind === 'pdf'" class="v2-native-pdf"><text>PDF 将在微信中打开</text><button role="button" tabindex="0" :disabled="loading" @click="nativePdf">打开资料</button></view>
+      <!-- #endif -->
       <text v-if="manifest && !loading" class="v2-current-version">正在查看当前发布版本</text>
       <button role="button" tabindex="0" class="v2-owner-product" @click="openProduct">查看所属产品 ↗</button>
       <AnalyticsNotice ref="analyticsNotice" />
     </view>
   </view>
-
-<!-- #endif -->
-<!-- #ifndef H5 -->
-
-  <view class="viewer"
-    ><view class="viewer-navigation"
-      ><button role="button" tabindex="0" @click="backToSource(source)">← 返回上一页</button
-      ><button role="button" tabindex="0" v-if="!source.startsWith('/pages/detail/')" @click="openProduct">
-        查看所属产品
-      </button></view
-    ><view class="viewer-title"
-      ><text>{{ manifest?.name ?? "资料预览" }}</text
-      ><text class="version">{{ manifest?.versionLabel }}</text></view
-    ><AnalyticsNotice ref="analyticsNotice" /><view v-if="error" class="error" role="alert"
-      ><text>{{ error }}</text
-      ><button role="button" tabindex="0" @click="open">重新打开</button></view
-    ><view v-show="!error"
-      ><view
-        v-if="manifest?.previewKind !== 'video' && (!native || manifest?.previewKind === 'images')"
-        class="controls"
-        ><button role="button" tabindex="0" :disabled="loading || page <= 1" @click="turn(page - 1)">
-          上一页</button
-        ><input
-          type="number"
-          :value="String(page)"
-          aria-label="页码"
-          :disabled="loading"
-          @confirm="turn(Number($event.detail.value))"
-        /><text>/ {{ manifest?.pageCount ?? "—" }}</text
-        ><button role="button" tabindex="0"
-          :disabled="loading || page >= (manifest?.pageCount ?? 1)"
-          @click="turn(page + 1)"
-        >
-          下一页
-        </button></view
-      ><view v-if="!native && manifest?.previewKind !== 'video'" class="controls"
-        ><button role="button" tabindex="0"
-          :disabled="loading || zoom <= 0.5"
-          @click="
-            zoom = Math.max(0.5, zoom - 0.25);
-            render();
-          "
-        >
-          缩小</button
-        ><text>{{ Math.round(zoom * 100) }}%</text
-        ><button role="button" tabindex="0"
-          :disabled="loading || zoom >= 2.5"
-          @click="
-            zoom = Math.min(2.5, zoom + 0.25);
-            render();
-          "
-        >
-          放大
-        </button></view
-      ><video v-if="manifest?.previewKind === 'video' && videoPath" :src="videoPath" controls :autoplay="false" :show-center-play-btn="true" class="material-video" @play="videoStarted" @pause="videoPaused" @ended="videoPaused" @error="fail(new Error('此终端无法播放该视频或资料已更新；请重试，或联系管理员提供兼容的 MP4。'))" /><text v-if="manifest?.previewKind === 'video'" class="video-help">视频不转码。MOV/WebM 的支持取决于当前微信或浏览器，建议使用 MP4。</text><text v-if="loading" class="loading" role="status">正在读取…</text
-      ><!-- #ifdef H5 --><view
-        id="preview-surface"
-        class="surface"
-      /><!-- #endif --><!-- #ifdef MP-WEIXIN --><image
-        v-if="imagePath"
-        class="image-page"
-        :src="imagePath"
-        mode="widthFix"
-        @load="analyticsNotice?.record(manifest)"
-        @error="fail(new Error('图片载入失败，请重试'))"
-      /><view v-if="manifest?.previewKind === 'pdf'" class="native-pdf"
-        ><text>使用微信预览 PDF</text
-        ><button role="button" tabindex="0" :disabled="loading" @click="nativePdf">打开资料</button></view
-      ><!-- #endif --></view
-    ></view
-  >
-
-<!-- #endif -->
 </template>
 <style scoped>
+.mp-share {
+  display: block;
+  width: 100%;
+  margin: 0 0 12px;
+  min-height: 44px;
+  font-size: 14px;
+  line-height: 44px;
+  color: var(--zj-color-brand-hover, #1953a0);
+  background: #fff;
+  border: 1px solid #cfdaeb;
+  border-radius: 10px;
+}
 .viewer {
   min-height: 100vh;
   background: #17242f;
@@ -399,4 +359,8 @@ onUnload(() => {
 .viewer {
   padding-bottom: calc(24px + env(safe-area-inset-bottom));
 }
+
+.v2-image-page { display:block; width:100%; }
+.v2-native-pdf { display:flex; flex-direction:column; align-items:center; gap:12px; margin:24px 16px; padding:24px; border-radius:20px; background:#fff; color:#122b49; }
+.v2-native-pdf button { min-height:44px; padding:0 24px; border-radius:12px; background:#1967f2; color:#fff; }
 </style>

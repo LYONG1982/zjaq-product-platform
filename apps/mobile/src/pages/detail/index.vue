@@ -5,12 +5,13 @@ import type { Responses } from "@zj/contracts";
 import { api, resourceUrl } from "../../api";
 // #ifdef H5
 import SharePanel from "../../components/SharePanel.vue";
-import SeriesHero from "../../components/SeriesHero.vue";
 // #endif
+import SeriesHero from "../../components/SeriesHero.vue";
 import { seriesStyle } from "../../series-display";
 import ProductVisual from "../../components/ProductVisual.vue";
 import ContactBlock from "../../components/ContactBlock.vue";
 import { safeSource, backToSource } from "../../navigation";
+import { useMiniProgramShare } from "../../share";
 const product = ref<Responses["PublicProduct"]>(),
   error = ref(""),
   loading = ref(true);
@@ -120,11 +121,18 @@ function preview(materialId: string) {
       encodeURIComponent("/pages/detail/index?id=" + id),
   });
 }
+useMiniProgramShare(() => ({
+  title: product.value
+    ? product.value.name + (hasText(product.value.tagline) ? "｜" + product.value.tagline : "")
+    : "产品详情",
+  path: "/pages/detail/index?id=" + encodeURIComponent(id),
+  imageUrl: product.value?.media.length ? resourceUrl(product.value.media[0].path) : undefined,
+}));
 </script>
 <template>
-<!-- #ifdef H5 -->
+
   <view class="h5-v2 v2-detail" :style="seriesStyle(product?.category.id ?? '')">
-    <view class="v2-detail-header"><button role="button" tabindex="0" @click="back" aria-label="返回上一页">← 产品详情</button><text class="v2-demo">本地演示</text></view>
+    <view class="v2-detail-header"><button role="button" tabindex="0" @click="back" aria-label="返回上一页">← 产品详情</button></view>
     <view v-if="error" class="v2-detail-empty" role="alert"><text>{{ error }}</text><button role="button" tabindex="0" @click="load">重新加载</button><button role="button" tabindex="0" @click="back">返回上一页</button></view>
     <view v-else-if="loading && !product" class="v2-detail-empty" role="status">正在读取…</view>
     <template v-else-if="product">
@@ -142,86 +150,22 @@ function preview(materialId: string) {
         <button role="button" tabindex="0" v-for="m in product.materials" :key="m.materialId" class="material-card v2-detail-material" @click="preview(m.materialId)"><view class="v2-material-top"><text class="v2-format">{{ m.previewKind === 'pdf' ? 'PDF' : m.previewKind === 'video' ? '视频' : '图集' }}</text><text>{{ m.versionLabel }}{{ m.previewKind === 'video' ? '' : ' · ' + m.pageCount + ' 页' }}</text></view><text class="feature-title">{{ m.name }}</text><text class="v2-material-date">{{ m.publishedAt.slice(0, 10) }}</text><text class="preview-link">预览资料 ↗</text></button>
         <text v-if="!product.materials.length" class="paragraph">暂无可预览资料</text>
       </view>
+      <!-- #ifdef H5 -->
       <SharePanel :product-id="product.productId" />
+      <!-- #endif -->
+      <!-- #ifndef H5 -->
+      <button class="mp-share" open-type="share">分享产品给同事</button>
+      <!-- #endif -->
       <ContactBlock />
     </template>
   </view>
 
-<!-- #endif -->
-<!-- #ifndef H5 -->
 
-  <view :class="['detail-page', themeClass]"
-    ><button role="button" tabindex="0" class="back-link" @click="back">← 返回上一页</button
-    ><view v-if="error" class="empty" role="alert"
-      ><text>{{ error }}</text
-      ><button role="button" tabindex="0" @click="load">重新加载</button
-      ><button role="button" tabindex="0" @click="back">返回上一页</button></view
-    ><view v-else-if="loading && !product" class="empty">正在读取…</view
-    ><template v-else-if="product"
-      ><view class="detail-intro"
-        ><text class="category-label">{{ product.category.name }}</text
-        ><text class="detail-title">{{ product.name }}</text
-        ><text v-if="product.model" class="paragraph">产品型号：{{ product.model }}</text
-        ><text v-if="hasText(product.tagline)" class="tagline">{{
-          product.tagline
-        }}</text
-        ><button role="button" tabindex="0" v-if="product.materials.length" class="view-materials" @click="jump('materials')">查看产品资料</button></view
-      ><view v-if="summaryParagraphs.length || hasText(product.audiences)" class="detail-section product-introduction"><text class="section-title">产品介绍</text><text v-for="(paragraph, index) in summaryParagraphs" :key="index" class="paragraph summary">{{ paragraph }}</text><text v-if="hasText(product.audiences)" class="paragraph">适用对象：{{ product.audiences }}</text></view
-      ><view class="section-nav" aria-label="产品详情分区"
-        ><button role="button" tabindex="0"
-          v-if="hasGroup('problemValues')"
-          @click="jump('problemValues')"
-        >
-          价值</button
-        ><button role="button" tabindex="0" v-if="hasGroup('features')" @click="jump('features')">
-          能力</button
-        ><button role="button" tabindex="0" v-if="hasGroup('scenarios')" @click="jump('scenarios')">
-          场景</button
-        ><button role="button" tabindex="0" @click="jump('materials')">资料</button></view
-      ><template v-for="group in visibleGroups" :key="group.key"
-        ><view
-          :id="'section-' + group.key"
-          class="detail-section"
-          ><text class="section-title">{{ group.label }}</text
-          ><view v-if="group.key === 'features'" class="feature-tags"><button role="button" tabindex="0" v-for="item in group.items" :key="item.id" class="capability-tag" :aria-label="item.title || item.text" @click="showCapability(item)">{{ item.title || item.text }}</button></view><template v-else><view
-            v-for="item in group.items"
-            :key="item.id"
-            class="feature-card"
-            ><text v-if="hasText(item.title)" class="feature-title">{{
-              item.title
-            }}</text
-            ><text v-if="hasText(item.text)" class="paragraph">{{
-              item.text
-            }}</text></view
-          ></template></view
-        ></template
-      ><view v-if="product.media.length" class="media-list"><text class="section-title">产品介绍图片</text><view v-for="(m, index) in product.media" :key="m.mediaId"><button class="intro-picture" :aria-label="'全屏查看图片 ' + (index + 1)" @click="previewImage(index)"><image :src="resourceUrl(m.path)" :alt="m.alt || product.name" mode="widthFix" /></button><text>{{ m.alt }}</text></view></view>
-      ><view id="section-materials" class="detail-section"
-        ><text class="section-title">产品资料</text
-        ><button role="button" tabindex="0"
-          v-for="m in product.materials"
-          :key="m.materialId"
-          class="material-card"
-          @click="preview(m.materialId)"
-        >
-          <text class="feature-title">{{ m.name }}</text
-          ><text class="material-meta"
-            >{{ m.versionLabel }} ·
-            {{ m.previewKind === "pdf" ? "PDF" : m.previewKind === "video" ? "视频" : "图片" }} ·
-            {{ m.previewKind === 'video' ? '' : m.pageCount + ' 页 · ' }}{{ m.publishedAt.slice(0, 10) }}</text
-          ><text class="preview-link">预览 →</text></button
-        ><text v-if="!product.materials.length" class="paragraph"
-          >暂无可预览资料</text
-        ></view
-      ><ContactBlock />
-      </template
-    ></view
-  >
 
-<!-- #endif -->
 </template>
 <style scoped>
 .intro-picture { display:block; width:100%; padding:0; background:transparent; line-height:0; border:0; }
+.mp-share { margin:16px 0 0; min-height:44px; font-size:14px; line-height:44px; color:var(--zj-color-brand-hover); background:#fff; border:1px solid #cfdaeb; border-radius:10px; }
 .intro-picture image { display:block; width:100%; height:auto; }
 .intro-picture::after { border:0; }
 

@@ -2,6 +2,7 @@
 import { onMounted, ref } from "vue";
 import type { Responses } from "@zj/contracts";
 import { api, errorInfo } from "../api";
+import { randomId } from "../random-id";
 type BannerItem = Responses["SiteBanner"]["items"][number];
 const props = defineProps<{ canManage: boolean }>();
 const items = ref<BannerItem[]>([]), version = ref(0), busy = ref(false), message = ref("");
@@ -24,7 +25,7 @@ function selectFile(id: string, event: Event) {
 }
 function addItem() {
   if (items.value.filter(item => !item.isDefault).length >= 5) { message.value = "最多添加 5 张自定义 Banner。"; return; }
-  items.value.push({ id: crypto.randomUUID(), isDefault: false, imagePath: null, imageData: null, link: null, startsAt: null, endsAt: null });
+  items.value.push({ id: randomId(), isDefault: false, imagePath: null, imageData: null, link: null, startsAt: null, endsAt: null });
   message.value = "已新增自定义页，请上传图片并保存。";
 }
 function removeItem(id: string) {

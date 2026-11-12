@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import { resourceUrl } from "../api";
+import { imageSource, resourceUrl } from "../api";
 const props = defineProps<{
   path?: string | null;
   alt: string;
@@ -8,24 +8,27 @@ const props = defineProps<{
   categoryId?: string;
 }>();
 const failed = ref(false);
+const resolved = ref("");
 watch(
   () => props.path,
-  () => {
+  async (value) => {
     failed.value = false;
+    resolved.value = value ? await imageSource(resourceUrl(value)).catch(() => { failed.value = true; return ""; }) : "";
   },
+  { immediate: true },
 );
 </script>
 <template>
   <view :class="['product-visual', { large, failed }]">
     <image
-      v-if="path && !failed"
-      :src="resourceUrl(path)"
+      v-if="resolved && !failed"
+      :src="resolved"
       :alt="alt"
       mode="aspectFit"
       :lazy-load="true"
       @error="failed = true"
     />
-    <image v-else-if="categoryId && ['miding', 'miyi', 'mishu', 'ai'].includes(categoryId)" :src="'/static/series/' + categoryId + '.png'" mode="aspectFit" class="series-icon" aria-hidden="true" />
+    <image v-else-if="categoryId && ['miding', 'miyi', 'mishu', 'ai'].includes(categoryId)" :src="'/static/shared/series-icon/' + categoryId + '.png'" mode="aspectFit" class="series-icon" aria-hidden="true" />
     <view v-else class="visual-symbol" aria-hidden="true"
       ><view /><view /><view
     /></view>

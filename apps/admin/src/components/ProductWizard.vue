@@ -14,12 +14,14 @@ const step = ref(1),
   model = ref(""),
   productType = ref<Domain["CreateProduct"]["productType"] | "">(""),
   ownership = ref<Domain["CreateProduct"]["ownership"] | "">(""),
+  sequence = ref(""),
   aliases = ref(""),
   busy = ref(false),
   error = ref(""),
   duplicate = ref(false),
   allowDuplicate = ref(false),
-  confirmCancel = ref(false);
+  confirmCancel = ref(false),
+  confirmCreate = ref(false);
 const key = requestKey();
 const category = computed(() =>
   props.categories.find((c) => c.id === categoryId.value),
@@ -37,6 +39,18 @@ const chosen = computed(
     choices.value[0],
 );
 const hint = ref("");
+const seriesCodes: Record<string, string> = { miding: "D", miyi: "Y", mishu: "S", ai: "A" };
+const typeCodes: Record<string, string> = { SOFTWARE: "S", HARDWARE: "H" };
+const ownershipCodes: Record<string, string> = { SELF_DEVELOPED: "A", PARTNER: "B" };
+const codePreview = computed(() => {
+  const series = seriesCodes[categoryId.value];
+  const type = productType.value ? typeCodes[productType.value] : undefined;
+  const from = ownership.value ? ownershipCodes[ownership.value] : undefined;
+  const tail = sequence.value.trim();
+  return series && type && from && /^\d{1,3}$/.test(tail)
+    ? `ZJ-${series}-${type}-${from}-${tail.padStart(3, "0")}`
+    : "";
+});
 function changeCategory() {
   if (!choices.value.some((t) => t.id === templateId.value)) {
     templateId.value = category.value?.defaultTemplateId ?? "";
@@ -45,14 +59,23 @@ function changeCategory() {
 }
 changeCategory();
 function close() {
-  if (name.value || owner.value || model.value || productType.value || ownership.value || aliases.value) confirmCancel.value = true;
+  if (name.value || owner.value || model.value || productType.value || ownership.value || aliases.value || sequence.value) confirmCancel.value = true;
   else emit("cancel");
 }
-async function create() {
+async function prepare() {
   if (busy.value) return;
   error.value = "";
   if (!name.value.trim() || !owner.value.trim() || !model.value.trim() || !productType.value || !ownership.value || !chosen.value) {
     error.value = "请填写产品名称、产品资料负责人、型号，并选择产品类型和属性。";
+    return;
+  }
+  if (!seriesCodes[categoryId.value]) {
+    error.value = "该分类不在编号体系内，请选择密鼎、密翼、密塾或 AI+ 系列。";
+    return;
+  }
+  const tail = sequence.value.trim();
+  if (!/^\d{1,3}$/.test(tail) || Number(tail) < 1 || Number(tail) > 999) {
+    error.value = "请填写 1 至 999 的编号流水。";
     return;
   }
   name.value = normalizeProductName(name.value);
@@ -64,6 +87,18 @@ async function create() {
       (p) => p.name.trim() === name.value.trim(),
     );
     if (duplicate.value && !allowDuplicate.value) return;
+    confirmCreate.value = true;
+  } catch (e) {
+    error.value = errorInfo(e).message;
+  } finally {
+    busy.value = false;
+  }
+}
+async function create() {
+  if (busy.value || !chosen.value || !productType.value || !ownership.value) return;
+  error.value = "";
+  busy.value = true;
+  try {
     const body: Domain["CreateProduct"] = {
       name: name.value.trim(),
       owner: owner.value.trim(),
@@ -73,6 +108,7 @@ async function create() {
       categoryId: categoryId.value,
       templateId: chosen.value.id as Domain["CreateProduct"]["templateId"],
       templateVersion: chosen.value.version,
+      sequence: Number(sequence.value.trim()),
       aliases: aliases.value
         .split(/[，,\n]/)
         .map((x) => x.trim())
@@ -80,6 +116,7 @@ async function create() {
     };
     emit("created", (await api.create(body, key(body))).data);
   } catch (e) {
+    confirmCreate.value = false;
     error.value = errorInfo(e).message;
   } finally {
     busy.value = false;
@@ -130,7 +167,7 @@ async function create() {
       ><template v-else
         ><p class="helper">
           {{ category?.name }} · {{ chosen?.name }} v{{ chosen?.version }} ·
-          编号将在创建后生成
+          编号按《产品双码互通体系方案》对照表填写
         </p>
         <label class="field"
           >正式名称<input aria-label="正式名称"
@@ -144,6 +181,15 @@ async function create() {
             autocomplete="off" /></label
         ><label class="field"
           >产品型号<input v-model="model" maxlength="80" autocomplete="off" /></label
+        ><label class="field"
+          >编号流水（三位，001~999）<input
+            v-model="sequence"
+            inputmode="numeric"
+            maxlength="3"
+            autocomplete="off"
+            placeholder="例如 008" /><small>{{
+            codePreview || "填写后预览完整编号"
+          }}</small></label
         ><label class="field"
           >产品类型<select v-model="productType"><option value="">请选择</option><option value="SOFTWARE">软件</option><option value="HARDWARE">软硬件</option></select></label
         ><label class="field"
@@ -174,8 +220,26 @@ async function create() {
         @click="step = 2"
       >
         下一步</button
-      ><button v-else class="primary" :disabled="busy" @click="create">
-        {{ busy ? "正在创建…" : "创建并开始制作" }}
+      ><button v-else class="primary" :disabled="busy" @click="prepare">
+        下一步确认
+      </button></template
+    ></Modal
+  ><Modal
+    v-if="confirmCreate"
+    title="确认新增产品"
+    :busy="busy"
+    @close="confirmCreate = false"
+    ><p>请核对产品名称、编号与型号，确认后写入草稿。</p>
+    <p class="helper">产品名称：{{ name }}</p>
+    <p class="helper">产品编号：{{ codePreview }}</p>
+    <p class="helper">产品型号：{{ model }}</p>
+    <p class="helper">产品系列：{{ category?.name }}</p>
+    <p class="helper">产品类型：{{ productType === "HARDWARE" ? "软硬件" : "软件" }}</p>
+    <p class="helper">产品属性：{{ ownership === "PARTNER" ? "合作" : "自研" }}</p>
+    <template #footer
+      ><button :disabled="busy" @click="confirmCreate = false">返回修改</button
+      ><button class="primary" :disabled="busy" @click="create">
+        {{ busy ? "正在创建…" : "确认创建" }}
       </button></template
     ></Modal
   ><Modal

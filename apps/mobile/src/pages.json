@@ -3,8 +3,10 @@
     {
       "path": "pages/home/index",
       "style": {
-        "navigationBarTitleText": "中技安全产品平台",
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "中技安全产品平台"
+        // #ifdef H5
+        ,"navigationStyle": "custom"
+        // #endif
       }
     },
     {
@@ -68,15 +70,21 @@
     "list": [
       {
         "pagePath": "pages/home/index",
-        "text": "首页"
+        "text": "首页",
+        "iconPath": "static/tabbar/home.png",
+        "selectedIconPath": "static/tabbar/home-active.png"
       },
       {
         "pagePath": "pages/products/index",
-        "text": "产品"
+        "text": "产品",
+        "iconPath": "static/tabbar/products.png",
+        "selectedIconPath": "static/tabbar/products-active.png"
       },
       {
         "pagePath": "pages/materials/index",
-        "text": "资料"
+        "text": "资料",
+        "iconPath": "static/tabbar/materials.png",
+        "selectedIconPath": "static/tabbar/materials-active.png"
       }
     ],
     "fontSize": "14px",

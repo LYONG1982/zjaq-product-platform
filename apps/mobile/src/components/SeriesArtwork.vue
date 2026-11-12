@@ -8,6 +8,6 @@ watch(() => theme.value.assetFile, () => { failed.value = false; });
 </script>
 <template>
   <view class="v3-series-artwork" aria-hidden="true">
-    <image v-if="theme.assetFile && !failed" :key="theme.assetFile" :src="'/static/h5/series-v3/' + theme.assetFile" mode="aspectFit" :lazy-load="!eager" @error="failed = true" />
+    <image v-if="theme.assetFile && !failed" :key="theme.assetFile" :src="'/static/shared/series-v3/' + theme.assetFile" mode="aspectFit" :lazy-load="!eager" @error="failed = true" />
   </view>
 </template>

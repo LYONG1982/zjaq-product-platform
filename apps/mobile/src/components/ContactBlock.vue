@@ -40,6 +40,15 @@ function onCallKey(event: KeyboardEvent) {
   // #endif
 }
 
+// #ifndef H5
+// 小程序：长按图片弹出「识别图中二维码」，点击可先看大图再长按识别。
+function previewQr(key: QrKey) {
+  const src = paths[key];
+  if (!src || failed[key]) return;
+  uni.previewImage({ urls: [src], current: src });
+}
+// #endif
+
 // #ifdef H5
 const preview = ref<{ src: string; title: string } | null>(null), imageDialog = ref<HTMLDialogElement | null>(null);
 let restoreView: { x: number; y: number; overflow: string; focus: HTMLElement | null } | null = null;
@@ -99,7 +108,7 @@ defineExpose({ reload });
   <view v-if="contact" class="contact-block">
     <text class="contact-title">联系方式</text>
     <view class="contact-qrs">
-      <view v-for="slot in slots" :key="slot.key" class="contact-qr"><image v-if="paths[slot.key] && !failed[slot.key]" :src="paths[slot.key]!" mode="aspectFit" :alt="slot.title + '二维码'" @error="failed[slot.key] = true" /><view v-else class="placeholder">暂未配置</view><text>{{ slot.title }}</text></view>
+      <view v-for="slot in slots" :key="slot.key" class="contact-qr"><image v-if="paths[slot.key] && !failed[slot.key]" :src="paths[slot.key]!" mode="aspectFit" :show-menu-by-longpress="true" :alt="slot.title + '二维码'" @click="previewQr(slot.key)" @error="failed[slot.key] = true" /><view v-else class="placeholder">暂未配置</view><text>{{ slot.title }}</text></view>
     </view>
     <view class="contact-phone"><view><text>官方电话</text><text class="number">{{ contact.phone || '暂未配置' }}</text></view><button role="button" :tabindex="contact.phone ? 0 : -1" :disabled="!contact.phone" @click="call" @keydown="onCallKey">拨打</button></view>
   </view>
