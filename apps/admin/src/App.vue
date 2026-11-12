@@ -36,7 +36,6 @@ const section = ref("products"),
   category = ref(""),
   state = ref(""),
   owner = ref(""),
-  removed = ref(""),
   loading = ref(true),
   error = ref(""),
   rows = ref<AdminProductRow[]>([]),
@@ -71,7 +70,6 @@ async function load(append = false) {
       categoryId: category.value || undefined,
       publicationState: state.value || undefined,
       owner: owner.value.trim() || undefined,
-      removed: isAdmin.value && removed.value === "true" ? true : undefined,
       cursor: append ? (next.value ?? undefined) : undefined,
     });
     if (id !== seq) return;
@@ -88,7 +86,6 @@ function resetFilters() {
   category.value = "";
   state.value = "";
   owner.value = "";
-  removed.value = "";
   void load();
 }
 async function bootstrap() {
@@ -164,7 +161,7 @@ function logout() {
     editing.value = null; wizard.value = false; removalRow.value = null;
     rows.value = []; events.value = []; categories.value = []; templates.value = [];
     displayName.value = ""; isAdmin.value = false; next.value = null; auditNext.value = null;
-    q.value = ""; category.value = ""; state.value = ""; owner.value = ""; removed.value = "";
+    q.value = ""; category.value = ""; state.value = ""; owner.value = "";
     auditProduct.value = ""; auditAction.value = ""; error.value = ""; removalNotice.value = "";
     section.value = "products"; loading.value = false; loggedOut.value = true; authNeeded.value = true;
   };
@@ -181,20 +178,20 @@ function created(d: AdminDraft) {
   editing.value = d;
   void load();
 }
-const removalRow = ref<AdminProductRow | null>(null), removalMode = ref<"remove" | "restore">("remove"), removalReason = ref(""), removalConfirmed = ref(false), removalBusy = ref(false), removalError = ref(""), removalNotice = ref("");
+const removalRow = ref<AdminProductRow | null>(null), removalReason = ref(""), removalConfirmation = ref(""), removalConfirmed = ref(false), removalBusy = ref(false), removalError = ref(""), removalNotice = ref("");
 const removalKey = requestKey();
-function openRemoval(row: AdminProductRow, mode: "remove" | "restore") {
-  removalRow.value = row; removalMode.value = mode; removalReason.value = ""; removalConfirmed.value = false; removalError.value = "";
+function openRemoval(row: AdminProductRow) {
+  removalRow.value = row; removalReason.value = ""; removalConfirmation.value = ""; removalConfirmed.value = false; removalError.value = "";
 }
 async function submitRemoval() {
   if (!removalRow.value || !isAdmin.value || !removalConfirmed.value) return;
-  const row = removalRow.value, body = { expectedDraftVersion: row.draftVersion, expectedPublicationVersion: row.publicationVersion, reason: removalReason.value.trim(), confirmed: true as const };
-  if (!body.reason) { removalError.value = "请填写操作原因"; return; }
+  const row = removalRow.value, body = { expectedDraftVersion: row.draftVersion, expectedPublicationVersion: row.publicationVersion, reason: removalReason.value.trim(), confirmation: removalConfirmation.value.trim(), confirmed: true as const };
+  if (!body.reason) { removalError.value = "请填写移除原因"; return; }
+  if (body.confirmation !== row.productId) { removalError.value = "请输入完整产品编号以确认"; return; }
   removalBusy.value = true; removalError.value = "";
   try {
-    if (removalMode.value === "remove") await api.removeProduct(row.productId, body, removalKey({ mode: "remove", id: row.productId, ...body }));
-    else await api.restoreProduct(row.productId, body, removalKey({ mode: "restore", id: row.productId, ...body }));
-    removalNotice.value = removalMode.value === "remove" ? "产品已安全移除；历史、原件和身份继续保留。" : "产品已恢复；尚未上架，需要另行确认发布。";
+    await api.removeProduct(row.productId, body, removalKey({ mode: "remove", id: row.productId, ...body }));
+    removalNotice.value = `产品 ${row.productId} 已彻底移除，编号已释放。`;
     removalRow.value = null; await load();
   } catch (error) { removalError.value = error instanceof Error ? error.message : "操作未完成，请重试"; }
   finally { removalBusy.value = false; }
@@ -206,7 +203,6 @@ const actionName = (s: string) =>
     PUBLISH: "发布",
     UNPUBLISH: "下架",
     REMOVE_PRODUCT: "移除产品",
-    RESTORE_PRODUCT: "恢复产品",
     CREATE_CATEGORY: "新增分类",
     UPDATE_CATEGORY: "修改分类",
     CREATE_USER: "新增账号",
@@ -279,9 +275,9 @@ onMounted(() => { if (!loggedOut.value) void bootstrap(); });
           }}</span
         >
         <div class="identity">
-          <span class="demo-tag">模拟身份</span
+          <span class="demo-tag">{{ isAdmin ? "管理员" : "内容制作人" }}</span
           ><span>{{ displayName || "连接中" }}</span
-          ><span class="avatar">制</span>
+          ><span class="avatar">{{ (displayName || "制").slice(0, 1) }}</span>
         </div>
       </header>
       <main :class="{ 'audit-page': !editing && section === 'audit' }">
@@ -328,12 +324,9 @@ onMounted(() => { if (!loggedOut.value) void bootstrap(); });
             </nav>
             <form class="product-filters" @submit.prevent="load()">
               <label class="field">发布状态<select v-model="state" aria-label="发布状态" @change="load()"><option value="">全部状态</option><option value="DRAFT">草稿</option><option value="PUBLISHED">已发布</option><option value="OFFLINE">已下架</option></select></label>
-              <label v-if="isAdmin" class="field">记录范围<select v-model="removed" aria-label="移除状态" @change="load()"><option value="">正常产品</option><option value="true">已移除</option></select></label>
-              <button type="button" class="primary" :disabled="loading || !categories.length" @click="wizard = true">新增产品</button>
-              <button v-if="isAdmin" type="button" @click="removed = removed === 'true' ? '' : 'true'; load()">{{ removed === 'true' ? '返回正常产品' : '查看已移除' }}</button>
               <label class="field">产品名称<input v-model="q" aria-label="搜索产品" placeholder="搜索产品名称或别名" maxlength="100" /></label>
               <label class="field">负责人<input v-model="owner" aria-label="产品资料负责人筛选" placeholder="产品资料负责人" maxlength="100" /></label>
-              <button class="primary" type="submit">查询</button><button type="button" @click="resetFilters">重置</button>
+              <div class="filter-actions"><button class="primary" type="submit">查询</button><button type="button" @click="resetFilters">重置</button><button type="button" class="primary" :disabled="loading || !categories.length" @click="wizard = true">新增产品</button></div>
             </form>
             <div class="table-heading">
               <strong>产品主档</strong><span>已加载 {{ rows.length }} 款</span>
@@ -365,7 +358,6 @@ onMounted(() => { if (!loggedOut.value) void bootstrap(); });
                   <tr v-for="r in rows" :key="r.productId">
                     <td class="product-code">{{ r.productId }}</td>
                     <td class="product-name">
-                      <small v-if="r.deletedAt">已移除 · {{ r.deletionReason }}</small>
                       <span class="product-name-lines" :title="r.name">{{ r.name }}</span><small v-if="r.hasUnpublishedChanges"
                         >有未发布修改</small
                       >
@@ -394,9 +386,9 @@ onMounted(() => { if (!loggedOut.value) void bootstrap(); });
                         :disabled="loading"
                         @click="edit(r.productId)"
                       >
-                        {{ r.deletedAt ? "查看留档" : "编辑" }}
+                        {{ "编辑" }}
                       </button>
-                      <button v-if="isAdmin && (r.deletedAt || (r.publicationState === 'DRAFT' && r.publicationVersion === 0))" class="text-button" :class="{ danger: !r.deletedAt }" :disabled="loading" @click="openRemoval(r, r.deletedAt ? 'restore' : 'remove')">{{ r.deletedAt ? "恢复产品" : "移除产品" }}</button>
+                      <button v-if="isAdmin && r.publicationState === 'DRAFT'" class="text-button danger" :disabled="loading" @click="openRemoval(r)">移除产品</button>
                     </td>
                   </tr>
                 </tbody>
@@ -478,7 +470,7 @@ onMounted(() => { if (!loggedOut.value) void bootstrap(); });
                 >操作<select v-model="auditAction">
                   <option value="">全部操作</option>
                   <option
-                    v-for="a in ['CREATE', 'SAVE', 'PUBLISH', 'UNPUBLISH', 'REMOVE_PRODUCT', 'RESTORE_PRODUCT']"
+                    v-for="a in ['CREATE', 'SAVE', 'PUBLISH', 'UNPUBLISH', 'REMOVE_PRODUCT']"
                     :key="a"
                     :value="a"
                   >
@@ -534,13 +526,14 @@ onMounted(() => { if (!loggedOut.value) void bootstrap(); });
       </main>
     </div>
   </div>
-  <Modal v-if="removalRow" :title="removalMode === 'remove' ? '确认移除产品' : '确认恢复产品'" :busy="removalBusy" @close="removalRow = null">
+  <Modal v-if="removalRow" title="确认移除产品" :busy="removalBusy" @close="removalRow = null">
     <p><strong>{{ removalRow.name }}</strong> · {{ removalRow.productId }}</p>
-    <p>{{ removalMode === 'remove' ? '仅从未发布的草稿可以移除，移除后从默认管理列表隐藏。编码、型号、UUID、历史资料和原文件全部保留。' : '恢复后回到管理列表，不会自动上架；请核对内容后另行确认发布。' }}</p>
-    <label class="field">{{ removalMode === 'remove' ? '移除原因（必填）' : '恢复原因（必填）' }}<textarea v-model="removalReason" :aria-label="removalMode === 'remove' ? '移除原因（必填）' : '恢复原因（必填）'" maxlength="300" rows="3" /></label>
-    <label class="check-line"><input v-model="removalConfirmed" type="checkbox" />我已确认产品及本次操作影响</label>
+    <p class="error-inline">移除不可恢复：该编号下的产品、草稿、资料历史、全部发布快照、资产与原件、型号与公开标识索引都会被清除，旧发布链接将立即失效。完成后编号可重新使用。</p>
+    <label class="field">移除原因（必填）<textarea v-model="removalReason" aria-label="移除原因（必填）" maxlength="300" rows="3" /></label>
+    <label class="field">输入完整产品编号以确认<input v-model="removalConfirmation" aria-label="输入完整产品编号以确认" :placeholder="removalRow.productId" maxlength="100" /></label>
+    <label class="check-line"><input v-model="removalConfirmed" type="checkbox" />我已确认此操作不可恢复</label>
     <p v-if="removalError" class="error-inline" role="alert">{{ removalError }}</p>
-    <template #footer><button :disabled="removalBusy" @click="removalRow = null">取消</button><button :class="removalMode === 'remove' ? 'danger' : 'primary'" :disabled="removalBusy || !removalConfirmed || !removalReason.trim()" @click="submitRemoval">{{ removalBusy ? '正在处理…' : removalMode === 'remove' ? '确认移除' : '确认恢复' }}</button></template>
+    <template #footer><button :disabled="removalBusy" @click="removalRow = null">取消</button><button class="danger" :disabled="removalBusy || !removalConfirmed || !removalReason.trim() || removalConfirmation.trim() !== removalRow.productId" @click="submitRemoval">{{ removalBusy ? '正在处理…' : '确认移除' }}</button></template>
   </Modal>
   <SignIn
     :logged-out="loggedOut"

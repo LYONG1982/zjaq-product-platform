@@ -3,6 +3,7 @@ import { ref, onMounted, onBeforeUnmount } from "vue";
 import type { DraftContent } from "@zj/contracts";
 import { api } from "../api";
 import { uploadFile } from "../upload";
+import { randomId } from "../random-id";
 type Media = DraftContent["media"][number];
 type Item = { id: string; media?: Media; file?: File; url: string; alt: string; state: "ready" | "uploading" | "failed"; status: string };
 const props = defineProps<{ modelValue: Media[]; productId: string }>();
@@ -42,7 +43,7 @@ function choose(event: Event) {
     if (items.value.length >= 6) { error.value = "每款产品最多 6 张图片"; break; }
     if (!/\.(png|jpe?g|webp)$/i.test(file.name) || !file.size || file.size > 2_000_000) { error.value = file.name + "：请选择非空 JPG、PNG 或 WebP，单张不超过 2 MB"; continue; }
     const url = URL.createObjectURL(file); urls.add(url);
-    items.value.push({ id: crypto.randomUUID(), file, url, alt: file.name.replace(/\.[^.]+$/, "").slice(0,300) || "产品介绍图片", state: "uploading", status: "准备上传…" });
+    items.value.push({ id: randomId(), file, url, alt: file.name.replace(/\.[^.]+$/, "").slice(0,300) || "产品介绍图片", state: "uploading", status: "准备上传…" });
     // Queue order is selection order, independently of request completion order.
     void enqueue(items.value[items.value.length - 1]);
   }

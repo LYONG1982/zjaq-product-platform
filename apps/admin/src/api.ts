@@ -4,56 +4,62 @@ import {
   fetchTransport,
   type Transport,
 } from "@zj/api-client";
+import { randomId } from "./random-id";
 const base =
   import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:3100/api/v1";
-export const isLocalMock = ["127.0.0.1", "localhost"].includes(
-  new URL(base).hostname,
-);
 const logoutFlag = "zj-admin-signed-out";
+const tokenKey = "zj-admin-token";
 let authGeneration = 0;
-let accessToken: string | undefined = isLocalMock && sessionStorage.getItem(logoutFlag) !== "1"
-  ? (import.meta.env.VITE_MOCK_TOKEN ?? "local-mock")
-  : undefined;
+let accessToken: string | undefined = sessionStorage.getItem(tokenKey) ?? undefined;
 const transport: Transport = async (...args) => {
   const generation = authGeneration;
   const result = await fetchTransport(...args);
   if (generation !== authGeneration) throw new Error("当前会话已结束，请重新登录");
-  if (result.status === 401)
+  if (result.status === 401) {
+    accessToken = undefined;
+    sessionStorage.removeItem(tokenKey);
     window.dispatchEvent(new Event("zj-session-expired"));
+  }
   return result;
 };
 export const api = createClient(base, transport, () => accessToken);
 export function signOut() {
+  const token = accessToken;
   authGeneration += 1;
   accessToken = undefined;
   sessionStorage.setItem(logoutFlag, "1");
-  void fetch(base + "/admin/logout", { method: "POST", credentials: "include", signal: AbortSignal.timeout(10000) }).catch(() => {});
+  sessionStorage.removeItem(tokenKey);
+  if (token)
+    void fetch(base + "/auth/logout", {
+      method: "POST",
+      headers: { Authorization: "Bearer " + token },
+      redirect: "error",
+      signal: AbortSignal.timeout(10000),
+    }).catch(() => {});
 }
 export const wasSignedOut = () => sessionStorage.getItem(logoutFlag) === "1";
 export async function signIn(username: string, password: string) {
-  if (isLocalMock) accessToken = import.meta.env.VITE_MOCK_TOKEN ?? "local-mock";
-  if (!isLocalMock) {
-    const env = import.meta.env.VITE_CLOUDBASE_ENV_ID,
-      origin = import.meta.env.VITE_CLOUDBASE_AUTH_ORIGIN;
-    const expected = "https://" + env + ".api.tcloudbasegateway.com";
-    if (!env || origin !== expected) throw new Error("身份服务尚未配置");
-    const response = await fetch(origin + "/auth/v1/signin", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
-      redirect: "error",
-      signal: AbortSignal.timeout(15000),
-    });
-    const result = await response.json();
-    if (!response.ok || typeof result.access_token !== "string")
-      throw new Error("登录未成功，请检查账号信息");
-    accessToken = result.access_token;
-  }
+  const response = await fetch(base + "/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password }),
+    redirect: "error",
+    signal: AbortSignal.timeout(15000),
+  });
+  const result = (await response.json().catch(() => null)) as
+    | { data?: { accessToken?: unknown }; error?: { message?: string } }
+    | null;
+  const token = result?.data?.accessToken;
+  if (!response.ok || typeof token !== "string")
+    throw new Error(result?.error?.message ?? "登录未成功，请检查账号信息");
+  accessToken = token;
   try {
     await api.me();
+    sessionStorage.setItem(tokenKey, token);
     sessionStorage.removeItem(logoutFlag);
   } catch (e) {
-    if (!isLocalMock) accessToken = undefined;
+    accessToken = undefined;
+    sessionStorage.removeItem(tokenKey);
     throw e;
   }
 }
@@ -67,7 +73,7 @@ export function requestKey() {
     const next = JSON.stringify(value);
     if (!key || body !== next) {
       body = next;
-      key = crypto.randomUUID();
+      key = randomId();
     }
     return key;
   };

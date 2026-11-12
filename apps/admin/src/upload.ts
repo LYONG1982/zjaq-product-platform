@@ -2,6 +2,7 @@ import { api } from "./api";
 import type { Domain } from "@zj/contracts";
 import { ApiError } from "@zj/api-client";
 import { uploadFailure, type UploadStage } from "./upload-errors";
+import { randomId } from "./random-id";
 const attempts = new WeakMap<File, Map<string, string>>();
 export type UploadProgress = {
   stage: "preparing" | "uploading" | "checking" | "ready";
@@ -35,7 +36,7 @@ async function transferUpload(
     attempts.set(file, map);
   }
   const scope = productId + "/" + purpose;
-  if (!map.has(scope)) map.set(scope, crypto.randomUUID());
+  if (!map.has(scope)) map.set(scope, randomId());
   status("正在创建上传任务…");
   progress?.({ stage: "preparing", loaded: 0, total: file.size || null });
   const intent = (

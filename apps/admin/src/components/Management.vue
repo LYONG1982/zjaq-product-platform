@@ -24,7 +24,8 @@ const category = ref<Domain["CategoryWrite"]>({
   allowedTemplateIds: ["software"],
 });
 const user = ref<Domain["AdminUserWrite"]>({
-  subjectId: "",
+  username: "",
+  password: "",
   displayName: "",
   role: "CONTENT_MANAGER",
   enabled: true,
@@ -69,14 +70,16 @@ function editUser(u?: Responses["AdminUser"]) {
   editingId.value = u?.userId ?? "";
   user.value = u
     ? {
-        subjectId: u.subjectId,
+        username: u.username ?? "",
+        password: "",
         displayName: u.displayName,
         role: u.role,
         enabled: u.enabled,
         expectedVersion: u.version,
       }
     : {
-        subjectId: "",
+        username: "",
+        password: "",
         displayName: "",
         role: "CONTENT_MANAGER",
         enabled: true,
@@ -93,8 +96,13 @@ async function save() {
         await api.updateCategory(editingId.value, category.value);
       else await api.createCategory(category.value);
     } else {
-      if (editingId.value) await api.updateUser(editingId.value, user.value);
-      else await api.createUser(user.value);
+      const { password, ...rest } = user.value;
+      if (editingId.value)
+        await api.updateUser(
+          editingId.value,
+          password ? { ...rest, password } : rest,
+        );
+      else await api.createUser({ ...rest, password });
     }
     open.value = false;
     await load();
@@ -162,8 +170,8 @@ watch(() => [props.kind, props.canManage], load, { immediate: true });
       <table v-else-if="canManage">
         <thead>
           <tr>
+            <th>登录账号</th>
             <th>显示名称</th>
-            <th>身份主体</th>
             <th>角色</th>
             <th>状态</th>
             <th>操作</th>
@@ -171,8 +179,8 @@ watch(() => [props.kind, props.canManage], load, { immediate: true });
         </thead>
         <tbody>
           <tr v-for="u in users" :key="u.userId">
+            <td>{{ u.username ?? "—" }}</td>
             <td>{{ u.displayName }}</td>
-            <td>{{ u.subjectId }}</td>
             <td>{{ u.role === "ADMIN" ? "管理员" : u.role === "SALES" ? "销售" : "内容制作人" }}</td>
             <td>{{ u.enabled ? "启用" : "禁用" }}</td>
             <td>
@@ -240,12 +248,23 @@ watch(() => [props.kind, props.canManage], load, { immediate: true });
         ></template
       ><template v-else
         ><label class="field"
-          >身份主体<input
-            v-model="user.subjectId"
+          >登录账号<input
+            v-model="user.username"
             :disabled="!!editingId"
             required
-            maxlength="200"
-          /><small>填写身份服务提供的主体 ID。</small></label
+            minlength="3"
+            maxlength="64"
+            pattern="[A-Za-z0-9][A-Za-z0-9._-]*"
+          /><small>用于登录后台，创建后不能修改。</small></label
+        ><label class="field"
+          >{{ editingId ? "重置密码（留空表示不修改）" : "密码（必填）" }}<input
+            v-model="user.password"
+            type="password"
+            :required="!editingId"
+            minlength="8"
+            maxlength="128"
+            autocomplete="new-password"
+          /><small>至少 8 位；保存后该账号现有会话将失效。</small></label
         ><label class="field"
           >显示名称<input
             v-model="user.displayName"

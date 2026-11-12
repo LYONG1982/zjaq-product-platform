@@ -9,6 +9,7 @@ import type {
   Domain,
 } from "@zj/contracts";
 import { api, copy, requestKey, errorInfo, stateName } from "../api";
+import { randomId } from "../random-id";
 import ShareDialog from "./ShareDialog.vue";
 import ProductImages from "./ProductImages.vue";
 import Modal from "./Modal.vue";
@@ -42,10 +43,24 @@ const current = ref(copy(props.draft)),
   reason = ref("内容调整"),
   leaveOpen = ref(false),
   serverDraft = ref<AdminDraft | null>(null),
-  compareOpen = ref(false);
+  compareOpen = ref(false),
+  renumberOpen = ref(false),
+  renumberCategory = ref(""),
+  renumberType = ref(""),
+  renumberOwnership = ref(""),
+  renumberSequence = ref(""),
+  renumberReason = ref("编号与配置项调整"),
+  renumberBusy = ref(false),
+  renumberError = ref(""),
+  restoreDraftOpen = ref(false),
+  restoreDraftReason = ref("恢复为草稿"),
+  restoreDraftBusy = ref(false),
+  restoreDraftError = ref("");
 let pendingLeave: (() => void) | null = null;
 const publishKey = requestKey(),
   unpublishKey = requestKey(),
+  renumberKey = requestKey(),
+  restoreDraftKey = requestKey(),
   dirty = computed(() => imagesPending.value || JSON.stringify(content.value) !== saved.value),
   template = computed(() =>
     props.templates.find(
@@ -59,6 +74,21 @@ const compatible = computed(() =>
     (c) => c.enabled && c.allowedTemplateIds.includes(content.value.templateId),
   ),
 );
+const canRenumber = computed(
+  () => current.value.publicationState === "DRAFT" && !current.value.deletedAt,
+);
+const seriesCodes: Record<string, string> = { miding: "D", miyi: "Y", mishu: "S", ai: "A" };
+const typeCodes: Record<string, string> = { SOFTWARE: "S", HARDWARE: "H" };
+const ownershipCodes: Record<string, string> = { SELF_DEVELOPED: "A", PARTNER: "B" };
+const renumberPreview = computed(() => {
+  const series = seriesCodes[renumberCategory.value];
+  const type = typeCodes[renumberType.value];
+  const from = ownershipCodes[renumberOwnership.value];
+  const tail = renumberSequence.value.trim();
+  return series && type && from && /^\d{1,3}$/.test(tail)
+    ? `ZJ-${series}-${type}-${from}-${tail.padStart(3, "0")}`
+    : "";
+});
 const modules = [
   ["basic", "基本信息"],
   ["problems", "问题与价值"],
@@ -222,6 +252,77 @@ async function openPublish() {
   publicConfirmed.value = false;
   publishOpen.value = true;
 }
+function openRenumber() {
+  clearError();
+  renumberError.value = "";
+  if (dirty.value) { error.value = "请先保存草稿，再修改编号。"; return; }
+  if (!content.value.productType || !content.value.ownership) { error.value = "请先填写产品类型和产品属性并保存草稿。"; return; }
+  renumberCategory.value = content.value.categoryId;
+  renumberType.value = content.value.productType;
+  renumberOwnership.value = content.value.ownership;
+  renumberSequence.value = current.value.productId.match(/-(\d{3})$/)?.[1] ?? "";
+  renumberOpen.value = true;
+}
+async function renumber() {
+  if (renumberBusy.value) return;
+  renumberError.value = "";
+  if (!renumberPreview.value) { renumberError.value = "请选择完整配置并填写 1 至 999 的编号流水。"; return; }
+  if (!renumberReason.value.trim()) { renumberError.value = "请填写修改原因。"; return; }
+  renumberBusy.value = true;
+  try {
+    const body: Domain["RenumberProduct"] = {
+      expectedDraftVersion: current.value.draftVersion,
+      categoryId: renumberCategory.value,
+      productType: renumberType.value as Domain["RenumberProduct"]["productType"],
+      ownership: renumberOwnership.value as Domain["RenumberProduct"]["ownership"],
+      sequence: Number(renumberSequence.value.trim()),
+      reason: renumberReason.value.trim(),
+    };
+    const d = (await api.renumberProduct(current.value.productId, body, renumberKey(body))).data;
+    current.value = d;
+    content.value = copy(d.content);
+    saved.value = JSON.stringify(d.content);
+    renumberOpen.value = false;
+    notice.value = "编号已更新为 " + d.productId;
+    emit("changed");
+  } catch (e) {
+    renumberError.value = errorInfo(e).message;
+  } finally {
+    renumberBusy.value = false;
+  }
+}
+function openRestoreDraft() {
+  clearError();
+  restoreDraftError.value = "";
+  if (dirty.value) { error.value = "请先保存草稿，再恢复为草稿。"; return; }
+  restoreDraftReason.value = "恢复为草稿";
+  restoreDraftOpen.value = true;
+}
+async function restoreDraft() {
+  if (restoreDraftBusy.value) return;
+  restoreDraftError.value = "";
+  if (!restoreDraftReason.value.trim()) { restoreDraftError.value = "请填写原因。"; return; }
+  restoreDraftBusy.value = true;
+  try {
+    const body: Domain["RestoreDraft"] = {
+      expectedDraftVersion: current.value.draftVersion,
+      expectedPublicationVersion: current.value.publicationVersion,
+      reason: restoreDraftReason.value.trim(),
+      confirmed: true,
+    };
+    const d = (await api.restoreDraft(current.value.productId, body, restoreDraftKey(body))).data;
+    current.value = d;
+    content.value = copy(d.content);
+    saved.value = JSON.stringify(d.content);
+    restoreDraftOpen.value = false;
+    notice.value = "已恢复为草稿，编号与发布历史保留。";
+    emit("changed");
+  } catch (e) {
+    restoreDraftError.value = errorInfo(e).message;
+  } finally {
+    restoreDraftBusy.value = false;
+  }
+}
 async function publish() {
   if (busy.value || !publicConfirmed.value) return;
   busy.value = true;
@@ -322,7 +423,7 @@ function rebaseLocal() {
   notice.value = "已保留本地输入并更新基准，请再次核对后手动保存。";
 }
 function addItem(key: "problemValues" | "features" | "scenarios") {
-  content.value[key].push({ id: crypto.randomUUID(), title: "", text: "" });
+  content.value[key].push({ id: randomId(), title: "", text: "" });
 }
 function editMaterial(index: number | null) {
   materialIndex.value = index;
@@ -377,6 +478,9 @@ function putMaterial(m: Domain["MaterialRef"]) {
         }}</span
         ><button :disabled="busy || !dirty || !!current.deletedAt" @click="save">保存草稿</button
         ><button :disabled="busy || !!current.deletedAt" @click="openPreview">预览</button
+        ><button v-if="current.publicationState === 'OFFLINE' && !current.deletedAt" :disabled="busy" @click="openRestoreDraft">
+          恢复为草稿
+        </button
         ><button class="primary" :disabled="busy || !!current.deletedAt" @click="openPublish">
           {{ current.publicationState === "PUBLISHED" ? "发布更新" : "发布" }}
         </button>
@@ -467,6 +571,17 @@ function putMaterial(m: Domain["MaterialRef"]) {
               rows="2"
             />
           </label>
+        </section>
+        <section v-if="canRenumber" id="edit-renumber" class="edit-section">
+          <h2>编号与配置</h2>
+          <div class="form-grid">
+            <label class="field">当前编号<input :value="current.productId" readonly /></label>
+            <label class="field">编号状态<input value="草稿状态可修改；已发布快照与历史保留原编号" readonly /></label>
+          </div>
+          <button type="button" :disabled="busy || !!current.deletedAt" @click="openRenumber">
+            修改编号与配置
+          </button>
+          <p class="helper">修改前需先保存草稿。已发布或曾发布的产品改号后，旧发布快照仍保留原编号，公开链接不受影响。</p>
         </section>
         <section
           v-for="group in groups"
@@ -574,6 +689,84 @@ function putMaterial(m: Domain["MaterialRef"]) {
     @cancel="materialOpen = false"
   />
   <MaterialHistory v-if="historyOpen" :product-id="current.productId" @close="historyOpen = false" />
+  <Modal
+    v-if="renumberOpen"
+    title="确认修改编号"
+    :busy="renumberBusy"
+    @close="renumberOpen = false"
+    ><p>
+      <strong>{{ content.name }}</strong> · {{ current.productId }} →
+      {{ renumberPreview || "待生成" }}
+    </p>
+    <p v-if="current.releaseSequence > 0" class="warning">
+      该产品已有 {{ current.releaseSequence }} 次发布记录。改号只影响当前草稿与后续发布，旧发布快照继续保留原编号。
+    </p>
+    <div class="form-grid">
+      <label class="field"
+        >产品系列<select v-model="renumberCategory">
+          <option
+            v-for="c in categories.filter((c) => c.enabled && seriesCodes[c.id])"
+            :key="c.id"
+            :value="c.id"
+          >
+            {{ c.name }}
+          </option>
+        </select></label
+      >
+      <label class="field"
+        >产品类型<select v-model="renumberType">
+          <option value="">请选择</option>
+          <option value="SOFTWARE">软件</option>
+          <option value="HARDWARE">软硬件</option>
+        </select></label
+      >
+      <label class="field"
+        >产品属性<select v-model="renumberOwnership">
+          <option value="">请选择</option>
+          <option value="SELF_DEVELOPED">自研</option>
+          <option value="PARTNER">合作</option>
+        </select></label
+      >
+      <label class="field"
+        >编号流水（001~999）<input
+          v-model="renumberSequence"
+          inputmode="numeric"
+          maxlength="3"
+          autocomplete="off" /></label
+      >
+    </div>
+    <p class="helper">修改后编号：{{ renumberPreview || "请填写完整配置" }}</p>
+    <label class="field"
+      >修改原因<textarea v-model="renumberReason" rows="2" maxlength="300" />
+    </label>
+    <p v-if="renumberError" class="error-inline" role="alert">{{ renumberError }}</p>
+    <template #footer
+      ><button :disabled="renumberBusy" @click="renumberOpen = false">返回修改</button
+      ><button class="primary" :disabled="renumberBusy || !renumberPreview" @click="renumber">
+        {{ renumberBusy ? "正在修改…" : "确认修改" }}
+      </button></template
+    ></Modal
+  >
+  <Modal
+    v-if="restoreDraftOpen"
+    title="确认恢复为草稿"
+    :busy="restoreDraftBusy"
+    @close="restoreDraftOpen = false"
+    ><p>
+      <strong>{{ content.name }}</strong> · {{ current.productId }}
+    </p>
+    <p>恢复后产品状态变回草稿，编号、公开标识、发布快照与历史继续保留；公开端在看到重新发布前不会展示该产品。</p>
+    <label class="field"
+      >恢复原因<textarea v-model="restoreDraftReason" rows="2" maxlength="300" />
+    </label>
+    <p v-if="restoreDraftError" class="error-inline" role="alert">{{ restoreDraftError }}</p>
+    <template #footer
+      ><button :disabled="restoreDraftBusy" @click="restoreDraftOpen = false">取消</button
+      ><button class="primary" :disabled="restoreDraftBusy" @click="restoreDraft">
+        {{ restoreDraftBusy ? "正在恢复…" : "确认恢复" }}
+      </button></template
+    ></Modal
+  >
   <Modal
     v-if="publishOpen"
     title="确认发布"

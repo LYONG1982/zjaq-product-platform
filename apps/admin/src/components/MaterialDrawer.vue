@@ -6,6 +6,7 @@ import AssetViewer from "./AssetViewer.vue";
 import { api, copy } from "../api";
 import { uploadFile } from "../upload";
 import { nextMaterialVersion, validMaterialVersion } from "../versions";
+import { randomId } from "../random-id";
 const props = defineProps<{ productId: string; initial?: Domain["MaterialRef"]; mode?: "pdf" | "video" }>();
 const uploadMode = props.initial?.preview.kind === "video" ? "video" : props.initial ? "pdf" : props.mode ?? "pdf";
 const emit = defineEmits<{ save: [material: Domain["MaterialRef"]]; cancel: [] }>();
@@ -22,8 +23,8 @@ const name = ref(props.initial?.name ?? ""),
   source = ref(props.initial?.sourceAssetId ?? null),
   busy = ref(false), message = ref(""), error = ref(""),
   showPreview = ref(false), confirmDiscard = ref(false), nameEdited = ref(!!props.initial);
-const materialId = props.initial?.materialId ?? crypto.randomUUID();
-const versionId = props.initial?.versionId ?? crypto.randomUUID();
+const materialId = props.initial?.materialId ?? randomId();
+const versionId = props.initial?.versionId ?? randomId();
 const subCategoryOptions = computed(() => category.value === "promotional"
   ? ([["deck", "演示文稿"], ["onepager", "单页介绍"], ["video", "视频"]] as const)
   : category.value === "technical"
@@ -59,7 +60,7 @@ type FileEntry = {
 };
 const files = ref<FileEntry[]>([]), batchIds = ref<string[]>([]);
 function existing(fileKind: FileKind, label: string, assetId: string) {
-  files.value.push({ id: crypto.randomUUID(), name: label, size: null, fileKind,
+  files.value.push({ id: randomId(), name: label, size: null, fileKind,
     purpose: fileKind === "source" ? "source" : "preview", state: "ready", loaded: 0, total: null, assetId, error: "", adopted: true });
 }
 if (pdf.value) existing("pdf", "当前 PDF 预览件", pdf.value.assetId);
@@ -131,7 +132,7 @@ function choose(event: Event, asSource = false) {
   for (const fileKind of ["pdf", "images", "video", "source"] as const) {
     for (const file of groups[fileKind]) {
       if (files.value.some(f => f.file && f.file.name === file.name && f.file.size === file.size && f.file.lastModified === file.lastModified)) continue;
-      files.value.push({ id: crypto.randomUUID(), file, name: file.name, size: file.size, fileKind,
+      files.value.push({ id: randomId(), file, name: file.name, size: file.size, fileKind,
         purpose: fileKind === "source" ? "source" : "preview", state: "pending", loaded: 0, total: file.size, error: "", adopted: false });
     }
   }
@@ -255,7 +256,7 @@ function save() {
   const value = material()!;
   if (props.initial && !changed.value) { emit("save", copy(props.initial)); return; }
   value.versionLabel = version.value = effectiveVersion.value!;
-  if (props.initial) value.versionId = crypto.randomUUID();
+  if (props.initial) value.versionId = randomId();
   emit("save", value);
 }
 const copyNotice = ref("");
